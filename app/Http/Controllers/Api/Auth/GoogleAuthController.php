@@ -34,6 +34,5 @@ class GoogleAuthController extends Controller
             return response()->json($e->getMessage());
         }
         return response()->json(['token' => $token], Response::HTTP_OK);
-
     }
 }
