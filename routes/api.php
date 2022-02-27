@@ -18,8 +18,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/login', [\App\Http\Controllers\Api\Auth\AuthController::class, 'login']);
-Route::post('/register', [\App\Http\Controllers\Api\Auth\AuthController::class, 'register']);
-Route::post('/logout', [\App\Http\Controllers\Api\Auth\AuthController::class, 'logout'])->middleware(['auth:sanctum']);
 
-Route::post('/login/google', [\App\Http\Controllers\Api\Auth\GoogleAuthController::class, 'login']);
