@@ -20,19 +20,24 @@ class GoogleAuthController extends Controller
                 $user = User::create([
                     'name' => $request->name,
                     'email' => $request->email,
+                    'image_url' => $request->image_url,
+                    'provider_id' => $request->provider_id,
                     'email_verified_at' => now()
                 ]);
 
                 $token = $user->createToken('auth-token')->plainTextToken;
+                return response()->json(['token' => $token], Response::HTTP_OK);
             } else {
-                User::where('email', '=', $request->email)->update(['name' => $request->name]);
+                User::where('email', '=', $request->email)->update([
+                    'name' => $request->name,
+                    'image_url' => $request->image_url,
+                ]);
                 $user = User::where('email', '=', $request->email)->first();
+                $token = $user->createToken('auth-token')->plainTextToken;
+                return response()->json(['token' => $token], Response::HTTP_OK);
             }
-
-            $token = $user->createToken('auth-token')->plainTextToken;
         } catch (Exception $e) {
             return response()->json($e->getMessage());
         }
-        return response()->json(['token' => $token], Response::HTTP_OK);
     }
 }
