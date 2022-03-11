@@ -1,13 +1,30 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Auth\GoogleAuthController;
+use App\Http\Controllers\Api\Auth\ResetPasswordController;
+use App\Http\Controllers\Api\Auth\VerifyAccountController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [\App\Http\Controllers\Api\Auth\AuthController::class, 'login']);
-Route::post('/register', [\App\Http\Controllers\Api\Auth\AuthController::class, 'register']);
-Route::post('/logout', [\App\Http\Controllers\Api\Auth\AuthController::class, 'logout'])->middleware(['auth:sanctum']);
+Route::controller(AuthController::class)->group(function () {
+    Route::post('/login', 'login');
+    Route::post('/register', 'register');
+    Route::post('/logout', 'logout')->middleware(['auth:sanctum']);
+});
 
-Route::post('/login/google', [\App\Http\Controllers\Api\Auth\GoogleAuthController::class, 'login']);
+// Login with Google account
+Route::post('/login/google', [GoogleAuthController::class, 'login']);
 
 // Reset password
-Route::post('/forgot-password', [\App\Http\Controllers\Api\Auth\ResetPasswordController::class, 'forgotPassword']);
-Route::put('/reset-password', [\App\Http\Controllers\Api\Auth\ResetPasswordController::class, 'resetPassword']);
+Route::controller(ResetPasswordController::class)->group(function () {
+    Route::post('/forgot-password', 'forgotPassword');
+    Route::put('/reset-password', 'resetPassword');
+});
+
+
+// Verify account
+Route::controller(VerifyAccountController::class)->group(function () {
+    Route::post('/email/verification-notification', 'resendVerifyEmail');
+    Route::put('/verify-account', 'verifyEmail');
+});
+
