@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Events\UserVerifyAccount;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\LoginRequest;
 use App\Http\Requests\Api\Auth\RegisterRequest;
+use App\Http\Requests\Api\Auth\VerifyAccount\VerifyAccountRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+
 
 class AuthController extends Controller
 {
+
+
     /**
      * Login to the system with account
      *
@@ -28,7 +33,12 @@ class AuthController extends Controller
 
             // check password
             if (!$user || !Hash::check($request->input('password'), $user->password)) {
-                return response()->json('Email or password is not correct!', Response::HTTP_UNAUTHORIZED);
+                return response()->json('Email or password is not correct!', 401);
+            }
+            // Check email is verified?
+            if (is_null($user->email_verified_at)) {
+                event(new UserVerifyAccount($user));
+                return response()->json('Your account not verify', 403);
             }
 
             $token = $user->createToken('auth-token')->plainTextToken;
@@ -36,12 +46,12 @@ class AuthController extends Controller
                 'token' => $token,
                 'user' => $user,
             ];
+            return response()->json($response);
         } catch (Exception $e) {
             return response()->json($e->getMessage());
         }
-
-        return response()->json($response, Response::HTTP_OK);
     }
+
 
     /**
      * Register account in system
@@ -52,15 +62,14 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         try {
-            $fields = $request->only(['name', 'email', 'password']);
-            $fields['password'] = bcrypt($fields['password']);
+            $fields = $request->only(['name', 'email', 'password']); // Get input from form data
+            $fields['password'] = bcrypt($fields['password']); // Encryption password field
+            $user = User::create($fields);
 
-            User::create($fields);
-
-            // All good
-            return response()->json("Register successfully", Response::HTTP_CREATED);
+            // send link verify account
+            event(new UserVerifyAccount($user));
+            return response()->json("Register successfully", 201);
         } catch (Exception $e) {
-            // Something went wrong!
             return response()->json($e->getMessage());
         }
     }
@@ -73,8 +82,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-//        dd($request->user()->tokens()->id);
         $request->user()->currentAccessToken()->delete();
-        return response()->json('Logout success', 200);
+        return response()->json('Logout success');
     }
 }
