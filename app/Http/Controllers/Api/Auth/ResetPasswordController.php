@@ -14,6 +14,12 @@ use Illuminate\Support\Str;
 
 class ResetPasswordController extends Controller
 {
+    /**
+     * Send email reset password
+     *
+     * @param ForgotPasswordRequest $request
+     * @return JsonResponse
+     */
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
         $email = $request->input('email');
@@ -23,8 +29,7 @@ class ResetPasswordController extends Controller
             if (is_null($user)) {
                 return response()->json('Email not found!', 404);
             }
-            // Else
-            // Generate token
+            // Else generate token
             $token = Str::random(20);
             DB::table('password_resets')->insert([
                 'email' => $email,
@@ -44,6 +49,12 @@ class ResetPasswordController extends Controller
 
     }
 
+    /**
+     * Handle reset password
+     *
+     * @param ResetPasswordRequest $request
+     * @return JsonResponse
+     */
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
         $token = $request->input('token');
@@ -56,8 +67,8 @@ class ResetPasswordController extends Controller
         $user = User::where('email', '=', $passwordReset->email)->first();
         if (!$user) {
             return response()->json([
-                'message' => 'User doesn\'t exist!'
-            ]);
+                'message' => "User doesn't exist!"
+            ], 404);
         }
 
         $user->password = bcrypt($request->input('password'));

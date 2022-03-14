@@ -10,11 +10,18 @@ use Illuminate\Http\Request;
 
 class GoogleAuthController extends Controller
 {
+    /**
+     * Login via google account
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function login(Request $request): JsonResponse
     {
         try {
             $googleUser = User::where('email', '=', $request->email)->first();
 
+            // if user not existed
             if (!$googleUser) {
                 $user = User::create([
                     'name' => $request->name,
@@ -23,7 +30,7 @@ class GoogleAuthController extends Controller
                     'provider_id' => $request->provider_id,
                     'email_verified_at' => now()
                 ]);
-            } else {
+            } else { // Update info if existed user
                 User::where('email', $request->email)->update([
                     'name' => $request->name,
                     'image_url' => $request->image_url,
@@ -31,7 +38,7 @@ class GoogleAuthController extends Controller
                 ]);
                 $user = User::where('email', $request->email)->first();
             }
-            $token = $user->createToken('auth-token')->plainTextToken;
+            $token = $user->createToken('auth-token')->plainTextToken; // give a token for user to access backend
             return response()->json(['token' => $token], 200);
         } catch (Exception $e) {
             return response()->json($e->getMessage());
