@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Support\Facades\Http;
 
-class LocationController extends Controller
+class PublicLocationController extends Controller
 {
     protected string $domainApi = "";
 
@@ -15,7 +15,12 @@ class LocationController extends Controller
         $this->domainApi = "https://thongtindoanhnghiep.co/api/";
     }
 
-    public function getCities()
+    /**
+     * Get all the cities
+     *
+     * @return mixed
+     */
+    public function getCities(): mixed
     {
         try {
             $response = Http::get("$this->domainApi/city");
@@ -25,7 +30,13 @@ class LocationController extends Controller
         }
     }
 
-    public function getDistricts($cityID)
+    /**
+     * Get all the districts of the city
+     *
+     * @param $cityID
+     * @return mixed
+     */
+    public function getDistricts($cityID): mixed
     {
         try {
             $response = Http::get("$this->domainApi/city/$cityID/district");
@@ -35,7 +46,13 @@ class LocationController extends Controller
         }
     }
 
-    public function getWards($distinctID)
+    /**
+     * Get all the wards of the distinct
+     *
+     * @param $distinctID
+     * @return mixed
+     */
+    public function getWards($distinctID): mixed
     {
         try {
             $response = Http::get("$this->domainApi/district/$distinctID/ward");
