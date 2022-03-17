@@ -15,8 +15,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-
-
     /**
      * Login to the system with normal account
      *
@@ -47,7 +45,7 @@ class AuthController extends Controller
             ];
             return response()->json($response);
         } catch (Exception $e) {
-            return response()->json($e->getMessage());
+            return response()->json($e->getMessage(), 500);
         }
     }
 
@@ -64,12 +62,13 @@ class AuthController extends Controller
             $fields = $request->only(['name', 'email', 'password']); // Get input from form data
             $fields['password'] = bcrypt($fields['password']); // Encryption password field
             $user = User::create($fields);
-
+            $user->assignRole('user'); // Assign user role
+            $user->givePermissionTo('view all posts', 'view a post');
             // send link verify account
             event(new UserVerifyAccount($user));
             return response()->json("Register successfully", 201);
         } catch (Exception $e) {
-            return response()->json($e->getMessage());
+            return response()->json($e->getMessage(), 500);
         }
     }
 

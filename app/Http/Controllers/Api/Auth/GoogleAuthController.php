@@ -39,9 +39,9 @@ class GoogleAuthController extends Controller
                 $user = User::where('email', $request->email)->first();
             }
             $token = $user->createToken('auth-token')->plainTextToken; // give a token for user to access backend
-            return response()->json(['token' => $token], 200);
+            return response()->json(['token' => $token] );
         } catch (Exception $e) {
-            return response()->json($e->getMessage());
+            return response()->json($e->getMessage(), 500);
         }
     }
 }

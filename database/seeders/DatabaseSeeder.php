@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,7 +15,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             CategorySeeder::class,
+            TagSeeder::class,
+            UserSeeder::class,
+            RolePermissionSeeder::class,
         ]);
-        User::factory(10)->hasPost()->create();
     }
 }

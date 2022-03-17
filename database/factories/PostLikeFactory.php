@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends Factory
  */
-class PostFactory extends Factory
+class PostLikeFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,9 +17,7 @@ class PostFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->name,
-            'body' => $this->faker->realText,
-            'category_id' => rand(1, 10),
+            'user_id' => 1
         ];
     }
 }

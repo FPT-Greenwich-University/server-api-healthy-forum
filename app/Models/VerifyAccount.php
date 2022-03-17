@@ -10,6 +10,12 @@ class VerifyAccount extends Model
     use HasFactory;
 
     protected $table = 'verify_accounts';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'email',
         'token',

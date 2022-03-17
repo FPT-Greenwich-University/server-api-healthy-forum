@@ -2,13 +2,17 @@
 
 namespace Database\Factories;
 
+use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory
  */
-class PostFactory extends Factory
+class CommentFactory extends Factory
 {
+    public array $listUserID = [];
+
     /**
      * Define the model's default state.
      *
@@ -16,10 +20,11 @@ class PostFactory extends Factory
      */
     public function definition()
     {
+        $listUserID = User::all()->pluck('id')->toArray();
+
         return [
-            'title' => $this->faker->name,
-            'body' => $this->faker->realText,
-            'category_id' => rand(1, 10),
+            'content' => $this->faker->colorName,
+            'user_id' => 1
         ];
     }
 }

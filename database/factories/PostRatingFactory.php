@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PostRating>
  */
-class PostFactory extends Factory
+class PostRatingFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,9 +17,8 @@ class PostFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->name,
-            'body' => $this->faker->realText,
-            'category_id' => rand(1, 10),
+            'user_id' => '1',
+            'point' => rand(1, 5)
         ];
     }
 }

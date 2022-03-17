@@ -24,13 +24,12 @@ class ResetPasswordController extends Controller
     {
         $email = $request->input('email');
         try {
-            // Check if a user exists in systems
-            $user = User::where('email', '=', $email)->first();
+            $user = User::where('email', '=', $email)->first();// Check if a user exists in systems
             if (is_null($user)) {
                 return response()->json('Email not found!', 404);
             }
-            // Else generate token
-            $token = Str::random(20);
+
+            $token = Str::random(20); // Else generate token
             DB::table('password_resets')->insert([
                 'email' => $email,
                 'token' => $token,
@@ -39,14 +38,12 @@ class ResetPasswordController extends Controller
             $data = [
                 'client_url' => env('CLIENT_APP_URL') . '/reset-password?token=' . $token,
             ];
-
-            // send link reset password vie email
+            // Send link reset password vie email
             event(new ResetPassword($user, $data));
+            return response()->json('send mail success');
         } catch (Exception $exception) {
             return response()->json(['message' => $exception->getMessage()], 500);
         }
-        return response()->json('send mail success');
-
     }
 
     /**

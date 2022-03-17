@@ -6,22 +6,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Image extends Model
+class Favorite extends Model
 {
     use HasFactory;
 
-    protected  $fillable = [
-        'path',
-        'imageable_id',
-        'imageable_type',
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'favoriteable_id',
+        'favoriteable_type'
     ];
 
     /**
-     * Get the parent imageable model (user or post)
+     * Get the parent favoriteable model (user or post)
      *
      * @return MorphTo
      */
-    public function imageable(): MorphTo
+    public function favoriteable(): MorphTo
     {
         return $this->morphTo();
     }
