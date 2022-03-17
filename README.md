@@ -29,6 +29,10 @@ many web projects, such as:
 ```php
 php artisan schedule:work 
 ```
+2.Running queue job
+```php
+php artisan queue:listen
+```
 
 [//]: # (Laravel is accessible, powerful, and provides tools required for large, robust applications.)
 

@@ -10,7 +10,6 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\Response as ResponseStatus;
 
 class ProfileController extends Controller
 {
@@ -23,21 +22,10 @@ class ProfileController extends Controller
     public function show(Request $request): JsonResponse
     {
         try {
-            // Get user id
-            $userId = $request->user()->id;
-            // Get user with user id
-//            Bad option
-//            $user = DB::table('users')
-//                ->join('profiles', function ($join) {
-//                    $join->on('users.id', '=', 'profiles.user_id');
-//                })
-//                ->where('users.id', $userId)
-//                ->select('users.id', 'users.email', 'users.name', 'profiles.*')
-//                ->first();
-            $user = User::with(['profile'])->findOrFail($request->user()->id);
-            return response()->json($user, ResponseStatus::HTTP_OK);
+            $user = User::with(['profile'])->findOrFail($request->user()->id); // return 404 error if not found
+            return response()->json($user);
         } catch (Exception $exception) {
-            return response()->json($exception->getMessage());
+            return response()->json($exception->getMessage(), 500);
         }
     }
 
@@ -50,26 +38,21 @@ class ProfileController extends Controller
     public function update(UpdateProfileRequest $request): JsonResponse
     {
         try {
-            // Get user id
-            $userId = $request->user()->id;
-//            $user = User::select('id')->findOrFail($userId);
+            $userId = $request->user()->id; // Get user id
             $userProfile = DB::table('profiles')
-                ->where('user_id', $userId)
+                ->where('user_id', $request->user()->id)
                 ->first();
-
             $data = $request->only(['phone', 'description', 'age', 'gender', 'city', 'district', 'ward', 'street']);
             $data['user_id'] = $userId;
 
             if (is_null($userProfile)) {
-                // Create new profile
-                Profile::create($data);
+                Profile::create($data);  // Create new profile
             } else {
-                // Update current profile
-                Profile::where('user_id', $userId)->update($data);
+                Profile::where('user_id', $userId)->update($data);  // Update current profile
             }
         } catch (Exception $exception) {
-            return response()->json($exception->getMessage());
+            return response()->json($exception->getMessage(), 500);
         }
-        return response()->json('Update success', ResponseStatus::HTTP_ACCEPTED);
+        return response()->json('Update success', 201);
     }
 }

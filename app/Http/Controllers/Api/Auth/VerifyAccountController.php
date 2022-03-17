@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 class VerifyAccountController extends Controller
 {
     /**
+     * Send mail for verify account
+     *
      * @param VerifyAccountRequest $request
      * @return JsonResponse
      */
@@ -40,6 +42,8 @@ class VerifyAccountController extends Controller
     }
 
     /**
+     * Handle update verify of account
+     *
      * @param Request $request
      * @return JsonResponse
      */

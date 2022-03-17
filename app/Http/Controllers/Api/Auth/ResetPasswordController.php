@@ -14,18 +14,22 @@ use Illuminate\Support\Str;
 
 class ResetPasswordController extends Controller
 {
+    /**
+     * Send email reset password
+     *
+     * @param ForgotPasswordRequest $request
+     * @return JsonResponse
+     */
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
         $email = $request->input('email');
         try {
-            // Check if a user exists in systems
-            $user = User::where('email', '=', $email)->first();
+            $user = User::where('email', '=', $email)->first();// Check if a user exists in systems
             if (is_null($user)) {
                 return response()->json('Email not found!', 404);
             }
-            // Else
-            // Generate token
-            $token = Str::random(20);
+
+            $token = Str::random(20); // Else generate token
             DB::table('password_resets')->insert([
                 'email' => $email,
                 'token' => $token,
@@ -34,16 +38,20 @@ class ResetPasswordController extends Controller
             $data = [
                 'client_url' => env('CLIENT_APP_URL') . '/reset-password?token=' . $token,
             ];
-
-            // send link reset password vie email
+            // Send link reset password vie email
             event(new ResetPassword($user, $data));
+            return response()->json('send mail success');
         } catch (Exception $exception) {
             return response()->json(['message' => $exception->getMessage()], 500);
         }
-        return response()->json('send mail success');
-
     }
 
+    /**
+     * Handle reset password
+     *
+     * @param ResetPasswordRequest $request
+     * @return JsonResponse
+     */
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
         $token = $request->input('token');
@@ -56,8 +64,8 @@ class ResetPasswordController extends Controller
         $user = User::where('email', '=', $passwordReset->email)->first();
         if (!$user) {
             return response()->json([
-                'message' => 'User doesn\'t exist!'
-            ]);
+                'message' => "User doesn't exist!"
+            ], 404);
         }
 
         $user->password = bcrypt($request->input('password'));

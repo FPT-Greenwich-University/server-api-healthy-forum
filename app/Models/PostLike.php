@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Profile extends Model
+class PostLike extends Model
 {
     use HasFactory;
 
@@ -16,21 +16,12 @@ class Profile extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'phone',
-        'age',
-        'gender',
-        'city',
-        'district',
-        'ward',
-        'street',
-        'description',
-        'user_id'
+        'user_id',
+        'post_id',
     ];
 
-    // Define relationships
-
     /**
-     * Get the profile associated with the user.
+     * Get all the likes from the user
      *
      * @return BelongsTo
      */

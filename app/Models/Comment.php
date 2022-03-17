@@ -6,31 +6,33 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Profile extends Model
+class Comment extends Model
 {
     use HasFactory;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array
      */
     protected $fillable = [
-        'phone',
-        'age',
-        'gender',
-        'city',
-        'district',
-        'ward',
-        'street',
-        'description',
-        'user_id'
+        'name',
+        'description'
     ];
 
-    // Define relationships
 
     /**
-     * Get the profile associated with the user.
+     * Get the post that own the comment
+     *
+     * @return BelongsTo
+     */
+    public function post(): BelongsTo
+    {
+        return $this->belongsTo(Post::class);
+    }
+
+    /**
+     * Get the user that own the comment
      *
      * @return BelongsTo
      */
