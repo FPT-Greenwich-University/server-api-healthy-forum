@@ -65,16 +65,16 @@ class RegisterController extends Controller
                 ->where('is_accept', false)
                 ->first();
 
-            if (!is_null($registerUser)) {
+            if (!is_null($registerUser)) {  // If exist user then
                 DB::table('register_doctor_role_drafts')
                     ->where('user_id', $registerUserID)
                     ->update(['is_accept' => true]);
                 $user = User::findOrFail($registerUserID);
                 $user->assignRole('doctor'); // Assign doctor role
-                $user->givePermissionTo('create a post', 'update a post', 'delete a post');
+                $user->givePermissionTo('create a post', 'update a post', 'delete a post'); // Give permission of doctor role
                 return response()->json('Accept success');
             } else {
-                return response()->json('User not found or not have request register doctor role!', 404);
+                return response()->json('User not found or not have request register doctor role!', 404); // Return response 404
             }
         } catch (Exception $exception) {
             return response()->json($exception->getMessage(), 500);
