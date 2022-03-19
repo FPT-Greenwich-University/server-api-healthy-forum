@@ -30,7 +30,7 @@ class GoogleAuthController extends Controller
                     'provider_id' => $request->provider_id,
                     'email_verified_at' => now()
                 ]);
-                $user->assignRole('user'); // Assign user role
+                $user->assignRole('customer'); // Assign customer role
                 $user->givePermissionTo('view all posts', 'view a post');
             } else { // Update info if existed user
                 User::where('email', $request->email)->update([
