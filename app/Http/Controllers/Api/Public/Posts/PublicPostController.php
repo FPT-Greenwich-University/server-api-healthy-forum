@@ -16,18 +16,35 @@ class PublicPostController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $posts = Post::join('images', function ($join) {
-                $join->on('posts.id', '=', 'images.imageable_id')
-                    ->where('images.imageable_type', '=', 'App\Models\Post');
-            })
-                ->select('posts.title', 'images.path')
-                ->paginate(10);
+            if ($request->query()) { // if request have query
+                $posts = $this->filter($request);
+            } else {
+                $posts = Post::join('images', function ($join) {
+                    $join->on('posts.id', '=', 'images.imageable_id')
+                        ->where('images.imageable_type', '=', 'App\Models\Post');
+                })
+                    ->select('posts.title', 'images.path')
+                    ->paginate(10);
+            }
             return response()->json($posts);
         } catch (Exception $exception) {
             return response()->json($exception, 500);
+        }
+    }
+
+    public function filter(Request $request)
+    {
+        if ($request->query('categoryID')) {
+            return Post::join('images', function ($join) {
+                $join->on('posts.id', '=', 'images.imageable_id')
+                    ->where('images.imageable_type', '=', 'App\Models\Post');
+            })
+                ->where('category_id', '=', $request->query('categoryID'))
+                ->select('posts.title', 'images.path')
+                ->paginate(10);
         }
     }
 

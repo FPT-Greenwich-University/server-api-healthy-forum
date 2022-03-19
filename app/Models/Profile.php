@@ -11,6 +11,12 @@ class Profile extends Model
     use HasFactory;
 
     /**
+     * Constant
+     */
+    const MALE_GENDER = 0;
+    const FEMALE_GENDER = 1;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -26,8 +32,6 @@ class Profile extends Model
         'description',
         'user_id'
     ];
-
-    // Define relationships
 
     /**
      * Get the profile associated with the user.

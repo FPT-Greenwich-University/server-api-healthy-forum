@@ -42,8 +42,7 @@ Route::controller(VerifyAccountController::class)->group(function () {
  * Register doctor role
  */
 Route::controller(RegisterController::class)->middleware(['auth:sanctum'])->group(function () {
-    Route::get('/register/doctor-role', 'getListRegisterDoctorRoles'); //TODO Middle is admin here
-    Route::post('/register/doctor-role', 'registerWithRoleDoctor'); // TODO:: add check is not doctor
-    // TODO make middleware is admin, is doctor, is normal user
-    Route::put('/register/doctor-role/{registerUserID}', 'acceptRegisterDoctorRole'); //TODO:: add middle admin here
+    Route::get('/register/doctor-role', 'getListRegisterDoctorRoles')->middleware('role:admin'); //TODO Middle is admin here
+    Route::post('/register/doctor-role', 'registerWithRoleDoctor');
+    Route::put('/register/doctor-role/{registerUserID}', 'acceptRegisterDoctorRole')->middleware('role:admin'); //TODO:: add middle admin here
 });

@@ -62,7 +62,7 @@ class AuthController extends Controller
             $fields = $request->only(['name', 'email', 'password']); // Get input from form data
             $fields['password'] = bcrypt($fields['password']); // Encryption password field
             $user = User::create($fields);
-            $user->assignRole('user'); // Assign user role
+            $user->assignRole('customer'); // Assign customer role
             $user->givePermissionTo('view all posts', 'view a post');
             // send link verify account
             event(new UserVerifyAccount($user));

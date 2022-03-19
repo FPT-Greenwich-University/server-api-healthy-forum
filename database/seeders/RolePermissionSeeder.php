@@ -20,13 +20,13 @@ class RolePermissionSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
         Role::insert([
             ['name' => 'admin', 'guard_name' => 'web'],
-            ['name' => 'user', 'guard_name' => 'web'],
+            ['name' => 'customer', 'guard_name' => 'web'],
             ['name' => 'doctor', 'guard_name' => 'web'],
         ]);
         $permissionsByRole = [
             'admin' => ['create user', 'detail user', 'edit user', 'delete user', 'ban user'],
             'doctor' => ['create a post', 'update a post', 'delete a post'],
-            'user' => ['view all posts', 'view a post'],
+            'customer' => ['view all posts', 'view a post'],
         ];
 
         $insertPermissions = fn($role) => collect($permissionsByRole[$role])
@@ -36,7 +36,7 @@ class RolePermissionSeeder extends Seeder
         $permissionIdsByRole = [
             'admin' => $insertPermissions('admin'),
             'doctor' => $insertPermissions('doctor'),
-            'user' => $insertPermissions('user'),
+            'customer' => $insertPermissions('customer'),
         ];
 
         foreach ($permissionIdsByRole as $role => $permissionIds) {

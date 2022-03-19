@@ -21,12 +21,22 @@ class PostLike extends Model
     ];
 
     /**
-     * Get all the likes from the user
+     * Get the user that own this like
      *
      * @return BelongsTo
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the post that own this like
+     *
+     * @return BelongsTo
+     */
+    public function post(): BelongsTo
+    {
+        return $this->belongsTo(Post::class);
     }
 }
