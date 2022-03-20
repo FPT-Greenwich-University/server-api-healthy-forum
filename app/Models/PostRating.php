@@ -9,5 +9,15 @@ class PostRating extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'point',
+        'user_id',
+        'post_id'
+    ];
 
 }

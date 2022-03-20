@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api\Users\PostLikes;
+namespace App\Http\Controllers\Api\Users\PostRatings;
 
 use App\Http\Controllers\Controller;
-use App\Models\PostLike;
+use App\Models\PostRating;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PostLikeController extends Controller
+class PostRatingController extends Controller
 {
     /**
      * User like the post
@@ -17,19 +17,21 @@ class PostLikeController extends Controller
      * @param $postID --The post's id
      * @return JsonResponse
      */
-    public function likeThePost(Request $request, int $postID): JsonResponse
+    public function ratingThePost(Request $request, int $postID): JsonResponse
     {
-        try {
-            $result = $this->checkLikeIsExist($request, $postID);
 
-            if ($result === false) { // if user not have like this post
-                PostLike::create([
-                    'post_id' => $postID,
+        try {
+            $result = $this->checkRatingIsExist($request, $postID);
+
+            if ($result === false) { // if user not have rating this post
+                PostRating::create([
+                    'point' => $request->input('point'),
                     'user_id' => $request->user()->id,
+                    'post_id' => $postID
                 ]);
-                return response()->json("Like post successful");
+                return response()->json('Rating successful');
             } else {
-                return response()->json("The user have like post before", 202);
+                return response()->json("The user have rating post before", 202);
             }
         } catch (Exception $exception) {
             return response()->json([
@@ -43,16 +45,16 @@ class PostLikeController extends Controller
     }
 
     /**
-     * Check if the like of user was had existed
+     * Check if the rating of user was had existed
      *
      * @param Request $request
      * @param int $postID
      * @return bool true if result is null, false
      * otherwise.
      */
-    public function checkLikeIsExist(Request $request, int $postID): bool
+    public function checkRatingIsExist(Request $request, int $postID): bool
     {
-        $result = PostLike::where('post_id', $postID)->where('user_id', $request->user()->id)->first();
+        $result = PostRating::where('post_id', $postID)->where('user_id', $request->user()->id)->first();
 
         if (!is_null($result)) {
             return true;
@@ -60,25 +62,23 @@ class PostLikeController extends Controller
         return false; // default
     }
 
-
     /**
-     * User unlike the post
-     *
+     * Update rating the post of the user
      * @param Request $request
-     * @param int $postID
+     * @param $postID
      * @return JsonResponse
      */
-    public function unlikeThePost(Request $request, int $postID): JsonResponse
+    public function updateRatingThePost(Request $request, $postID): JsonResponse
     {
         try {
-            $result = $this->checkLikeIsExist($request, $postID);
-
-            if ($result === true) { // if user had liked this post
-                PostLike::where('user_id', $request->user()->id)->where('post_id', $postID)->delete();
-                return response()->json("Unlike post successful");
-            } else {
-                return response()->json("The user not have like this post before", 202);
-            }
+            PostRating::where('user_id', $request->user()->id)
+                ->where('post_id', $postID)
+                ->update([
+                    'point' => $request->input('point'),
+                    'user_id' => $request->user()->id,
+                    'post_id' => $postID
+                ]);
+            return response()->json("Update successful");
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),
@@ -89,5 +89,4 @@ class PostLikeController extends Controller
             ], 500);
         }
     }
-
 }
