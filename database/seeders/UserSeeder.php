@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
                 ->has(Image::factory()->count(1)
                     ->state(new Sequence(fn($sequence) => ['imageable_type' => $models->random()])
                     ))
-                ->has(Comment::factory()->count(30))
+                ->has(Comment::factory()->count(5))
                 ->has(Tag::factory()->count(5))
                 ->has(PostLike::factory()->count(1))
                 ->has(PostRating::factory()->count(1))

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Users\PostRatings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Post\Rating\CreateOrUpdatePostRatingRequest;
 use App\Models\PostRating;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,6 @@ class PostRatingController extends Controller
      */
     public function ratingThePost(Request $request, int $postID): JsonResponse
     {
-
         try {
             $result = $this->checkRatingIsExist($request, $postID);
 
@@ -64,11 +64,11 @@ class PostRatingController extends Controller
 
     /**
      * Update rating the post of the user
-     * @param Request $request
+     * @param CreateOrUpdatePostRatingRequest $request
      * @param $postID
      * @return JsonResponse
      */
-    public function updateRatingThePost(Request $request, $postID): JsonResponse
+    public function updateRatingThePost(CreateOrUpdatePostRatingRequest $request, $postID): JsonResponse
     {
         try {
             PostRating::where('user_id', $request->user()->id)
