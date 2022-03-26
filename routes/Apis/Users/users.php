@@ -1,9 +1,17 @@
 <?php
 
+use App\Http\Controllers\Api\Users\Post\PostController;
 use App\Http\Controllers\Api\Users\PostComments\PostCommentController;
 use App\Http\Controllers\Api\Users\PostLikes\PostLikeController;
 use App\Http\Controllers\Api\Users\PostRatings\PostRatingController;
 use Illuminate\Support\Facades\Route;
+
+/**
+ * CRUD post
+ */
+Route::controller(PostController::class)->middleware(['auth:sanctum'])->group(function () {
+    Route::post('/posts', 'createPost');
+});
 
 /**
  * Like or unlike post

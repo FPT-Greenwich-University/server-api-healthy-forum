@@ -23,7 +23,9 @@ class Post extends Model
         'title',
         'body',
         'user_id',
-        'category_id'
+        'category_id',
+        'published_at',
+        'is_published'
     ];
 
 

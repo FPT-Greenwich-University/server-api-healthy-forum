@@ -20,6 +20,7 @@ class PostFactory extends Factory
             'title' => $this->faker->name,
             'body' => $this->faker->realText,
             'category_id' => rand(1, 10),
+            'published_at' => now(),
         ];
     }
 }
