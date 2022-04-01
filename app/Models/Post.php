@@ -107,4 +107,27 @@ class Post extends Model
     {
         return $this->belongsToMany(Tag::class);
     }
+
+
+    /**
+     * Scope a query to only include publish posts
+     *
+     * @param $query
+     * @return void
+     */
+    public function scopePublished($query)
+    {
+        $query->where('is_published', 1);
+    }
+
+    /**
+     * Scope a query to only include posts not published
+     *
+     * @param $query
+     * @return void
+     */
+    public function scopeNotPublished($query)
+    {
+        $query->where('is_published', 0);
+    }
 }

@@ -6,26 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Post\CreatePostRequest;
 use App\Models\Post;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
     /**
-     * Check the post exist
-     * @param $postID
-     * @return bool --true if the post exist, otherwise false
+     * Doctor store new post in resources
+     *
+     * @param CreatePostRequest $request
+     * @return JsonResponse
      */
-    public static function checkPostExist($postID): bool
-    {
-        $post = Post::find($postID);
-        if (is_null($post)) {
-            return false;
-        }
-        return true;
-    }
-
-
-    public function createPost(CreatePostRequest $request)
+    public function createPost(CreatePostRequest $request): JsonResponse
     {
         try {
             DB::beginTransaction();

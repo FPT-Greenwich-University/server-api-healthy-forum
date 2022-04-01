@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Post\Comment\CreateChildPostCommentRequest;
 use App\Http\Requests\Api\Post\Comment\CreatePostCommentRequest;
 use App\Models\Comment;
+use App\Models\Post;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 class PostCommentController extends Controller
@@ -22,29 +24,22 @@ class PostCommentController extends Controller
     public function storePostComment(CreatePostCommentRequest $request, $postID): JsonResponse
     {
         try {
-            $result = PostController::checkPostExist($postID);
+            $post = Post::findOrFail($postID); // if post not found then return 404 error
+            $post->comments()->create([ // insert using relationship
+                'content' => $request->input('content'),
+                'user_id' => $request->user()->id,
+                'post_id' => $postID,
+                'parent_comment_id' => $request->input('parent_comment_id')
+            ]);
+            return response()->json('Create new comment success');
 
-            if ($result === true) { // if post exist
-
-
-                Comment::create([
-                    'content' => $request->input('content'),
-                    'user_id' => $request->user()->id,
-                    'post_id' => $postID,
-                    'parent_comment_id' => $request->input('parent_comment_id')
-                ]);
-                return response()->json('Create new comment success');
-
-            } else {
-                return response()->json('The post not found', 404);
-            }
+        } catch (ModelNotFoundException $exception) {
+            return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),
                 'Line' => $exception->getLine(),
-                'Code' => $exception->getCode(),
                 'File' => $exception->getFile(),
-                'Trace' => $exception->getTrace()
             ], 500);
         }
     }
@@ -59,33 +54,29 @@ class PostCommentController extends Controller
     public function storeChildPostComment(CreateChildPostCommentRequest $request, $postID): JsonResponse
     {
         try {
-            $result = PostController::checkPostExist($postID);
+            $post = PostController::findOrFail($postID); // if post not found then return 404 error json
 
-            if ($result === true) { // if post exist
+            if ($this->checkCommentExist($request->input('parent_comment_id')) === true) { // check if comment parent is exist
+                $post->comments()->create([
+                    'content' => $request->input('content'),
+                    'user_id' => $request->user()->id,
+                    'post_id' => $postID,
+                    'parent_comment_id' => $request->input('parent_comment_id')
+                ]);
 
-                if ($this->checkCommentExist($request->input('parent_comment_id')) === true) { // check if comment parent is exist
-                    Comment::create([
-                        'content' => $request->input('content'),
-                        'user_id' => $request->user()->id,
-                        'post_id' => $postID,
-                        'parent_comment_id' => $request->input('parent_comment_id')
-                    ]);
-                    return response()->json('Create new comment success');
-                } else {
-                    return response()->json('The parent comment is not exist', 404);
-                }
+                return response()->json('Create new comment success');
 
             } else {
                 return response()->json('The post not found', 404);
             }
 
+        } catch (ModelNotFoundException $exception) {
+            return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),
                 'Line' => $exception->getLine(),
-                'Code' => $exception->getCode(),
                 'File' => $exception->getFile(),
-                'Trace' => $exception->getTrace()
             ], 500);
         }
     }

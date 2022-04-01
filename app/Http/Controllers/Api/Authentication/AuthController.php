@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Auth;
+namespace App\Http\Controllers\Api\Authentication;
 
 use App\Events\UserVerifyAccount;
 use App\Http\Controllers\Controller;

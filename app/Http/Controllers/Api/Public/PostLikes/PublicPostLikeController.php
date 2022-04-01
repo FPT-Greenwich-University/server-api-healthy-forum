@@ -21,7 +21,11 @@ class PublicPostLikeController extends Controller
             $total_likes = PostLike::where('post_id', $postID)->count();
             return response()->json(['total_likes' => $total_likes]);
         } catch (Exception $exception) {
-            return response()->json($exception->getMessage(), 500);
+            return response()->json([
+                'Message' => $exception->getMessage(),
+                'Line' => $exception->getLine(),
+                'File' => $exception->getFile(),
+            ], 500);
         }
     }
 }
