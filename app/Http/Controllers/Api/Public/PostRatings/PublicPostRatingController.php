@@ -21,7 +21,11 @@ class PublicPostRatingController extends Controller
             $avgRatings = PostRating::where('post_id', $postID)->avg('point');
             return response()->json(['avgRatingPoint' => $avgRatings]);
         } catch (Exception $exception) {
-            return response()->json($exception->getMessage(), 500);
+            return response()->json([
+                'Message' => $exception->getMessage(),
+                'Line' => $exception->getLine(),
+                'File' => $exception->getFile(),
+            ], 500);
         }
     }
 }

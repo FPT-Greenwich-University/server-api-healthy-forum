@@ -19,7 +19,11 @@ class PublicCommentController extends Controller
             $comments = Comment::where('post_id', $postID)->paginate(10);
             return response()->json($comments);
         } catch (Exception $exception) {
-            return response()->json($exception, 500);
+            return response()->json([
+                'Message' => $exception->getMessage(),
+                'Line' => $exception->getLine(),
+                'File' => $exception->getFile(),
+            ], 500);
         }
     }
 }

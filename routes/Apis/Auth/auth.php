@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\Auth\AuthController;
-use App\Http\Controllers\Api\Auth\GoogleAuthController;
-use App\Http\Controllers\Api\Auth\RegisterController;
-use App\Http\Controllers\Api\Auth\ResetPasswordController;
-use App\Http\Controllers\Api\Auth\VerifyAccountController;
+use App\Http\Controllers\Api\Authentication\AuthController;
+use App\Http\Controllers\Api\Authentication\GoogleAuthController;
+use App\Http\Controllers\Api\Authentication\RegisterController;
+use App\Http\Controllers\Api\Authentication\ResetPasswordController;
+use App\Http\Controllers\Api\Authentication\VerifyAccountController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -42,7 +42,7 @@ Route::controller(VerifyAccountController::class)->group(function () {
  * Register doctor role
  */
 Route::controller(RegisterController::class)->middleware(['auth:sanctum'])->group(function () {
-    Route::get('/register/doctor-role', 'getListRegisterDoctorRoles')->middleware('role:admin'); //TODO Middle is admin here
+    Route::get('/register/doctor-role', 'getListRegisterDoctorRoles')->middleware('role:admin');
     Route::post('/register/doctor-role', 'registerWithRoleDoctor');
-    Route::put('/register/doctor-role/{registerUserID}', 'acceptRegisterDoctorRole')->middleware('role:admin'); //TODO:: add middle admin here
+    Route::put('/register/doctor-role/{registerUserID}', 'acceptRegisterDoctorRole')->middleware('role:admin');
 });

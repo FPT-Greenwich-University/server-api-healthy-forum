@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Auth;
+namespace App\Http\Controllers\Api\Authentication;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -36,7 +36,6 @@ class RegisterController extends Controller
      */
     public function registerWithRoleDoctor(Request $request): JsonResponse
     {
-        // TODO:: taoj request validate
         try {
             $user = User::findOrFail($request->user()->id);
             DB::table('register_doctor_role_drafts')->insert([
@@ -58,7 +57,6 @@ class RegisterController extends Controller
      */
     public function acceptRegisterDoctorRole($registerUserID): JsonResponse
     {
-//        TODO:: tao request validate
         try {
             $registerUser = DB::table('register_doctor_role_drafts')
                 ->where('user_id', $registerUserID)
