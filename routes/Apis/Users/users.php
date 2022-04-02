@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Users\Favorites\PostFavoriteController;
 use App\Http\Controllers\Api\Users\Post\PostController;
 use App\Http\Controllers\Api\Users\PostComments\PostCommentController;
 use App\Http\Controllers\Api\Users\PostLikes\PostLikeController;
@@ -35,4 +36,13 @@ Route::controller(PostRatingController::class)->middleware(['auth:sanctum'])->gr
 Route::controller(PostCommentController::class)->middleware(['auth:sanctum'])->group(function () {
     Route::post('/posts/{postID}/comments', 'storePostComment');
     Route::post('/posts/{postID}/child-comments/', 'storeChildPostComment');
+});
+
+/**
+ * User's favorite post
+ */
+Route::controller(PostFavoriteController::class)->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/users/favorites/posts', 'index');
+    Route::post('/users/favorites/posts', 'store'); // store new post to favorite post list
+    Route::delete('/users/favorites/posts/{favoritePostID}', 'destroy');
 });

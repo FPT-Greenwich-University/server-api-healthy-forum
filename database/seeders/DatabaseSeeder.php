@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             TagSeeder::class,
             RolePermissionSeeder::class,
             UserSeeder::class,
+            AdminAccountSeeder::class,
+            DoctorAccountSeeder::class
         ]);
     }
 }

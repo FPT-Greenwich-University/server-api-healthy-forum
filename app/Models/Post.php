@@ -73,7 +73,7 @@ class Post extends Model
      * Get all the users' favorite list
      * @return MorphMany
      */
-    public function favorite(): MorphMany
+    public function favorites(): MorphMany
     {
         return $this->morphMany(Favorite::class, 'favoriteable');
     }

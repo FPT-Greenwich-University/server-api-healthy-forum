@@ -27,7 +27,9 @@ class CreatePostRequest extends ApiFormRequest
             'title' => ['required', 'min:10', 'max:100'],
             'category_id' => ['required', 'numeric'],
             'body' => ['required'],
-            'thumbnail' => ['required', 'image']
+            'thumbnail' => ['required', 'image'],
+            'tags' => ['required', 'array', 'min:1'], // array tag id
+            'tags.*' => ['required', 'numeric']// tag id
         ];
     }
 }
