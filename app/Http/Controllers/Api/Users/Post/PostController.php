@@ -31,6 +31,10 @@ class PostController extends Controller
                 'published_at' => now()
             ]);
 
+            // Assign tag to post
+            $listTagIds = $request->input('tags');
+            $post->tags()->attach($listTagIds);
+
             // Store a thumbnail
             $file = $request->file('thumbnail'); // retrieve a file
             $fileName = $file->hashName() . $file->extension(); // Generate a unique, random name...
