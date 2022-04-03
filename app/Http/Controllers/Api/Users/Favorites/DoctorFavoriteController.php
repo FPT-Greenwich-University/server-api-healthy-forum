@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Api\Users\Favorites;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Users\Favorites\StoreFavoritePostRequest;
+use App\Http\Requests\Api\Users\Favorites\StoreFavoriteDoctorRequest;
 use App\Models\Favorite;
-use App\Models\Post;
+use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PostFavoriteController extends Controller
+class DoctorFavoriteController extends Controller
 {
     /**
-     * User get own list favorite posts
+     * User get own list favorite doctors
      *
      * @param Request $request
      * @return JsonResponse
@@ -24,7 +24,7 @@ class PostFavoriteController extends Controller
         try {
             $userID = $request->user()->id;
             $favoritePosts = Favorite::where('user_id', $userID)
-                ->where('favoriteable_type', 'App\Models\Post')
+                ->where('favoriteable_type', 'App\Models\User')
                 ->paginate(10);
             return response()->json($favoritePosts);
         } catch (Exception $exception) {
@@ -39,23 +39,28 @@ class PostFavoriteController extends Controller
     /**
      * Add post to the favorite list of user
      *
-     * @param StoreFavoritePostRequest $request
+     * @param StoreFavoriteDoctorRequest $request
      * @return JsonResponse
      */
-    public function store(StoreFavoritePostRequest $request): JsonResponse
+    public function store(StoreFavoriteDoctorRequest $request): JsonResponse
     {
         try {
-            $userID = $request->user()->id;
-            $postID = $request->input('post_id');
+            $user = $request->user();
+            $doctorID = $request->input('doctor_id');
 
-            if ($this->checkIsPostFavoriteExist($userID, $postID) === false) { // check if post have exits in user's favorite post
-                $post = Post::findOrFail($request->input('post_id')); // check the post is exits, return 404 if post not found
-                $post->favorites()->create(['user_id' => $request->user()->id]);
-                return response()->json('Add post to the favorite successfully');
+            if ($this->checkIsDoctorFavoriteExist($user->id, $doctorID) === false) { // check if post have exits in user's favorite post
+                User::findOrFail($doctorID); // check the doctor is exits in system, return 404 if post not found
+                // Add doctor to favorite list
+                Favorite::create([
+                    'user_id' => $user->id,
+                    'favoriteable_id' => $doctorID,
+                    'favoriteable_type' => "App\Models\User"
+                ]);
+                return response()->json('Add doctor to the favorite successfully');
             }
 
             // Default
-            return response()->json('The post have existed in favorite list', 202);
+            return response()->json('The doctor have existed in favorite list', 202);
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {
@@ -63,26 +68,27 @@ class PostFavoriteController extends Controller
                 'Message' => $exception->getMessage(),
                 'Line' => $exception->getLine(),
                 'File' => $exception->getFile(),
+                'Trace' => $exception->getTrace()
             ], 500);
         }
     }
 
     /**
-     * Check post have existed in the favorite list
+     * Check doctor have existed in the favorite doctor list
      *
      * @param $userID --User id
-     * @param $postID --Post id
+     * @param $doctorID
      * @return bool true if existed
      * otherwise false
      */
-    public function checkIsPostFavoriteExist($userID, $postID): bool
+    public function checkIsDoctorFavoriteExist($userID, $doctorID): bool
     {
-        $favoritePost = Favorite::where('user_id', $userID)
-            ->where('favoriteable_id', $postID)
-            ->where('favoriteable_type', 'App\Models\Post')
+        $favoriteDoctor = Favorite::where('user_id', $userID)
+            ->where('favoriteable_id', $doctorID)
+            ->where('favoriteable_type', 'App\Models\User')
             ->first();
 
-        if (is_null($favoritePost)) {
+        if (is_null($favoriteDoctor)) {
             return false;
         } else {
             return true;
@@ -90,7 +96,7 @@ class PostFavoriteController extends Controller
     }
 
     /**
-     * Remove a post get out user's favorite post
+     * Remove a doctor get out user's favorite post
      *
      * @param $favoriteID
      * @return JsonResponse
@@ -100,7 +106,7 @@ class PostFavoriteController extends Controller
         try {
             Favorite::findOrFail($favoriteID); // if not found favorite item then return 404 json error
             Favorite::destroy($favoriteID);
-            return response()->json('Remove the post get out favorite list successfully');
+            return response()->json('Remove the doctor get out favorite list successfully');
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Users\Favorites\DoctorFavoriteController;
 use App\Http\Controllers\Api\Users\Favorites\PostFavoriteController;
 use App\Http\Controllers\Api\Users\Post\PostController;
 use App\Http\Controllers\Api\Users\PostComments\PostCommentController;
@@ -41,8 +42,17 @@ Route::controller(PostCommentController::class)->middleware(['auth:sanctum'])->g
 /**
  * User's favorite post
  */
-Route::controller(PostFavoriteController::class)->middleware(['auth:sanctum'])->group(function () {
-    Route::get('/users/favorites/posts', 'index');
-    Route::post('/users/favorites/posts', 'store'); // store new post to favorite post list
-    Route::delete('/users/favorites/posts/{favoritePostID}', 'destroy');
+Route::prefix('/users')->controller(PostFavoriteController::class)->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/favorites/posts', 'index');
+    Route::post('/favorites/posts', 'store'); // store new post to favorite post list
+    Route::delete('/favorites/posts/{favoriteID}', 'destroy');
+});
+
+/**
+ * User's favorite doctor
+ */
+Route::prefix('/users')->controller(DoctorFavoriteController::class)->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/favorites/doctors', 'index');
+    Route::post('/favorites/doctors', 'store'); // store new post to favorite post list
+    Route::delete('/favorites/doctors/{favoriteID}', 'destroy');
 });
