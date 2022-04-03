@@ -78,7 +78,7 @@ class User extends Authenticatable
      *
      * @return MorphMany
      */
-    public function favorite(): MorphMany
+    public function favorites(): MorphMany
     {
         return $this->morphMany(Favorite::class, 'favoriteable');
     }
