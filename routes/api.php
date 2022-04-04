@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admins\Categories\CategoryController;
 use App\Http\Controllers\Api\Admins\Posts\PostController;
+use App\Http\Controllers\Api\Admins\Users\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,16 +24,33 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 /*
  * Admin handle posts
  */
-Route::prefix('/admins')->controller(PostController::class)->middleware(['role:admin', 'auth:sanctum'])->group(function () {
-    Route::get('/posts/not-published', 'getPostsIsNotPublished'); // Get posts where are not published
-    Route::put('/posts/{postID}/publish', 'acceptPublishPost'); // Published post by update status => true for the post
-});
+Route::prefix('/admins')
+    ->controller(PostController::class)
+    ->middleware(['role:admin', 'auth:sanctum'])
+    ->group(function () {
+        Route::get('/posts/not-published', 'getPostsIsNotPublished'); // Get posts where are not published
+        Route::put('/posts/{postID}/publish', 'acceptPublishPost'); // Published post by update status => true for the post
+    });
 
 /*
  * Admin handle posts
  */
-Route::prefix('/admins')->controller(CategoryController::class)->middleware(['role:admin', 'auth:sanctum'])->group(function () {
-    Route::post('/categories', 'store');
-    Route::put('/categories/{categoryID}', 'update');
-    Route::delete('/categories/{categoryID}', 'destroy');
-});
+Route::prefix('/admins')
+    ->controller(CategoryController::class)
+    ->middleware(['role:admin', 'auth:sanctum'])
+    ->group(function () {
+        Route::post('/categories', 'store');
+        Route::put('/categories/{categoryID}', 'update');
+        Route::delete('/categories/{categoryID}', 'destroy');
+    });
+
+/**
+ * Admin manager user
+ */
+Route::prefix('/admins')
+    ->middleware(['role:admin', 'auth:sanctum'])
+    ->controller(UserController::class)
+    ->group(function () {
+        Route::get('/users', 'index'); // List all users
+        Route::get('/roles', 'getRoles');
+    });
