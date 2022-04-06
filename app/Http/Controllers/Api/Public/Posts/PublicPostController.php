@@ -71,4 +71,24 @@ class PublicPostController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get all posts via tag name
+     *
+     * @param $tagID
+     * @return JsonResponse
+     */
+    public function getPostViaTagName($tagID): JsonResponse
+    {
+        try {
+            $posts = Post::tag($tagID)->isPublished()->paginate(20);
+            return response()->json($posts);
+        } catch (Exception $exception) {
+            return response()->json([
+                'Message' => $exception->getMessage(),
+                'Line' => $exception->getLine(),
+                'File' => $exception->getFile(),
+            ], 500);
+        }
+    }
 }
