@@ -54,7 +54,7 @@ class PostCommentController extends Controller
     public function storeChildPostComment(CreateChildPostCommentRequest $request, $postID): JsonResponse
     {
         try {
-            $post = PostController::findOrFail($postID); // if post not found then return 404 error json
+            $post = Post::findOrFail($postID); // if post not found then return 404 error json
 
             if ($this->checkCommentExist($request->input('parent_comment_id')) === true) { // check if comment parent is exist
                 $post->comments()->create([

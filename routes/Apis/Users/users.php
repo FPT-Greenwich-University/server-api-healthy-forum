@@ -9,10 +9,11 @@ use App\Http\Controllers\Api\Users\PostRatings\PostRatingController;
 use Illuminate\Support\Facades\Route;
 
 /**
- * CRUD post
+ *  Doctor CRUD post
  */
-Route::controller(PostController::class)->middleware(['auth:sanctum'])->group(function () {
+Route::controller(PostController::class)->middleware(['auth:sanctum', 'role:doctor'])->group(function () {
     Route::post('/posts', 'createPost');
+    Route::delete('/posts/{postID}', 'deletePost');
 });
 
 /**

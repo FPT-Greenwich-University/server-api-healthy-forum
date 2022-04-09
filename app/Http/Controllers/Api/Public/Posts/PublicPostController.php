@@ -30,12 +30,10 @@ class PublicPostController extends Controller
                     ->paginate(10);
             }
             return response()->json($posts);
+//            $posts = Post::filter($request->all())->isPublished()->paginate(20);
+//            return response()->json($posts);
         } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'File' => $exception->getFile(),
-            ], 500);
+            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile(),], 500);
         }
     }
 
@@ -43,12 +41,8 @@ class PublicPostController extends Controller
     {
         if ($request->query('categoryID')) {
             return Post::join('images', function ($join) {
-                $join->on('posts.id', '=', 'images.imageable_id')
-                    ->where('images.imageable_type', '=', 'App\Models\Post');
-            })
-                ->where('category_id', '=', $request->query('categoryID'))
-                ->select('posts.title', 'images.path')
-                ->paginate(10);
+                $join->on('posts.id', '=', 'images.imageable_id')->where('images.imageable_type', '=', 'App\Models\Post');
+            })->where('category_id', '=', $request->query('categoryID'))->select('posts.title', 'images.path')->paginate(10);
         }
     }
 
@@ -64,11 +58,7 @@ class PublicPostController extends Controller
             $post = Post::with(['image'])->findOrFail($postID);
             return response()->json($post);
         } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'File' => $exception->getFile(),
-            ], 500);
+            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile(),], 500);
         }
     }
 
@@ -81,14 +71,10 @@ class PublicPostController extends Controller
     public function getPostViaTagName($tagID): JsonResponse
     {
         try {
-            $posts = Post::tag($tagID)->isPublished()->paginate(20);
+            $posts = Post::query()->tag($tagID)->isPublished()->paginate(20);
             return response()->json($posts);
         } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'File' => $exception->getFile(),
-            ], 500);
+            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile(),], 500);
         }
     }
 }
