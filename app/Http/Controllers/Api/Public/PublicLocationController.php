@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Http;
 
 class PublicLocationController extends Controller
 {
-    protected string $domainApi = "";
+    protected string $domainApi = '';
 
     public function __construct()
     {
-        $this->domainApi = "https://thongtindoanhnghiep.co/api/";
+        $this->domainApi = 'https://thongtindoanhnghiep.co/api/';
     }
 
     /**

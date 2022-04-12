@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use App\Http\Traits\Filterable;
+
 
 class Post extends Model
 {
-    use HasFactory, Filterable;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -28,7 +28,6 @@ class Post extends Model
         'published_at',
         'is_published'
     ];
-
 
     /**
      * Get the user that owns the post
@@ -118,7 +117,7 @@ class Post extends Model
      */
     public function scopeIsPublished($query)
     {
-        $query->where('is_published', 1);
+        $query->where('posts.is_published', 1);
     }
 
     /**
@@ -129,7 +128,7 @@ class Post extends Model
      */
     public function scopeIsNotPublished($query)
     {
-        $query->where('is_published', 0);
+        $query->where('posts.is_published', 0);
     }
 
     /**

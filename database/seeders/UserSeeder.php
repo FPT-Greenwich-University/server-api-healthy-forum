@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
     {
         $models = collect(['\App\Models\User', '\App\Models\Post']);
         User::factory()
-            ->has(Post::factory()
+            ->has(Post::factory(1)
                 ->has(Image::factory()->count(1)
                     ->state(new Sequence(fn($sequence) => ['imageable_type' => $models->random()])
                     ))

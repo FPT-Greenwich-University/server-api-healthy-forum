@@ -7,11 +7,12 @@ use App\Models\Post;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PublicPostController extends Controller
 {
     /**
-     * Display all posts of the resource.
+     * Display all posts of the resources.
      *
      * @param Request $request
      * @return JsonResponse
@@ -19,30 +20,16 @@ class PublicPostController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            if ($request->query()) { // if request have query
-                $posts = $this->filter($request);
-            } else {
-                $posts = Post::join('images', function ($join) {
-                    $join->on('posts.id', '=', 'images.imageable_id')
-                        ->where('images.imageable_type', '=', 'App\Models\Post');
-                })
-                    ->select('posts.title', 'images.path')
-                    ->paginate(10);
-            }
-            return response()->json($posts);
-//            $posts = Post::filter($request->all())->isPublished()->paginate(20);
-//            return response()->json($posts);
+            return response()->json(Post::with(['image', 'category', 'user'])
+                ->isPublished()
+                ->orderBy('id', 'desc')
+                ->paginate(5));
         } catch (Exception $exception) {
-            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile(),], 500);
-        }
-    }
-
-    public function filter(Request $request)
-    {
-        if ($request->query('categoryID')) {
-            return Post::join('images', function ($join) {
-                $join->on('posts.id', '=', 'images.imageable_id')->where('images.imageable_type', '=', 'App\Models\Post');
-            })->where('category_id', '=', $request->query('categoryID'))->select('posts.title', 'images.path')->paginate(10);
+            return response()->json([
+                'Message' => $exception->getMessage(),
+                'Line' => $exception->getLine(),
+                'File' => $exception->getFile(),
+            ], 500);
         }
     }
 
@@ -55,8 +42,7 @@ class PublicPostController extends Controller
     public function show($postID): JsonResponse
     {
         try {
-            $post = Post::with(['image'])->findOrFail($postID);
-            return response()->json($post);
+            return response()->json(Post::with(['image', 'category', 'user'])->findOrFail($postID));
         } catch (Exception $exception) {
             return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile(),], 500);
         }
@@ -71,8 +57,7 @@ class PublicPostController extends Controller
     public function getPostViaTagName($tagID): JsonResponse
     {
         try {
-            $posts = Post::query()->tag($tagID)->isPublished()->paginate(20);
-            return response()->json($posts);
+            return response()->json(Post::tag($tagID)->isPublished()->paginate(20));
         } catch (Exception $exception) {
             return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile(),], 500);
         }

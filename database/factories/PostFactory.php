@@ -18,6 +18,8 @@ class PostFactory extends Factory
     {
         return [
             'title' => $this->faker->name,
+            'description' => $this->faker->text,
+            'is_published' => 1,
             'body' => $this->faker->realText,
             'category_id' => rand(1, 10),
             'published_at' => now(),
