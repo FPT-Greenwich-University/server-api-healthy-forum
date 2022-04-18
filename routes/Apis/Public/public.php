@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Public\Comments\PublicCommentController;
 use App\Http\Controllers\Api\Public\PostLikes\PublicPostLikeController;
 use App\Http\Controllers\Api\Public\PostRatings\PublicPostRatingController;
 use App\Http\Controllers\Api\Public\Posts\PublicPostController;
+use App\Http\Controllers\Api\Public\PostTags\PublicPostTagController;
 use App\Http\Controllers\Api\Public\PublicLocationController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,8 +13,15 @@ use Illuminate\Support\Facades\Route;
  */
 Route::controller(PublicPostController::class)->group(function () {
     Route::get('/posts', 'index');
-    Route::get('/posts/tags/{tagID}', 'getPostViaTagName');
+    Route::get('/posts/tags/{tagID}', 'getPostsByTag'); // get the posts by tag
     Route::get('/posts/{postID}', 'show');
+});
+
+/**
+ * Post tag routes
+ */
+Route::controller(PublicPostTagController::class)->group(function () {
+    Route::get('/posts/{postID}/tags', 'getPostTags'); // get the tags of the post
 });
 
 /**
@@ -21,6 +29,7 @@ Route::controller(PublicPostController::class)->group(function () {
  */
 Route::controller(PublicCommentController::class)->group(function () {
     Route::get('/posts/{postID}/comments', 'index');
+    Route::get('/posts/{postID}/comments/{commentID}/reply-comments', 'getReplyComments');
 });
 
 
