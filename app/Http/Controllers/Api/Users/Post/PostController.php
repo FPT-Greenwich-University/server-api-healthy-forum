@@ -25,7 +25,14 @@ class PostController extends Controller
             DB::beginTransaction();
 
             // Store a post
-            $post = Post::create(['user_id' => $request->user()->id, 'title' => $request->input('title'), 'body' => $request->input('body'), 'category_id' => $request->input('category_id'), 'published_at' => now()]);
+            $post = Post::create([
+                'user_id' => $request->user()->id,
+                'title' => $request->input('title'),
+                'body' => $request->input('body'),
+                'category_id' => $request->input('category_id'),
+                'description' => $request->input('description'),
+                'published_at' => now()
+            ]);
 
             // Assign tag to post
             $listTagIds = $request->input('tags');
@@ -34,10 +41,10 @@ class PostController extends Controller
             // Store a thumbnail
             $file = $request->file('thumbnail'); // retrieve a file
             $fileName = $file->hashName() . $file->extension(); // Generate a unique, random name...
-            $targetDir = public_path('posts/thumbnails/'); // set default path
+            $targetDir = 'posts/thumbnails/'; // set default path
             $file->move($targetDir, $fileName); // movie file to public folder
             $filePath = $targetDir . $fileName;
-            $post->image()->create(['path' => $filePath,]);
+            $post->image()->create(['path' => $filePath]);
 
             DB::commit(); // all OK
             return response()->json('Create post success');
