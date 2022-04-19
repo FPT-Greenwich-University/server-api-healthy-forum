@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Public\PostTags;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
