@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Public\PostRatings\PublicPostRatingController;
 use App\Http\Controllers\Api\Public\Posts\PublicPostController;
 use App\Http\Controllers\Api\Public\PostTags\PublicPostTagController;
 use App\Http\Controllers\Api\Public\PublicLocationController;
+use App\Http\Controllers\Api\Users\Doctors\DoctorController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -16,6 +17,8 @@ Route::controller(PublicPostController::class)->group(function () {
     Route::get('/posts/tags/{tagID}', 'getPostsByTag'); // get the posts by tag
     Route::get('/posts/{postID}', 'show');
 });
+
+Route::get('/users/{userID}/posts', [DoctorController::class, 'getPosts']); // get doctor post
 
 /**
  * Post tag routes

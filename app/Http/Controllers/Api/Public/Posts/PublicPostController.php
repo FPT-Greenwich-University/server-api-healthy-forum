@@ -102,6 +102,4 @@ class PublicPostController extends Controller
             return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile()], 500);
         }
     }
-
-
 }
