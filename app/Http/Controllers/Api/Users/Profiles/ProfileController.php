@@ -20,11 +20,10 @@ class ProfileController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function show(Request $request): JsonResponse
+    public function show($userID): JsonResponse
     {
         try {
-            $user = User::with(['profile'])->findOrFail($request->user()->id); // return 404 error if not found
-            return response()->json($user);
+            return response()->json(User::with(['profile'])->findOrFail($userID));
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {
