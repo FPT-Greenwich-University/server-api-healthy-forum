@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Public\PostRatings\PublicPostRatingController;
 use App\Http\Controllers\Api\Public\Posts\PublicPostController;
 use App\Http\Controllers\Api\Public\PostTags\PublicPostTagController;
 use App\Http\Controllers\Api\Public\PublicLocationController;
+use App\Http\Controllers\Api\Public\Users\ProfileController;
 use App\Http\Controllers\Api\Users\Doctors\DoctorController;
 use Illuminate\Support\Facades\Route;
 
@@ -58,3 +59,4 @@ Route::prefix('/public')->controller(PublicLocationController::class)->group(fun
     Route::get('/cities/{cityID}/districts', 'getDistricts');
     Route::get('/districts/{districtsID}/wards', 'getWards');
 });
+

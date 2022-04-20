@@ -3,7 +3,8 @@
 use App\Http\Controllers\Api\Users\Profiles\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::controller(ProfileController::class)->middleware(['auth:sanctum'])->group(function () {
-    Route::get('users/profiles', 'show'); // show current user's profile
-    Route::put('users/profiles', 'update');
+Route::controller(ProfileController::class)->group(function () {
+    Route::get('users/{userID}/profiles', 'show'); // show current user's profile
+    Route::put('/profiles', 'update')->middleware(['auth:sanctum']);
 });
+
