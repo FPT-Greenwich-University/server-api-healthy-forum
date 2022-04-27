@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admins\Categories\CategoryController;
 use App\Http\Controllers\Api\Admins\Posts\PostController;
 use App\Http\Controllers\Api\Admins\Users\UserController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return response()->json(User::with('roles')->findOrFail($request->user()->id));
 });
 
 /*

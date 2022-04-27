@@ -4,14 +4,23 @@ namespace App\Http\Controllers\Api\Public\PostTags;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post;
+use App\Models\Tag;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PublicPostTagController extends Controller
 {
+    public function index()
+    {
+        try {
+             return response()->json(Tag::all());
+        } catch (Exception $exception) {
+            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile()], 500);
+        }
+    }
+
     /**
      * Get the tags belong to the posts by post ID
      *
