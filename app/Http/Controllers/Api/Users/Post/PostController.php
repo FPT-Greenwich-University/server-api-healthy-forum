@@ -35,8 +35,7 @@ class PostController extends Controller
             ]);
 
             // Assign tag to post
-            $listTagIds = $request->input('tags');
-            $post->tags()->attach($listTagIds);
+            $post->tags()->attach($request->input('tags'));
 
             // Store a thumbnail
             $file = $request->file('thumbnail'); // retrieve a file

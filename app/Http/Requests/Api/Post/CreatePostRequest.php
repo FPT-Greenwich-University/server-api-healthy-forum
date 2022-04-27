@@ -25,6 +25,7 @@ class CreatePostRequest extends ApiFormRequest
     {
         return [
             'title' => ['required', 'min:10', 'max:100'],
+            'description' => ['required', 'min:20'],
             'category_id' => ['required', 'numeric'],
             'body' => ['required'],
             'thumbnail' => ['required', 'image'],
