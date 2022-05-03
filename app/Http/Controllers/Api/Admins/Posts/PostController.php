@@ -18,8 +18,31 @@ class PostController extends Controller
     public function getPostsIsNotPublished(): JsonResponse
     {
         try {
-            $posts = Post::notPublished()->paginate(10);
+            $posts = Post::with(['user', 'category'])
+                ->isNotPublished()
+                ->orderBy('id', 'desc')
+                ->paginate(2);
             return response()->json($posts);
+        } catch (Exception $exception) {
+            return response()->json([
+                'Message' => $exception->getMessage(),
+                'Line' => $exception->getLine(),
+                'File' => $exception->getFile(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Detail post by post id
+     * @param $postID
+     * @return JsonResponse
+     */
+    public function show($postID): JsonResponse
+    {
+        try {
+            return response()->json(Post::with(['image', 'category', 'user'])->findOrFail($postID));
+        } catch (ModelNotFoundException $exception) {
+            return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),

@@ -95,7 +95,7 @@ class PublicPostController extends Controller
     public function show($postID): JsonResponse
     {
         try {
-            return response()->json(Post::with(['image', 'category', 'user'])->findOrFail($postID));
+            return response()->json(Post::with(['image', 'category', 'user'])->isPublished()->findOrFail($postID));
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {

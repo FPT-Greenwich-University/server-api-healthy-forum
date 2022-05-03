@@ -13,8 +13,12 @@ use Illuminate\Support\Facades\Route;
  */
 Route::controller(PostController::class)->middleware(['auth:sanctum', 'role:doctor'])->group(function () {
     Route::post('/posts', 'createPost');
-    Route::delete('/posts/{postID}', 'deletePost');
 });
+
+/**
+ * Admin or doctor delete post
+ */
+Route::delete('/posts/{postID}', [PostController::class, 'deletePost'])->middleware(['auth:sanctum', 'has.any.roles:admin,doctor']);
 
 /**
  * Like or unlike post
