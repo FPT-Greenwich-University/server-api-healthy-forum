@@ -7,8 +7,8 @@ use App\Http\Requests\Api\Post\CreatePostRequest;
 use App\Models\Post;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
@@ -70,8 +70,8 @@ class PostController extends Controller
 
             $user = $request->user(); // current user
 
-            // Ensure user has own the post
-            if ($user->id === $post->user_id) {
+            // Ensure user has own the post or user is admin
+            if ($user->id === $post->user_id || $user->hasRole('admin')) {
                 $post->image()->delete(); // Delete image thumbnail first
                 DB::table('post_tag')->where('post_id', $postID)->delete();
                 $post->comments()->delete();
@@ -83,10 +83,9 @@ class PostController extends Controller
                 // All Good
                 DB::commit();
                 return response()->json('Delete the post successful', 200);
-            } else {
-                return response()->json("You don't have permission to delete this post", 403);
             }
 
+            return response()->json("You don't have permission to delete this post", 403);
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {
