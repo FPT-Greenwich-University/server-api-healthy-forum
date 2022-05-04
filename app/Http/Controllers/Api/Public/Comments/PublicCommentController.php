@@ -24,7 +24,6 @@ class PublicCommentController extends Controller
                 ->where('post_id', $postID)
                 ->orderBy('id', 'desc')
                 ->paginate(5)
-                ->withQueryString()
             );
         } catch (Exception $exception) {
             return response()->json([
