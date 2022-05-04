@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Users\PostComments;
 
-use App\Http\Controllers\Api\Users\Post\PostController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Post\Comment\CreateChildPostCommentRequest;
 use App\Http\Requests\Api\Post\Comment\CreatePostCommentRequest;
@@ -31,7 +30,7 @@ class PostCommentController extends Controller
                 'post_id' => $postID,
                 'parent_comment_id' => $request->input('parent_comment_id')
             ]);
-            return response()->json('Create new comment success');
+            return response()->json('Comment success');
 
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
