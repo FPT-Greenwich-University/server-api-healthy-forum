@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 
 class PublicCommentController extends Controller
 {
@@ -37,10 +36,10 @@ class PublicCommentController extends Controller
     public function getReplyComments($postID, $commentID): JsonResponse
     {
         try {
-            return response()->json(DB::table('comments')
-                ->where('post_id', '=', $postID)
-                ->where('parent_comment_id', '=', $commentID)
-                ->get());
+            return response()->json(
+                Comment::where('post_id', '=', $postID)
+                    ->where('parent_comment_id', '=', $commentID)
+                    ->get());
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),
