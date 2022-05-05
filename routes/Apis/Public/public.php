@@ -41,7 +41,7 @@ Route::controller(PublicPostTagController::class)->group(function () {
  */
 Route::controller(PublicCommentController::class)->group(function () {
     Route::get('/posts/{postID}/comments', 'index');
-    Route::get('/posts/{postID}/comments/{commentID}/reply-comments', 'getReplyComments');
+    Route::get('/posts/{postID}/comments/{commentID}/reply', 'getReplyComments');
 });
 
 

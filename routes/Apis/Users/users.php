@@ -50,7 +50,7 @@ Route::controller(PostCommentController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
         Route::post('/posts/{postID}/comments', 'storePostComment');
-        Route::post('/posts/{postID}/child-comments/', 'storeChildPostComment');
+        Route::post('/posts/{postID}/comments/{commentID}/reply', 'replyPostComment');
     });
 
 /**

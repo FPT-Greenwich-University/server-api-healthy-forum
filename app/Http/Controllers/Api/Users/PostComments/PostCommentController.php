@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Users\PostComments;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Post\Comment\CreateChildPostCommentRequest;
+use App\Http\Requests\Api\Post\Comment\ReplyPostCommentRequest;
 use App\Http\Requests\Api\Post\Comment\CreatePostCommentRequest;
 use App\Models\Comment;
 use App\Models\Post;
@@ -46,28 +46,28 @@ class PostCommentController extends Controller
     /**
      * Create a new child comment into the post
      *
-     * @param CreateChildPostCommentRequest $request
+     * @param ReplyPostCommentRequest $request
      * @param $postID
      * @return JsonResponse
      */
-    public function storeChildPostComment(CreateChildPostCommentRequest $request, $postID): JsonResponse
+    public function replyPostComment($postID, $commentID, ReplyPostCommentRequest $request): JsonResponse
     {
         try {
             $post = Post::findOrFail($postID); // if post not found then return 404 error json
 
-            if ($this->checkCommentExist($request->input('parent_comment_id')) === true) { // check if comment parent is exist
+            if (self::checkCommentExist($commentID) === true) { // check if parent comment is existed
                 $post->comments()->create([
                     'content' => $request->input('content'),
                     'user_id' => $request->user()->id,
                     'post_id' => $postID,
-                    'parent_comment_id' => $request->input('parent_comment_id')
+                    'parent_comment_id' => $commentID
                 ]);
 
                 return response()->json('Create new comment success');
 
-            } else {
-                return response()->json('The post not found', 404);
             }
+
+            return response()->json('The post not found', 404);
 
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
