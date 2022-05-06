@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained();
             $table->foreignId('category_id')->constrained();
             $table->boolean('is_published')->default(false);
-            $table->date('published_at');
+            $table->date('published_at')->nullable();
             $table->timestamps();
         });
     }
