@@ -37,7 +37,8 @@ class PublicCommentController extends Controller
     {
         try {
             return response()->json(
-                Comment::where('post_id', '=', $postID)
+                Comment::with(['user.image'])
+                    ->where('post_id', '=', $postID)
                     ->where('parent_comment_id', '=', $commentID)
                     ->get());
         } catch (Exception $exception) {
