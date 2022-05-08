@@ -49,7 +49,7 @@ Route::controller(PublicCommentController::class)->group(function () {
  * Post like routes
  */
 Route::controller(PublicPostLikeController::class)->group(function () {
-    Route::get('/posts/{postID}/likes', 'index');
+    Route::get('/posts/{postID}/total-likes', 'getTotalLike');
 });
 
 /**

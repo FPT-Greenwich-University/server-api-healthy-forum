@@ -29,6 +29,7 @@ Route::delete('/posts/{postID}', [PostController::class, 'deletePost'])
 Route::controller(PostLikeController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
+        Route::get('/posts/{postID}/likes/is-exist', 'checkUserLikePost'); // Check user like is exits
         Route::post('/posts/{postID}/likes', 'likeThePost'); // The user like the post
         Route::delete('/posts/{postID}/likes', 'unlikeThePost'); // The user unlike the post
     });

@@ -15,7 +15,7 @@ class PublicPostLikeController extends Controller
      * @param $postID
      * @return JsonResponse
      */
-    public function index($postID): JsonResponse
+    public function getTotalLike($postID): JsonResponse
     {
         try {
             $total_likes = PostLike::where('post_id', $postID)->count();

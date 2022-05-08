@@ -90,4 +90,30 @@ class PostLikeController extends Controller
         }
     }
 
+    /**
+     * Get like status, true if user has like otherwise false
+     *
+     * @param Request $request
+     * @param $postID
+     * @return JsonResponse
+     */
+    public function checkUserLikePost(Request $request, $postID): JsonResponse
+    {
+        try {
+            $result = $this->checkLikeIsExist($request, $postID);
+            if ($result === true) {
+                return response()->json(true);
+            } else {
+                return response()->json(false);
+            }
+        } catch (Exception $exception) {
+            return response()->json([
+                'Message' => $exception->getMessage(),
+                'Line' => $exception->getLine(),
+                'Code' => $exception->getCode(),
+                'File' => $exception->getFile(),
+                'Trace' => $exception->getTrace()
+            ], 500);
+        }
+    }
 }
