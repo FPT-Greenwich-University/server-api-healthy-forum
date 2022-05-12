@@ -26,6 +26,9 @@ Route::controller(PublicPostController::class)->group(function () {
     Route::get('/posts/{postID}', 'show');
 });
 
+/**
+ * Doctor get all post
+ */
 Route::get('/users/{userID}/posts', [DoctorController::class, 'getPosts']); // get doctor post
 
 /**

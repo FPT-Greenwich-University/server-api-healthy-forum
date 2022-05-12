@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Users\Doctors\DoctorController;
 use App\Http\Controllers\Api\Users\Favorites\DoctorFavoriteController;
 use App\Http\Controllers\Api\Users\Favorites\PostFavoriteController;
 use App\Http\Controllers\Api\Users\Post\PostController;
@@ -15,6 +16,13 @@ Route::controller(PostController::class)
     ->middleware(['auth:sanctum', 'role:doctor'])
     ->group(function () {
         Route::post('/posts', 'createPost');
+    });
+
+Route::controller(DoctorController::class)
+    ->middleware(['auth:sanctum', 'role:doctor'])
+    ->group(function () {
+        Route::get('/users/{userID}/posts/{postID}', 'getDetailPost');
+        Route::post('/users/{userID}/posts/{postID}', 'update');
     });
 
 /**
