@@ -39,7 +39,7 @@ class PostController extends Controller
 
             // Store a thumbnail
             $file = $request->file('thumbnail'); // retrieve a file
-            $fileName = $file->hashName() . $file->extension(); // Generate a unique, random name...
+            $fileName = $file->hashName(); // Generate a unique, random name...
             $targetDir = 'posts/thumbnails/'; // set default path
             $file->move($targetDir, $fileName); // movie file to public folder
             $filePath = $targetDir . $fileName;
@@ -68,10 +68,11 @@ class PostController extends Controller
 
             $post = Post::findOrFail($postID);// return 404 if not found
 
-            $user = $request->user(); // current user
+            $user = $request->user(); // get current user
 
-            // Ensure user has own the post or user is admin
+            // Ensure the user has own the post or have role admin
             if ($user->id === $post->user_id || $user->hasRole('admin')) {
+                \File::delete(public_path($post->image->path)); // delete image file
                 $post->image()->delete(); // Delete image thumbnail first
                 DB::table('post_tag')->where('post_id', $postID)->delete();
                 $post->comments()->delete();
@@ -80,6 +81,7 @@ class PostController extends Controller
                 $post->tags()->delete();
                 $post->postLikes()->delete();
                 $post->delete(); // delete the post
+
                 // All Good
                 DB::commit();
                 return response()->json('Delete the post successful', 200);
