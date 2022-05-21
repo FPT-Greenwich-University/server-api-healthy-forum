@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\Authentication;
 
 use App\Http\Controllers\Controller;
+use App\Models\RegisterDoctorRole;
 use App\Models\User;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,13 +18,13 @@ class RegisterController extends Controller
      *
      * @return JsonResponse
      */
-    public function getListRegisterDoctorRoles(): JsonResponse
+    public function getListRegisterDoctorRoles(Request $request): JsonResponse
     {
         try {
-            $registerUsers = DB::table('register_doctor_role_drafts')
+            $users = RegisterDoctorRole::with(['user'])
                 ->where('is_accept', 'false')
-                ->paginate('10');
-            return response()->json($registerUsers);
+                ->paginate(5);
+            return response()->json($users);
         } catch (Exception $exception) {
             return response()->json($exception->getMessage(), 500);
         }
@@ -37,15 +39,20 @@ class RegisterController extends Controller
     public function registerWithRoleDoctor(Request $request): JsonResponse
     {
         try {
-            $user = User::findOrFail($request->user()->id);
-            DB::table('register_doctor_role_drafts')->insert([
-                'user_id' => $user->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            return response()->json('Register success');
+            User::findOrFail($request->user()->id);
+
+            if (is_null(RegisterDoctorRole::where('user_id', $request->user()->id)->first())) {
+                DB::table('register_doctor_role_drafts')->insert([
+                    'user_id' => $request->user()->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                return response()->json('Register success');
+            } else {
+                return response()->json('You have already register before');
+            }
         } catch (Exception $exception) {
-            return response()->json($exception->getMessage(), 500);
+            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile()], 500);
         }
     }
 
@@ -74,8 +81,10 @@ class RegisterController extends Controller
             } else {
                 return response()->json('User not found or not have request register doctor role!', 404); // Return response 404
             }
+        } catch (ModelNotFoundException) {
+            return response()->json('User not found', 404);
         } catch (Exception $exception) {
-            return response()->json($exception->getMessage(), 500);
+            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile()], 500);
         }
     }
 }

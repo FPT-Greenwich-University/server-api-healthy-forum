@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('register_doctor_role_drafts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->unique()->constrained();
             $table->boolean('is_accept')->default(0); // default is false
             $table->timestamps();
         });
