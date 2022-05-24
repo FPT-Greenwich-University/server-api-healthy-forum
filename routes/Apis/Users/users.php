@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
  *  Doctor CRUD post
  */
 Route::controller(PostController::class)
-    ->middleware(['auth:sanctum', 'role:doctor'])
+    ->middleware(['auth:sanctum', 'role:doctor', 'has.permission:create a post'])
     ->group(function () {
         Route::post('/posts', 'createPost');
     });
