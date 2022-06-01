@@ -25,7 +25,10 @@ class DoctorFavoriteController extends Controller
             $userID = $request->user()->id;
             $favoritePosts = Favorite::where('user_id', $userID)
                 ->where('favoriteable_type', 'App\Models\User')
-                ->paginate(10);
+                ->join('users', 'favorites.favoriteable_id', 'users.id')
+                ->orderBy('favorites.id', 'desc')
+                ->select('users.id', 'users.name', 'users.email', 'image_url')
+                ->paginate(2);
             return response()->json($favoritePosts);
         } catch (Exception $exception) {
             return response()->json([
@@ -83,12 +86,12 @@ class DoctorFavoriteController extends Controller
      */
     public function checkIsDoctorFavoriteExist($userID, $doctorID): bool
     {
-        $favoriteDoctor = Favorite::where('user_id', $userID)
+        $favorite = Favorite::where('user_id', $userID)
             ->where('favoriteable_id', $doctorID)
             ->where('favoriteable_type', 'App\Models\User')
             ->first();
 
-        if (is_null($favoriteDoctor)) {
+        if (is_null($favorite)) {
             return false;
         } else {
             return true;
@@ -96,17 +99,50 @@ class DoctorFavoriteController extends Controller
     }
 
     /**
-     * Remove a doctor get out user's favorite post
-     *
-     * @param $favoriteID
+     * Check if doctor exits in user favorite list
+     * @param $userID
+     * @param $doctorID
      * @return JsonResponse
      */
-    public function destroy($favoriteID): JsonResponse
+    public function checkUserFollow($userID, $doctorID): JsonResponse
     {
         try {
-            Favorite::findOrFail($favoriteID); // if not found favorite item then return 404 json error
-            Favorite::destroy($favoriteID);
-            return response()->json('Remove the doctor get out favorite list successfully');
+            if ($this->checkIsDoctorFavoriteExist($userID, $doctorID) === true) {
+                return response()->json(true);
+            } else {
+                return response()->json(false);
+            }
+
+        } catch (Exception $exception) {
+            return response()->json([
+                'Message' => $exception->getMessage(),
+                'Line' => $exception->getLine(),
+                'File' => $exception->getFile(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Remove a doctor get out user's favorite post
+     *
+     * @param $userID
+     * @param $doctorID
+     * @return JsonResponse
+     */
+    public function destroy($userID, $doctorID): JsonResponse
+    {
+        try {
+            $favorite = Favorite::where('user_id', '=', $userID)
+                ->where('favoriteable_id', '=', $doctorID)
+                ->first();
+
+            if (!is_null($favorite)) {
+                $favorite->delete();
+            } else {
+                throw new ModelNotFoundException('Favorite not found in system');
+            }
+
+            return response()->json('Remove doctor from favorite list success');
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {

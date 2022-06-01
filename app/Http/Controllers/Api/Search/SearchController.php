@@ -16,7 +16,7 @@ class SearchController extends Controller
                 $posts = Post::with(['image', 'category', 'user'])
                     ->isPublished()
                     ->where('title', 'like', '%' . $request->query('title') . '%')
-                    ->paginate(2)
+                    ->paginate(10)
                     ->withQueryString();
 
                 return response()->json($posts);

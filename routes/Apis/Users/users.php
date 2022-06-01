@@ -82,6 +82,7 @@ Route::prefix('/users')
     ->middleware(['auth:sanctum'])
     ->group(function () {
         Route::get('/favorites/doctors', 'index');
+        Route::get('/{userID}/favorites/doctors/{doctorID}', 'checkUserFollow');  // Check is exits doctor in favorite list
         Route::post('/favorites/doctors', 'store'); // store new post to favorite post list
-        Route::delete('/favorites/doctors/{favoriteID}', 'destroy');
+        Route::delete('{userID}/favorites/doctors/{doctorID}', 'destroy');
     });
