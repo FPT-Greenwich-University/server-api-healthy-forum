@@ -19,17 +19,16 @@ class DoctorFavoriteController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index($userID): JsonResponse
     {
         try {
-            $userID = $request->user()->id;
-            $favoritePosts = Favorite::where('user_id', $userID)
+            $doctors = Favorite::where('favorites.user_id', $userID)
                 ->where('favoriteable_type', 'App\Models\User')
                 ->join('users', 'favorites.favoriteable_id', 'users.id')
                 ->orderBy('favorites.id', 'desc')
                 ->select('users.id', 'users.name', 'users.email', 'image_url')
                 ->paginate(2);
-            return response()->json($favoritePosts);
+            return response()->json($doctors);
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),
