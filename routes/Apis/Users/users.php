@@ -37,9 +37,12 @@ Route::delete('/posts/{postID}', [PostController::class, 'deletePost'])
 Route::controller(PostLikeController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
-        Route::get('/posts/{postID}/likes/is-exist', 'checkUserLikePost'); // Check user like is exits
-        Route::post('/posts/{postID}/likes', 'likeThePost'); // The user like the post
-        Route::delete('/posts/{postID}/likes', 'unlikeThePost'); // The user unlike the post
+        // Check user like is exits
+        Route::get('/posts/{postID}/likes/is-exist', 'checkUserLikePost');
+        // The user like the post
+        Route::post('/posts/{postID}/likes', 'likeThePost');
+        // The user unlike the post
+        Route::delete('/posts/{postID}/likes', 'unlikeThePost');
     });
 
 /**
@@ -48,8 +51,10 @@ Route::controller(PostLikeController::class)
 Route::controller(PostRatingController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
-        Route::post('/posts/{postID}/ratings', 'ratingThePost'); // The user rating the post
-        Route::put('/posts/{postID}/ratings/', 'updateRatingThePost'); // The user update rating the post
+        // The user rating the post
+        Route::post('/posts/{postID}/ratings', 'ratingThePost');
+        // The user update rating the post
+        Route::put('/posts/{postID}/ratings/', 'updateRatingThePost');
     });
 
 /**
@@ -69,9 +74,11 @@ Route::prefix('/users')
     ->controller(PostFavoriteController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
-        Route::get('/favorites/posts', 'index');
+        Route::get('/{userID}/favorites/posts', 'index')->withoutMiddleware(['auth:sanctum', 'api']);
+        // Check is exits the post in favorite list
+        Route::get('/{userID}/favorites/posts/{postID}', 'checkUserFollow')->withoutMiddleware('auth:sanctum');
         Route::post('/favorites/posts', 'store'); // store new post to favorite post list
-        Route::delete('/favorites/posts/{favoriteID}', 'destroy');
+        Route::delete('{userID}/favorites/posts/{postID}', 'destroy');
     });
 
 /**
@@ -81,8 +88,10 @@ Route::prefix('/users')
     ->controller(DoctorFavoriteController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
-        Route::get('/favorites/doctors', 'index');
-        Route::get('/{userID}/favorites/doctors/{doctorID}', 'checkUserFollow');  // Check is exits doctor in favorite list
-        Route::post('/favorites/doctors', 'store'); // store new post to favorite post list
+        Route::get('/{userID}/favorites/doctors', 'index')->withoutMiddleware(['auth:sanctum', 'api']);
+        // Check is exits doctor in favorite list
+        Route::get('/{userID}/favorites/doctors/{doctorID}', 'checkUserFollow')->withoutMiddleware('auth:sanctum');
+        // store new post to favorite post list
+        Route::post('/favorites/doctors', 'store');
         Route::delete('{userID}/favorites/doctors/{doctorID}', 'destroy');
     });

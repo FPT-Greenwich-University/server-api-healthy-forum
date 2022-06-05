@@ -19,14 +19,17 @@ class PostFavoriteController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index($userID): JsonResponse
     {
         try {
-            $userID = $request->user()->id;
-            $favoritePosts = Favorite::where('user_id', $userID)
+            $posts = Favorite::where('favorites.user_id', '=', $userID)
                 ->where('favoriteable_type', 'App\Models\Post')
-                ->paginate(10);
-            return response()->json($favoritePosts);
+                ->join('posts', 'favorites.favoriteable_id', 'posts.id')
+                ->join('users', 'posts.user_id', 'users.id')
+                ->orderBy('favorites.id', 'desc')
+                ->select('posts.id', 'posts.title', 'users.email as userEmail', 'users.id as userId', 'posts.description')
+                ->paginate(2);
+            return response()->json($posts);
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),
@@ -90,17 +93,49 @@ class PostFavoriteController extends Controller
     }
 
     /**
+     * Check if the post exits in user favorite list
+     * @param $userID
+     * @param $doctorID
+     * @return JsonResponse
+     */
+    public function checkUserFollow($userID, $postID): JsonResponse
+    {
+        try {
+            if ($this->checkIsPostFavoriteExist($userID, $postID) === true) {
+                return response()->json(true);
+            } else {
+                return response()->json(false);
+            }
+
+        } catch (Exception $exception) {
+            return response()->json([
+                'Message' => $exception->getMessage(),
+                'Line' => $exception->getLine(),
+                'File' => $exception->getFile(),
+            ], 500);
+        }
+    }
+
+    /**
      * Remove a post get out user's favorite post
      *
      * @param $favoriteID
      * @return JsonResponse
      */
-    public function destroy($favoriteID): JsonResponse
+    public function destroy($userID, $postID): JsonResponse
     {
         try {
-            Favorite::findOrFail($favoriteID); // if not found favorite item then return 404 json error
-            Favorite::destroy($favoriteID);
-            return response()->json('Remove the post get out favorite list successfully');
+            $favorite = Favorite::where('user_id', '=', $userID)
+                ->where('favoriteable_id', '=', $postID)
+                ->first();
+
+            if (!is_null($favorite)) {
+                $favorite->delete();
+            } else {
+                throw new ModelNotFoundException('The post not found in system');
+            }
+
+            return response()->json('Remove doctor from favorite list success');
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {
