@@ -16,7 +16,7 @@ class DoctorFavoriteController extends Controller
     /**
      * User get own list favorite doctors
      *
-     * @param Request $request
+     * @param $userID
      * @return JsonResponse
      */
     public function index($userID): JsonResponse

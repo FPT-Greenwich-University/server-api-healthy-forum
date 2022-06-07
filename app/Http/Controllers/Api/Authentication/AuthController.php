@@ -83,4 +83,11 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete(); // remove the current token which user are accessing to system
         return response()->json('Logout success');
     }
+
+    public function refresh(Request $request)
+    {
+        $user = $request->user();
+        $user->tokens()->delete();
+        return response()->json(['token' => $user->createToken($user->name)->plainTextToken]);
+    }
 }

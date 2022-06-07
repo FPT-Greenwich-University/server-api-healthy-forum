@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admins\Categories\CategoryController;
 use App\Http\Controllers\Api\Admins\Posts\PostController;
+use App\Http\Controllers\Api\Admins\Statistic\StatisticController;
 use App\Http\Controllers\Api\Admins\Users\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,4 +42,14 @@ Route::prefix('/admins')
         Route::post('/permissions', 'getPermissionsByRole'); // get all the permissions by the roles
         Route::get('/users/{userID}/roles', 'getUserRoles');
         Route::put('/users/{userID}/permissions', 'updatePermission'); // Update permission of the user
+    });
+
+/**
+ * Admin statistic
+ */
+Route::prefix('/admins/statistic')
+    ->middleware(['role:admin', 'auth:sanctum'])
+    ->controller(StatisticController::class)
+    ->group(function () {
+        Route::get('/posts', 'getPostsMostLiked');
     });
