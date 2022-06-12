@@ -6,15 +6,28 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Admins\Users\Permissions\FetchPermissionsRequest;
 use App\Http\Requests\Api\Admins\Users\Permissions\UpdatePermissionRequest;
 use App\Models\User;
+use App\Repositories\Interfaces\IUserRepository;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use App\Repositories\Interfaces\IRoleRepository;
 
 class UserController extends Controller
 {
+    private IRoleRepository $roleRepos;
+    private IUserRepository $userRepos;
+
+
+    public function __construct(IUserRepository $userRepository, IRoleRepository $roleRepository)
+    {
+        $this->userRepos = $userRepository;
+        $this->roleRepos = $roleRepository;
+    }
+
     /**
      * Admin get list customer and doctor role
      *
@@ -23,8 +36,9 @@ class UserController extends Controller
     public function getRoles(): JsonResponse
     {
         try {
-            $all_roles_except_admin = Role::whereNotIn('name', ['admin'])->get();
-            return response()->json($all_roles_except_admin);
+            $role = $this->roleRepos->handleGetExceptRoleByName(['admin']);
+
+            return response()->json($role, Response::HTTP_OK);
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),
@@ -43,20 +57,16 @@ class UserController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $roleName = User::CUSTOMER; // set default role name
-            $listAdminIDs = User::role(User::ADMIN_ROLE)->pluck('id'); // get all admin id
+            $roleName = User::CUSTOMER_ROLE; // set default role name
 
             if ($request->query('role_id')) { // if request url have query string role_id
-                $roleName = Role::find($request->query('role_id'))->name;
+                $roleName = $this->roleRepos->getRoleNameById($request->query('role_id'));
             }
 
-            // Get list user where role equal role name and not include admin role
-            $user = User::role($roleName)
-                ->whereNotIn('id', $listAdminIDs)
-                ->where('email_verified_at', '!=', null)
-                ->paginate(10)
-                ->withQueryString();
-            return response()->json($user);
+            $listAdminId = $this->userRepos->getListIdByRoleName(User::ADMIN_ROLE);
+
+            $users = $this->userRepos->getUsersWithoutAdmin($roleName, $listAdminId);
+            return response()->json($users);
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),
@@ -75,7 +85,7 @@ class UserController extends Controller
     public function getUserRoles($userID): JsonResponse
     {
         try {
-            return response()->json(User::with(['roles', 'permissions'])->findOrFail($userID));
+            return response()->json($this->userRepos->getUserWithRolePermission($userID));
         } catch (ModelNotFoundException $exception) {
             return response()->json('User not found', 404);
         } catch (Exception $exception) {

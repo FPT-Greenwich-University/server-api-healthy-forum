@@ -17,7 +17,7 @@ class ProfileController extends Controller
     /**
      * Get Authenticated user information.
      *
-     * @param Request $request
+     * @param $userID
      * @return JsonResponse
      */
     public function show($userID): JsonResponse
@@ -50,7 +50,8 @@ class ProfileController extends Controller
             if (is_null($userProfile)) {
                 Profile::create($data);  // Create new profile
             } else {
-                Profile::where('user_id', $userId)->update($data);  // Update current profile
+              $result =   Profile::where('user_id', $userId)->update($data);  // Update current profile
+               dd($result);
             }
 
             return response()->json('Update success', 201);

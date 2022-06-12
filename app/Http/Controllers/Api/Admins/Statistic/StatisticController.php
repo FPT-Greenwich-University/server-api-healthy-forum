@@ -3,12 +3,19 @@
 namespace App\Http\Controllers\Api\Admins\Statistic;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\Interfaces\IPostLikeRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class StatisticController extends Controller
 {
+    private IPostLikeRepository $postLikeRepos;
+    public function __construct(IPostLikeRepository $postLikeRepository)
+    {
+       $this->postLikeRepos = $postLikeRepository;
+    }
+
     /**
      * Get post by most like
      *
@@ -17,13 +24,7 @@ class StatisticController extends Controller
     public function getPostsMostLiked(): JsonResponse
     {
         try {
-            $posts = DB::table('post_likes')
-                ->join('posts', 'post_likes.post_id', '=', 'posts.id')
-                ->selectRaw('count(post_likes.id as total_like, posts.*')
-                ->groupBy('post_likes.post_id')
-                ->orderBy('total_like')
-                ->paginate(10);
-            return response()->json($posts);
+            return response()->json($this->postLikeRepos->handleGetPostsMostLiked(10));
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),

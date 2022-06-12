@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\Public\Posts;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Post;
-use App\Models\Tag;
+use App\Repositories\Interfaces\ICategoryRepository;
+use App\Repositories\Interfaces\IPostRepository;
+use App\Repositories\Interfaces\ITagRepository;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -13,6 +13,17 @@ use Illuminate\Http\Request;
 
 class PublicPostController extends Controller
 {
+    private IPostRepository $postRepos;
+    private ITagRepository $tagRepos;
+    private ICategoryRepository $categoryRepos;
+
+    public function __construct(IPostRepository $IPostRepository, ITagRepository $ITagRepository, ICategoryRepository $categoryRepository)
+    {
+        $this->postRepos = $IPostRepository;
+        $this->tagRepos = $ITagRepository;
+        $this->categoryRepos = $categoryRepository;
+    }
+
     /**
      * Display all posts of the resources.
      *
@@ -30,10 +41,7 @@ class PublicPostController extends Controller
                 return $this->getPostsByCategory($request->query('category'));
             }
 
-            return response()->json(Post::with(['image', 'category', 'user'])
-                ->isPublished()
-                ->orderBy('id', 'desc')
-                ->paginate(5));
+            return response()->json($this->postRepos->getPosts(10));
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),
@@ -52,14 +60,9 @@ class PublicPostController extends Controller
     public function getPostsByTag($tagID): JsonResponse
     {
         try {
-            Tag::findOrFail($tagID); // return 404 if not found
-            $listPostIDByTag = Post::tag($tagID)->pluck('posts.id');
+            $this->tagRepos->findById($tagID); // if tag id not found throw exception model not found
+            $posts = $this->postRepos->getPostsByTag($tagID);
 
-            $posts = Post::with(['image', 'category', 'user', 'tags'])
-                ->whereIn('posts.id', $listPostIDByTag)
-                ->isPublished()
-                ->orderBy('posts.id', 'desc')
-                ->paginate(5);
             return response()->json($posts->appends(['tag' => $tagID]));
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
@@ -71,13 +74,9 @@ class PublicPostController extends Controller
     public function getPostsByCategory($categoryID): JsonResponse
     {
         try {
-            Category::findOrFail($categoryID); // return 404 if not found
-            $listPostIDByCategory = Post::where('category_id', '=', $categoryID)->pluck('posts.id');
+            $this->categoryRepos->findById($categoryID);
+            $posts = $this->postRepos->getPostsByCategory($categoryID);
 
-            $posts = Post::with(['image', 'category', 'user'])
-                ->whereIn('posts.id', $listPostIDByCategory)
-                ->orderBy('posts.id', 'desc')
-                ->paginate(5);
             return response()->json($posts->appends(['category' => $categoryID]));
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
@@ -95,11 +94,13 @@ class PublicPostController extends Controller
     public function show($postID): JsonResponse
     {
         try {
-            return response()->json(Post::with(['image', 'category', 'user'])->isPublished()->findOrFail($postID));
+            return response()->json($this->postRepos->getDetailPost($postID));
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {
             return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile()], 500);
         }
     }
+
+
 }

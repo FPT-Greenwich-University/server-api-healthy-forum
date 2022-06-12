@@ -4,14 +4,21 @@ namespace App\Http\Controllers\Api\Admins\Categories;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Admins\Categories\CreateOrUpdateCategoryRequest;
-use App\Models\Category;
-use App\Models\Post;
+use App\Repositories\Interfaces\ICategoryRepository;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class CategoryController extends Controller
 {
+    private ICategoryRepository $categoryRepos;
+
+    public function __construct(ICategoryRepository $categoryRepository)
+    {
+        $this->categoryRepos = $categoryRepository;
+    }
+
     /**
      * Admin store new category in resources
      *
@@ -20,10 +27,9 @@ class CategoryController extends Controller
      */
     public function store(CreateOrUpdateCategoryRequest $request): JsonResponse
     {
-        $data = $request->only(['name', 'description']);
-
         try {
-            Category::create($data);
+
+            $this->categoryRepos->create($request->only(['name', 'description']));
             return response()->json('Create new category successful');
         } catch (Exception $exception) {
             return response()->json([
@@ -44,12 +50,13 @@ class CategoryController extends Controller
     public function update(CreateOrUpdateCategoryRequest $request, $categoryID): JsonResponse
     {
         try {
-            $category = Category::findOrFail($categoryID);
-            $category->update([
-                'name' => $request->input('name'),
-                'description' => $request->input('description')
-            ]);
-            return response()->json('Update category successful');
+           $category = $this->categoryRepos->findById($categoryID);
+
+            if (!is_null($category)) {
+                $this->categoryRepos->update($categoryID, $request->only(['name', 'description']));
+            }
+
+            return response()->json(null, Response::HTTP_NO_CONTENT);
         } catch (ModelNotFoundException $exception) {
             return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {
@@ -70,17 +77,15 @@ class CategoryController extends Controller
     public function destroy($categoryID): JsonResponse
     {
         try {
-            $category = Category::findOrFail($categoryID);
-            $posts = Post::where('category_id', $categoryID)->get();
+            $result = $this->categoryRepos->handleDeleteCategory($categoryID);
 
-            if ($posts->count() === 0) { // if the category not used by the post then accept delete
-                $category->delete();
-                return response()->json('Delete category successful');
-            } else { // return message not accept delete the category
-                return response()->json("The category has been used by user, can't delete", 405);
+            if($result === false) {
+               return response()->json("Category has used by products, can't be not delete", Response::HTTP_BAD_REQUEST);
             }
+
+            return response()->json(null, Response::HTTP_NO_CONTENT);
         } catch (ModelNotFoundException $exception) {
-            return response()->json($exception->getMessage(), 404);
+            return response()->json($exception->getMessage(), Response::HTTP_NOT_FOUND);
         } catch (Exception $exception) {
             return response()->json([
                 'Message' => $exception->getMessage(),
