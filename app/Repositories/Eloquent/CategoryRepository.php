@@ -3,37 +3,50 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\Category;
-use App\Models\Post;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\ICategoryRepository;
-use App\Repositories\Interfaces\IPostRepository;
+use Exception;
 
 class CategoryRepository extends BaseRepository implements ICategoryRepository
 {
-    private IPostRepository $postRepos;
-    public function __construct(Category $model, IPostRepository $postRepository)
+
+    public function __construct(Category $model)
     {
         parent::__construct($model);
-        $this->postRepos = $postRepository;
     }
 
-    /**
-     * @param int $id category's id
-     * @return bool true if success
-     * otherwise false
-     */
-    public function handleDeleteCategory(int $id): bool
+    public function getAllCategories()
     {
-        parent::findById($id);
-        $posts = $this->postRepos->getPostsByCategory($id);
-
-        if ($posts->total() === 0) { // if the category not used by the post then accept delete
-            parent::delete($id);
-
-            return true;
+        try {
+            return parent::getAll();
+        } catch (Exception $exception) {
+            return $exception;
         }
-
-        return false;
     }
 
+    public function handleDeleteCategory(int $id)
+    {
+        try {
+            $existingCategory = parent::findById($id);
+            if (is_null($existingCategory)) return false;
+
+            parent::delete($id);
+            return true;
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function updateCategory(int $id, array $attributes)
+    {
+        try {
+            $existingCategory = parent::findById($id);
+            if (is_null($existingCategory)) return false;
+
+            parent::update($id, $attributes);
+            return true;
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }

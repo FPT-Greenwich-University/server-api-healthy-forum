@@ -2,7 +2,9 @@
 
 namespace App\Repositories\Interfaces;
 
-interface IPostRepository
+use App\Repositories\Interfaces\Common\IEloquentRepository;
+
+interface IPostRepository extends IEloquentRepository
 {
     /**
      * @param int $per_page the number item in per page
@@ -13,4 +15,5 @@ interface IPostRepository
     public function getDetailPost(int $id);
     public function getListPostIdByTag(int $tagId);
     public function getPostsByTag(int $tagId);
+    public function getPostsByCategory(int $categoryId, int $perPage);
 }

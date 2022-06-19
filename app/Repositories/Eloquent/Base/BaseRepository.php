@@ -23,7 +23,7 @@ class BaseRepository implements IEloquentRepository
 
     public function findById(int $id)
     {
-        return $this->model->findOrFail($id);
+        return $this->model->find($id);
     }
 
     public function getAll()

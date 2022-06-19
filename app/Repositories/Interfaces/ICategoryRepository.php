@@ -2,12 +2,11 @@
 
 namespace App\Repositories\Interfaces;
 
-interface ICategoryRepository
+use App\Repositories\Interfaces\Common\IEloquentRepository;
+
+interface ICategoryRepository extends IEloquentRepository
 {
-    /**
-     * @param int $id category's id
-     * @return bool true if success
-     * otherwise false
-     */
-    public function handleDeleteCategory(int $id): bool;
+    public function handleDeleteCategory(int $id);
+    public function updateCategory(int $id, array $attributes);
+    public function getAllCategories();
 }

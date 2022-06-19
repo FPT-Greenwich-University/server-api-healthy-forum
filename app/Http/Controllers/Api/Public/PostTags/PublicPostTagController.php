@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Api\Public\PostTags;
 
 use App\Http\Controllers\Controller;
-use App\Models\Post;
 use App\Repositories\Interfaces\IPostRepository;
 use App\Repositories\Interfaces\ITagRepository;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class PublicPostTagController extends Controller

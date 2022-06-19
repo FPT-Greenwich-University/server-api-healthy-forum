@@ -47,13 +47,13 @@ class PostRepository extends BaseRepository implements IPostRepository
         return $this->model->tag($tagId)->pluck('posts.id');
     }
 
-    public function getPostsByCategory(int $categoryId)
+    public function getPostsByCategory(int $categoryId, int $perPage)
     {
         $listPostIds = $this->getListPostIdByCategory($categoryId);
         return Post::with(['image', 'category', 'user'])
             ->whereIn('posts.id', $listPostIds)
             ->orderBy('posts.id', 'desc')
-            ->paginate(5);
+            ->paginate($perPage);
     }
 
     public function getListPostIdByCategory(int $categoryId)

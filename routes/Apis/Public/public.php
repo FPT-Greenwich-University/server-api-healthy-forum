@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
  * Categories
  */
 Route::controller(CategoryController::class)->group(function () {
-    Route::get('/categories', 'index'); // Get all the categories
+    Route::get('/categories', 'getAllCategories'); // Get all the categories
 });
 
 /**
