@@ -5,7 +5,6 @@ namespace App\Repositories\Eloquent;
 use App\Models\User;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\IUserRepository;
-use Illuminate\Database\Eloquent\Model;
 
 class UserRepository extends BaseRepository implements IUserRepository
 {
@@ -14,22 +13,54 @@ class UserRepository extends BaseRepository implements IUserRepository
         parent::__construct($model);
     }
 
-    public function getListIdByRoleName(string $roleName): array
+    public function getListIdByRoleName(string $roleName)
     {
-        return $this->model->role($roleName)->pluck('id')->toArray();
+        try {
+            return $this->model->role($roleName)->pluck('id')->toArray();
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
     }
 
     public function getUsersWithoutAdmin(string $roleName, array $list_id)
     {
-        return $this->model->role($roleName)
-            ->whereNotIn('id', $list_id)
-            ->where('email_verified_at', '!=', null)
-            ->paginate(10)
-            ->withQueryString();
+        try {
+            return $this->model->role($roleName)
+                ->whereNotIn('id', $list_id)
+                ->where('email_verified_at', '!=', null)
+                ->paginate(10)
+                ->withQueryString();
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+
     }
 
-    public function getUserWithRolePermission(int $userId): Model
+    public function getUserWithRolePermission(int $userId)
     {
-        return $this->model->with(['roles', 'permissions'])->findOrFail($userId);
+        try {
+            $result = $this->model->with(['roles', 'permissions'])->find($userId);
+
+            if (is_null($result)) return false;
+
+            return $result;
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function syncPermissions(int $userId, array $permissions)
+    {
+        try {
+            $user = $this->model->find($userId);
+
+            if (is_null($user)) return false;
+
+            $user->syncPermissions($permissions);
+
+            return true;
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
     }
 }

@@ -20,7 +20,7 @@ class CategoryRepository extends BaseRepository implements ICategoryRepository
         try {
             return parent::getAll();
         } catch (Exception $exception) {
-            return $exception;
+            return $exception->getMessage();
         }
     }
 

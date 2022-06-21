@@ -8,4 +8,5 @@ interface IRoleRepository
 {
     public function handleGetExceptRoleByName(array $name);
     public function getRoleNameById(int $roleId);
+    public function getPermissionByRoleId(array $roleId);
 }

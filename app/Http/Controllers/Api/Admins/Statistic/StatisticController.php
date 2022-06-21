@@ -23,14 +23,9 @@ class StatisticController extends Controller
      */
     public function getPostsMostLiked(): JsonResponse
     {
-        try {
-            return response()->json($this->postLikeRepos->handleGetPostsMostLiked(10));
-        } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'File' => $exception->getFile(),
-            ], 500);
-        }
+        $perPage = 5;
+        $result = $this->postLikeRepos->handleGetPostsMostLiked($perPage);
+
+        return response()->json($result);
     }
 }

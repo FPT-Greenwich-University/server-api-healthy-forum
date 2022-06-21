@@ -16,10 +16,14 @@ class PostLikeRepository extends BaseRepository implements IPostLikeRepository
 
     public function handleGetPostsMostLiked(int $per_page): mixed
     {
-        return DB::table('post_likes')->join("posts", "post_likes.post_id", "=", "posts.id")
-            ->select(DB::raw("count(post_likes.post_id) as total_liked, posts.*"))
-            ->groupBy("post_likes.post_id")
-            ->orderBy("total_liked", "desc")
-            ->paginate($per_page);
+        try {
+            return $this->model->join("posts", "post_likes.post_id", "=", "posts.id")
+                ->select(DB::raw("count(post_likes.post_id) as total_liked, posts.*"))
+                ->groupBy("post_likes.post_id")
+                ->orderBy("total_liked", "desc")
+                ->paginate($per_page);
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
     }
 }

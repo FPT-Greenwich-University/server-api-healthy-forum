@@ -33,11 +33,11 @@ class BaseRepository implements IEloquentRepository
 
     public function update(int $id, array $attributes)
     {
-        $this->model->where('id', '=', $id)->update($attributes);
+        return $this->model->where('id', '=', $id)->update($attributes);
     }
 
     public function delete(int $id)
     {
-        $this->model->destroy($id);
+        return $this->model->destroy($id);
     }
 }

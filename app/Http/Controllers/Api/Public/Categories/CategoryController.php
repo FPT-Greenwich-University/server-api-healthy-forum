@@ -20,7 +20,6 @@ class CategoryController extends Controller
     public function etAllCategories(): JsonResponse
     {
             $categories = $this->categoryRepository->getAllCategories();
-
             return response()->json($categories);
     }
 }

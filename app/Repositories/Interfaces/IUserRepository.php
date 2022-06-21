@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 interface IUserRepository
 {
-    public function getListIdByRoleName(string $roleName): array;
+    public function getListIdByRoleName(string $roleName);
 
     /**
      * @param string $roleName
@@ -19,5 +19,7 @@ interface IUserRepository
      * @param int $userId
      * @return Model
      */
-    public function getUserWithRolePermission(int $userId): Model;
+    public function getUserWithRolePermission(int $userId);
+
+    public function syncPermissions(int $userId, array $permissions);
 }

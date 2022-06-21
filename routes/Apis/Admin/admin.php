@@ -9,13 +9,14 @@ use Illuminate\Support\Facades\Route;
 /*
  * Admin handle posts
  */
+
 Route::prefix('/admins')
     ->controller(PostController::class)
     ->middleware(['role:admin', 'auth:sanctum'])
     ->group(function () {
         Route::get('/posts/not-published', 'getPostsIsNotPublished'); // Get posts where are not published
         Route::get('/posts/{postID}', 'show');
-        Route::put('/posts/{postID}/publish', 'acceptPublishPost'); // Published post by update status => true for the post
+        Route::put('/posts/{postID}/publish', 'acceptPublishPost')->where('postID', '[0-9]+'); // Published post by update status => true for the post
     });
 
 /*

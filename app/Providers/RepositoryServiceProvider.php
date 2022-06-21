@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Eloquent\CategoryRepository;
+use App\Repositories\Eloquent\CommentRepository;
+use App\Repositories\Eloquent\PermissionRepository;
 use App\Repositories\Eloquent\PostLikeRepository;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\RoleRepository;
@@ -11,6 +13,8 @@ use App\Repositories\Eloquent\TagRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Interfaces\Common\IEloquentRepository;
 use App\Repositories\Interfaces\ICategoryRepository;
+use App\Repositories\Interfaces\ICommentRepository;
+use App\Repositories\Interfaces\IPermissionRepository;
 use App\Repositories\Interfaces\IPostLikeRepository;
 use App\Repositories\Interfaces\IPostRepository;
 use App\Repositories\Interfaces\IRoleRepository;
@@ -34,6 +38,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ICategoryRepository::class, CategoryRepository::class);
         $this->app->bind(IPostLikeRepository::class, PostLikeRepository::class);
         $this->app->bind(IRoleRepository::class, RoleRepository::class);
+        $this->app->bind(IPermissionRepository::class, PermissionRepository::class);
+        $this->app->bind(ICommentRepository::class, CommentRepository::class);
     }
 
     /**
