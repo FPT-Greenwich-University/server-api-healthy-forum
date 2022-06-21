@@ -14,7 +14,7 @@ interface IPostRepository extends IEloquentRepository
     public function getPostsNotPublish(int $per_page);
     public function getDetailPost(int $id);
     public function getListPostIdByTag(int $tagId);
-    public function getPostsByTag(int $tagId);
+    public function getPostsByTag(int $tagId, int $perPage);
     public function getPostsByCategory(int $categoryId, int $perPage);
     public function updateStatusPost(int $postId, array $attributes);
 }
