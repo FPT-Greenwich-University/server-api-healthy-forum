@@ -12,4 +12,21 @@ class TagRepository extends BaseRepository implements ITagRepository
     {
         parent::__construct($model);
     }
+
+
+    public function getPostTags(int $postId)
+    {
+        try {
+            return $this->model->join('post_tag', 'tags.id', '=', 'post_tag.tag_id')
+                ->join('posts', function ($join) use ($postId) {
+                    $join->on('post_tag.post_id', '=', 'posts.id')
+                        ->where('posts.id', '=', $postId);
+                })
+                ->select('tags.*')
+                ->get();
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+
+    }
 }
