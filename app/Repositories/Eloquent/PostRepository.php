@@ -105,4 +105,17 @@ class PostRepository extends BaseRepository implements IPostRepository
             // return false;
         }
     }
+
+    public function searchPosts(string $title, int $perPage)
+    {
+        try {
+            return $this->model->with(['image', 'category', 'user'])
+                ->isPublished()
+                ->where('title', 'like', '%' . $title . '%')
+                ->paginate($perPage)
+                ->appends(['title' => $title]);
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }
