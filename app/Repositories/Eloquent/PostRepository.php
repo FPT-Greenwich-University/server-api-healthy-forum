@@ -22,6 +22,7 @@ class PostRepository extends BaseRepository implements IPostRepository
             return $exception->getMessage();
         }
     }
+
     public function getPostsNotPublish(int $per_page)
     {
         try {
@@ -34,13 +35,13 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getDetailPost(int $id)
     {
         try {
-            return $this->model->with(['image', 'category', 'user'])->isPublished()->findOrFail($id);
+            return $this->model->with(['image', 'category', 'user'])->isPublished()->find($id);
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
     }
 
-    public function getPostsByTag(int $tagId)
+    public function getPostsByTag(int $tagId, int $perPage)
     {
         try {
             $listPostIds = $this->getListPostIdByTag($tagId);
@@ -48,7 +49,8 @@ class PostRepository extends BaseRepository implements IPostRepository
                 ->whereIn('posts.id', $listPostIds)
                 ->isPublished()
                 ->orderBy('posts.id', 'desc')
-                ->paginate(5);
+                ->paginate($perPage)
+                ->withQueryString();
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
@@ -70,7 +72,8 @@ class PostRepository extends BaseRepository implements IPostRepository
             return Post::with(['image', 'category', 'user'])
                 ->whereIn('posts.id', $listPostIds)
                 ->orderBy('posts.id', 'desc')
-                ->paginate($perPage);
+                ->paginate($perPage)
+                ->withQueryString();
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
@@ -85,6 +88,7 @@ class PostRepository extends BaseRepository implements IPostRepository
             // logger()->error($exception->getMessage());
         }
     }
+
     public function updateStatusPost(int $postId, array $attributes)
     {
         try {

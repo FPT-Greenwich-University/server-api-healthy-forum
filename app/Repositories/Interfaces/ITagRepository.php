@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Interfaces;
 
-interface ITagRepository
+use App\Repositories\Interfaces\Common\IEloquentRepository;
+
+interface ITagRepository extends IEloquentRepository
 {
 }

@@ -32,57 +32,23 @@ class PublicPostController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        try {
-            if ($request->query('tag')) {
-                return $this->getPostsByTag($request->query('tag'));
-            }
+        if ($request->query('tag')) {
+            $tag = $this->tagRepos->findById($request->input('tag'));
 
-            if ($request->query('category')) {
-                return $this->getPostsByCategory($request->query('category'));
-            }
+            if (is_null($tag)) return response()->json("Post's tag not found", 404);
 
-            return response()->json($this->postRepos->getPosts(10));
-        } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'File' => $exception->getFile()
-            ], 500);
+            return response()->json($this->postRepos->getPostsByTag($request->input('tag'), 5));
         }
-    }
 
-    /**
-     * Get all posts by tag name
-     *
-     * @param $tagID
-     * @return JsonResponse
-     */
-    public function getPostsByTag($tagID): JsonResponse
-    {
-        try {
-            $this->tagRepos->findById($tagID); // if tag id not found throw exception model not found
-            $posts = $this->postRepos->getPostsByTag($tagID);
+        if ($request->query('category')) {
+            $category = $this->categoryRepos->findById($request->input('category'));
 
-            return response()->json($posts->appends(['tag' => $tagID]));
-        } catch (ModelNotFoundException $exception) {
-            return response()->json($exception->getMessage(), 404);
-        } catch (Exception $exception) {
-            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile()], 500);
+            if (is_null($category)) return response()->json("Post's category not found");
+
+            return response()->json($this->postRepos->getPostsByCategory($request->input('category'), 5));
         }
-    }
 
-    public function getPostsByCategory($categoryID): JsonResponse
-    {
-        try {
-            $this->categoryRepos->findById($categoryID);
-            $posts = $this->postRepos->getPostsByCategory($categoryID);
-
-            return response()->json($posts->appends(['category' => $categoryID]));
-        } catch (ModelNotFoundException $exception) {
-            return response()->json($exception->getMessage(), 404);
-        } catch (Exception $exception) {
-            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile()], 500);
-        }
+        return response()->json($this->postRepos->getPosts(10)); // default
     }
 
     /**
@@ -93,14 +59,10 @@ class PublicPostController extends Controller
      */
     public function show($postID): JsonResponse
     {
-        try {
-            return response()->json($this->postRepos->getDetailPost($postID));
-        } catch (ModelNotFoundException $exception) {
-            return response()->json($exception->getMessage(), 404);
-        } catch (Exception $exception) {
-            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile()], 500);
-        }
+        $result = $this->postRepos->getDetailPost($postID);
+
+        if (is_null($result)) return response()->json("Post not found", 404);
+
+        return response()->json($result);
     }
-
-
 }
