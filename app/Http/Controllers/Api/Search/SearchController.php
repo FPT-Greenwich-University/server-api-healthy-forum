@@ -3,32 +3,23 @@
 namespace App\Http\Controllers\Api\Search;
 
 use App\Http\Controllers\Controller;
-use App\Models\Post;
-use Exception;
+use App\Repositories\Interfaces\IPostRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
-    public function searchProducts(Request $request)
+    private IPostRepository $postRepository;
+
+    public function __construct(IPostRepository $postRepository)
     {
-        try {
-            if ($request->has('title')) {
-                $posts = Post::with(['image', 'category', 'user'])
-                    ->isPublished()
-                    ->where('title', 'like', '%' . $request->query('title') . '%')
-                    ->paginate(10)
-                    ->withQueryString();
+        $this->postRepository = $postRepository;
+    }
 
-                return response()->json($posts);
-            }
-
-            return response()->json('No records');
-        } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'File' => $exception->getFile(),
-            ], 500);
-        }
+    public function searchPosts(Request $request): JsonResponse
+    {
+        $perPage = 5;
+        $posts = $this->postRepository->searchPosts($request->query('title'), $perPage);
+        return response()->json($posts);
     }
 }
