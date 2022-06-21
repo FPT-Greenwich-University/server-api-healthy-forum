@@ -9,4 +9,6 @@ interface IPostLikeRepository
      * @return mixed
      */
     public function handleGetPostsMostLiked(int $per_page): mixed;
+
+    public function getTotalLike(int $postId);
 }
