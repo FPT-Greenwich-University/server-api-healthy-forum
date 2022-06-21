@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Post\CreatePostRequest;
 use App\Models\Post;
 use App\Models\User;
+use App\Repositories\Interfaces\IUserRepository;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -13,6 +14,12 @@ use Illuminate\Support\Facades\DB;
 
 class DoctorController extends Controller
 {
+    private IUserRepository $userRepository;
+    public function __construct(IUserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * Get posts of doctor
      * @param $userID
@@ -21,7 +28,9 @@ class DoctorController extends Controller
     public function getPosts($userID): JsonResponse
     {
         try {
-            User::findOrFail($userID);// return 404 error if the user not found
+            $user = $this->userRepository->findById($userID);
+
+
             $posts = Post::with(['image'])
                 ->where('user_id', $userID)
                 ->orderBy('id', 'desc')

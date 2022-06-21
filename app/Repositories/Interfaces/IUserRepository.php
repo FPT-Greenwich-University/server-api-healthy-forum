@@ -2,9 +2,10 @@
 
 namespace App\Repositories\Interfaces;
 
+use App\Repositories\Interfaces\Common\IEloquentRepository;
 use Illuminate\Database\Eloquent\Model;
 
-interface IUserRepository
+interface IUserRepository extends IEloquentRepository
 {
     public function getListIdByRoleName(string $roleName);
 
