@@ -26,4 +26,13 @@ class PostLikeRepository extends BaseRepository implements IPostLikeRepository
             return $exception->getMessage();
         }
     }
+
+    public function getTotalLike(int $postId)
+    {
+        try {
+            return $this->model->where('post_id', $postId)->count();
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }

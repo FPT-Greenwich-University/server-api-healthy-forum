@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Api\Public\PostLikes;
 
 use App\Http\Controllers\Controller;
-use App\Models\PostLike;
-use Exception;
+use App\Repositories\Interfaces\IPostLikeRepository;
+use App\Repositories\Interfaces\IPostRepository;
 use Illuminate\Http\JsonResponse;
 
 class PublicPostLikeController extends Controller
 {
+    private IPostRepository $postRepository;
+    private IPostLikeRepository $postLikeRepository;
+
+    public function __construct(IPostLikeRepository $postLikeRepository, IPostRepository $postRepository)
+    {
+        $this->postRepository = $postRepository;
+        $this->postLikeRepository = $postLikeRepository;
+    }
+
     /**
      * Get the total like of the post
      *
@@ -17,15 +26,12 @@ class PublicPostLikeController extends Controller
      */
     public function getTotalLike($postID): JsonResponse
     {
-        try {
-            $total_likes = PostLike::where('post_id', $postID)->count();
-            return response()->json(['total_likes' => $total_likes]);
-        } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'File' => $exception->getFile(),
-            ], 500);
-        }
+        $post = $this->postRepository->findById($postID);
+
+        if (is_null($post)) return response()->json("Post not found", 404);
+
+        $totalLikes = $this->postLikeRepository->getTotalLike($postID);
+
+        return response()->json($totalLikes);
     }
 }
