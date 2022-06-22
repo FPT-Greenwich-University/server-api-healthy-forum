@@ -178,6 +178,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         \App\Providers\RepositoryServiceProvider::class,
+        \App\Providers\FileManagerServiceProvider::class,
     ],
 
     /*

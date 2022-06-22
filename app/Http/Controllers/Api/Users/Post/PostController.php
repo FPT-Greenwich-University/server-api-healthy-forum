@@ -72,6 +72,7 @@ class PostController extends Controller
 
             // Ensure the user has own the post or have role admin
             if ($user->id === $post->user_id || $user->hasRole('admin')) {
+//                dd(public_path($post->image->path));
                 \File::delete(public_path($post->image->path)); // delete image file
                 $post->image()->delete(); // Delete image thumbnail first
                 DB::table('post_tag')->where('post_id', $postID)->delete();
