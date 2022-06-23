@@ -8,6 +8,7 @@ use App\Repositories\Eloquent\CommentRepository;
 use App\Repositories\Eloquent\PermissionRepository;
 use App\Repositories\Eloquent\PostLikeRepository;
 use App\Repositories\Eloquent\PostRepository;
+use App\Repositories\Eloquent\ProfileRepository;
 use App\Repositories\Eloquent\RoleRepository;
 use App\Repositories\Eloquent\TagRepository;
 use App\Repositories\Eloquent\UserRepository;
@@ -17,6 +18,7 @@ use App\Repositories\Interfaces\ICommentRepository;
 use App\Repositories\Interfaces\IPermissionRepository;
 use App\Repositories\Interfaces\IPostLikeRepository;
 use App\Repositories\Interfaces\IPostRepository;
+use App\Repositories\Interfaces\IProfileRepository;
 use App\Repositories\Interfaces\IRoleRepository;
 use App\Repositories\Interfaces\ITagRepository;
 use App\Repositories\Interfaces\IUserRepository;
@@ -40,6 +42,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IRoleRepository::class, RoleRepository::class);
         $this->app->bind(IPermissionRepository::class, PermissionRepository::class);
         $this->app->bind(ICommentRepository::class, CommentRepository::class);
+        $this->app->bind(IProfileRepository::class, ProfileRepository::class);
     }
 
     /**

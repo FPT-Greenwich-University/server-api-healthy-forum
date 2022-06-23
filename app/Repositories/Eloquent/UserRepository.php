@@ -63,4 +63,14 @@ class UserRepository extends BaseRepository implements IUserRepository
             return $exception->getMessage();
         }
     }
+
+    public function getUserWithProfile(int $userId)
+    {
+        try {
+
+            return $this->model->with(["profile"])->find($userId);
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }

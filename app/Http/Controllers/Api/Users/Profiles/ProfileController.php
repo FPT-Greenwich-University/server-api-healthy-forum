@@ -5,15 +5,22 @@ namespace App\Http\Controllers\Api\Users\Profiles;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Profile\UpdateProfileRequest;
 use App\Models\Profile;
-use App\Models\User;
-use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Repositories\Interfaces\IProfileRepository;
+use App\Repositories\Interfaces\IUserRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
+    private IUserRepository $userRepository;
+    private IProfileRepository $profileRepository;
+
+    public function __construct(IUserRepository $userRepository, IProfileRepository $profileRepository)
+    {
+        $this->userRepository = $userRepository;
+        $this->profileRepository = $profileRepository;
+    }
+
     /**
      * Get Authenticated user information.
      *
@@ -22,41 +29,38 @@ class ProfileController extends Controller
      */
     public function show($userID): JsonResponse
     {
-        try {
-            return response()->json(User::with(['profile'])->findOrFail($userID));
-        } catch (ModelNotFoundException $exception) {
-            return response()->json($exception->getMessage(), 404);
-        } catch (Exception $exception) {
-            return response()->json($exception->getMessage(), 500);
-        }
+        $user = $this->userRepository->getUserWithProfile($userID);
+
+        if ($user === null) return response()->json("User Not found", 404);
+
+        return response()->json($user);
     }
 
     /**
      * Update authenticated user information.
      *
+     * @param $userID
      * @param UpdateProfileRequest $request
      * @return JsonResponse
      */
-    public function update(UpdateProfileRequest $request): JsonResponse
+    public function update($userID, UpdateProfileRequest $request): JsonResponse
     {
-        try {
-            $userId = $request->user()->id; // Get user id
-            $userProfile = DB::table('profiles')
-                ->where('user_id', $request->user()->id)
-                ->first();
-            $data = $request->only(['phone', 'description', 'age', 'gender', 'city', 'district', 'ward', 'street']);
-            $data['user_id'] = $userId;
+        $userId = $request->user()->id; // Get user id
+        $user = $this->userRepository->findById($userID);
+        $attributes = $request->only(['phone', 'description', 'age', 'gender', 'city', 'district', 'ward', 'street']);
+        $attributes['user_id'] = $userId;
 
-            if (is_null($userProfile)) {
-                Profile::create($data);  // Create new profile
-            } else {
-              $result =   Profile::where('user_id', $userId)->update($data);  // Update current profile
-               dd($result);
-            }
+        if ($userId != $userID || is_null($user)) return response()->json("User not found", 404);
 
-            return response()->json('Update success', 201);
-        } catch (Exception $exception) {
-            return response()->json($exception->getMessage(), 500);
+        $userProfile = $this->profileRepository->getUserProfile($userId);
+
+        if (is_null($userProfile)) {
+            $this->profileRepository->create($attributes);
+
+        } else {
+            $this->profileRepository->updateProfileUser($userId, $attributes);
         }
+
+        return response()->json("", 204);
     }
 }
