@@ -212,4 +212,13 @@ class PostRepository extends BaseRepository implements IPostRepository
             return $exception->getMessage();
         }
     }
+
+    public function storePostComment(int $postId, array $attributes)
+    {
+        try {
+            return $this->model->find($postId)->comments()->create($attributes);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }

@@ -85,7 +85,6 @@ class PostController extends Controller
             if ($user->id === $post->user_id || $user->hasRole('admin')) {
                 $this->fileServices->deleteFile($post->image->path); // delete file image
 
-
                 $this->postTagRepository->deletePostTags($post->id);
                 // DB::table('post_tag')->where('post_id', $postID)->delete();
 
