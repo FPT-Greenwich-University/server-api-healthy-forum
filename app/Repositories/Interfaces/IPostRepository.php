@@ -6,12 +6,6 @@ use App\Repositories\Interfaces\Common\IEloquentRepository;
 
 interface IPostRepository extends IEloquentRepository
 {
-
-
-    /**
-     * @param int $per_page the number item in per page
-     * @return mixed
-     */
     public function getPosts(int $per_page);
 
     public function getPostsNotPublish(int $per_page);
@@ -28,6 +22,8 @@ interface IPostRepository extends IEloquentRepository
 
     public function searchPosts(string $title, int $perPage);
 
+    public function assignPostTags(int $postId, array $tags);
+
     public function getPostsByUser(int $userId);
 
     public function getDetailPostByUser(int $userId, int $postId);
@@ -35,5 +31,11 @@ interface IPostRepository extends IEloquentRepository
     public function updatePostTags(int $postId, array $tags);
 
     public function updatePost($postId, array $attributes);
+
+    public function createPostImage(int $postId, string $filePath);
     public function updatePostImage(int $postId, string $filePath);
+    /**
+     * Delete post with all related relationship constraint
+     */
+    public function deletePost(int $postId);
 }
