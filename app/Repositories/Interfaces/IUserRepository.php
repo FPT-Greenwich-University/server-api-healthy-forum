@@ -23,4 +23,5 @@ interface IUserRepository extends IEloquentRepository
     public function getUserWithRolePermission(int $userId);
 
     public function syncPermissions(int $userId, array $permissions);
+    public function getUserWithProfile(int $userId);
 }
