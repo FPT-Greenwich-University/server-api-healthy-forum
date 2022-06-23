@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Api\Users\Profiles;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Profile\UpdateProfileRequest;
-use App\Models\Profile;
 use App\Repositories\Interfaces\IProfileRepository;
 use App\Repositories\Interfaces\IUserRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -56,7 +54,6 @@ class ProfileController extends Controller
 
         if (is_null($userProfile)) {
             $this->profileRepository->create($attributes);
-
         } else {
             $this->profileRepository->updateProfileUser($userId, $attributes);
         }

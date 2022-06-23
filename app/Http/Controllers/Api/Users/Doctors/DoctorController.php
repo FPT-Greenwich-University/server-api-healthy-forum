@@ -7,6 +7,8 @@ use App\Http\Requests\Api\Post\CreatePostRequest;
 use App\Repositories\Interfaces\IPostRepository;
 use App\Repositories\Interfaces\IUserRepository;
 use App\Services\FileServices\FileServicesContract;
+use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 
 class DoctorController extends Controller
@@ -56,32 +58,40 @@ class DoctorController extends Controller
 
     public function update(CreatePostRequest $request, $userID, $postID)
     {
-        $attributes = $request->only(['title', 'body', 'category_id', 'description']);
-        $post = $this->postRepository->findById($postID);
+        try {
+            DB::beginTransaction();
+            $attributes = $request->only(['title', 'body', 'category_id', 'description']);
+            $post = $this->postRepository->findById($postID);
 
-        if ($post === null) return response()->json("Post not found", 404);
+            if ($post === null) return response()->json("Post not found", 404);
 
-        if ($post->user_id !== intval($userID)) return response()->json("Required permission", 403);
+            if ($post->user_id !== intval($userID)) return response()->json("Required permission", 403);
 
-        $this->postRepository->updatePost($postID, $attributes);
+            $this->postRepository->updatePost($postID, $attributes);
 
-        // Update tag
-        $this->postRepository->updatePostTags($postID, $request->input('tags'));
+            // Update tag
+            $this->postRepository->updatePostTags($postID, $request->input('tags'));
 
-        $imagePath = public_path($post->image->path);
-        $result = $this->fileServices->deleteFile($imagePath); // delete image file
+            $imagePath = public_path($post->image->path);
+            $result = $this->fileServices->deleteFile($imagePath); // delete image file
 
-        if ($result === false) return response()->json("Error to update post image", 500);
+            if ($result === false) return response()->json("Error to update post image", 500);
 
-        $file = $request->file('thumbnail'); // retrieve a file
-        $fileName = $file->hashName(); // Generate a unique, random name...
-        $targetDir = "posts/thumbnails/"; // set default path
+            $file = $request->file('thumbnail'); // retrieve a file
+            $fileName = $file->hashName(); // Generate a unique, random name...
+            $targetDir = "posts/thumbnails/"; // set default path
 
-        $this->fileServices->storeFile($file, $targetDir, $fileName); // movie file to public folder
+            $this->fileServices->storeFile($file, $targetDir, $fileName); // movie file to public folder
 
-        $filePath = $targetDir . $fileName; // set file path
+            $filePath = $targetDir . $fileName; // set file path
 
-        $this->postRepository->updatePostImage($postID, $filePath); // update current path image
-        return response()->json("", 204);
+            $this->postRepository->updatePostImage($postID, $filePath); // update current path image
+
+            DB::commit();
+            return response()->json("", 204);
+        } catch (Exception $exception) {
+            DB::rollBack();
+            return response()->json($exception->getMessage(), 500);
+        }
     }
 }

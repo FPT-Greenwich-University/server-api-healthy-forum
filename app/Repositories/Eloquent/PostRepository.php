@@ -163,6 +163,18 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
+    public function createPostImage(int $postId, string $filePath)
+    {
+        try {
+            $post = $this->model->find($postId);
+
+            $post->image()->create(['path' => $filePath]);
+            return true;
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
     public function updatePostImage($postId, string $filePath)
     {
         try {
@@ -170,6 +182,32 @@ class PostRepository extends BaseRepository implements IPostRepository
 
             $post->image()->delete(); // delete old path
             $post->image()->create(['path' => $filePath]);
+            return true;
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function assignPostTags(int $postId, array $tags)
+    {
+        try {
+            return $this->model->find($postId)->tags()->attach($tags);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function deletePost(int $postId)
+    {
+        try {
+            $post = $this->model->find($postId);
+            $post->comments()->delete();
+            $post->postRatings()->delete();
+            $post->favorites()->delete();
+            $post->tags()->delete();
+            $post->postLikes()->delete();
+            $post->image()->delete(); // Delete image thumbnail
+            $post->delete(); // delete the post 
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
