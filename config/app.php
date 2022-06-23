@@ -69,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE','UTC'),
 
     /*
     |--------------------------------------------------------------------------
@@ -82,7 +82,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => env('LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -176,7 +176,9 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
+        Spatie\Permission\PermissionServiceProvider::class,
+        \App\Providers\RepositoryServiceProvider::class,
+        \App\Providers\FileManagerServiceProvider::class,
     ],
 
     /*

@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Events\ResetPassword;
+use App\Events\UserVerifyAccount;
+use App\Listeners\ResetPassword\NotifyResetPassword;
+use App\Listeners\VerifyAccount\EmailToUserVerifyAccount;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -18,6 +21,16 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
+        // Verify account
+        UserVerifyAccount::class => [
+            EmailToUserVerifyAccount::class,
+        ],
+
+        // Reset password
+        ResetPassword::class => [
+            NotifyResetPassword::class
+        ],
     ];
 
     /**
@@ -27,7 +40,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+
     }
 
     /**
