@@ -38,4 +38,5 @@ interface IPostRepository extends IEloquentRepository
      * Delete post with all related relationship constraint
      */
     public function deletePost(int $postId);
+    public function storePostComment(int $postId, array $attributes);
 }
