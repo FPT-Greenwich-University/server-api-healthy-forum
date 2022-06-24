@@ -16,6 +16,7 @@ use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Interfaces\Common\IEloquentRepository;
 use App\Repositories\Interfaces\ICategoryRepository;
 use App\Repositories\Interfaces\ICommentRepository;
+use App\Repositories\Interfaces\IFavoriteRepository;
 use App\Repositories\Interfaces\IPermissionRepository;
 use App\Repositories\Interfaces\IPostLikeRepository;
 use App\Repositories\Interfaces\IPostRepository;
@@ -24,6 +25,7 @@ use App\Repositories\Interfaces\IProfileRepository;
 use App\Repositories\Interfaces\IRoleRepository;
 use App\Repositories\Interfaces\ITagRepository;
 use App\Repositories\Interfaces\IUserRepository;
+use App\Repositories\Eloquent\FavoriteRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -46,6 +48,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ICommentRepository::class, CommentRepository::class);
         $this->app->bind(IProfileRepository::class, ProfileRepository::class);
         $this->app->bind(IPostTagRepository::class, PostTagRepository::class);
+        $this->app->bind(IFavoriteRepository::class, FavoriteRepository::class);
     }
 
     /**
