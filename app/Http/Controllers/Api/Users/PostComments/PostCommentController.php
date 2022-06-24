@@ -45,8 +45,9 @@ class PostCommentController extends Controller
     /**
      * Create a new child comment into the post
      *
-     * @param ReplyPostCommentRequest $request
      * @param $postID
+     * @param $commentID
+     * @param ReplyPostCommentRequest $request
      * @return JsonResponse
      */
     public function replyPostComment($postID, $commentID, ReplyPostCommentRequest $request): JsonResponse
