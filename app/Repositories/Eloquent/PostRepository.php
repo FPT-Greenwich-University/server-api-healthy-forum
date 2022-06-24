@@ -221,4 +221,14 @@ class PostRepository extends BaseRepository implements IPostRepository
             return $exception->getMessage();
         }
     }
+
+    public function addFavoritePost(int $postId, int $userId)
+    {
+        try {
+            $post = $this->model->find($postId);
+            $post->favorites()->create(['user_id' => $userId]);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }
