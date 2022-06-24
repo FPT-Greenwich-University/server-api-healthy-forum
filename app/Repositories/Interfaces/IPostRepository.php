@@ -39,4 +39,5 @@ interface IPostRepository extends IEloquentRepository
      */
     public function deletePost(int $postId);
     public function storePostComment(int $postId, array $attributes);
+    public function addFavoritePost(int $postId, int $userId);
 }

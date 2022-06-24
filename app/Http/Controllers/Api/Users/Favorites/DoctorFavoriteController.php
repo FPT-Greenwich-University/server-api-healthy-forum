@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api\Users\Favorites;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Users\Favorites\StoreFavoriteDoctorRequest;
-use App\Repositories\Interfaces\IFavoriteRepository;
-use App\Repositories\Interfaces\IUserRepository;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Repositories\Interfaces\IUserRepository;
+use App\Repositories\Interfaces\IFavoriteRepository;
+use App\Http\Requests\Api\Users\Favorites\StoreFavoriteDoctorRequest;
 
 class DoctorFavoriteController extends Controller
 {
@@ -29,7 +30,7 @@ class DoctorFavoriteController extends Controller
     public function index($userID): JsonResponse
     {
         $perPage = 5;
-        return response()->json($this->favoriteRepository->getListFavoritesDoctor($userID, $perPage));
+        return response()->json($this->favoriteRepository->getListFavoritesDoctors($userID, $perPage));
     }
 
     /**
@@ -74,11 +75,9 @@ class DoctorFavoriteController extends Controller
     {
         $favoriteExisted = $this->favoriteRepository->checkFavoriteExisted($userID, $doctorID, "App\Models\User");
 
-        if (is_null($favoriteExisted)) {
-            return false;
-        } else {
-            return true;
-        }
+        if (is_null($favoriteExisted)) return false;
+
+        return true;
     }
 
     /**
@@ -90,11 +89,9 @@ class DoctorFavoriteController extends Controller
      */
     public function checkUserFollow($userID, $doctorID): JsonResponse
     {
-        if ($this->checkIsDoctorFavoriteExist($userID, $doctorID) === true) {
-            return response()->json(true);
-        } else {
-            return response()->json(false);
-        }
+        if ($this->checkIsDoctorFavoriteExist($userID, $doctorID) === true) return response()->json(true);
+
+        return response()->json(false);
     }
 
     /**

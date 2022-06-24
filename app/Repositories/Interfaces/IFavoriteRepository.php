@@ -6,7 +6,8 @@ use App\Repositories\Interfaces\Common\IEloquentRepository;
 
 interface IFavoriteRepository extends IEloquentRepository
 {
-    public function getListFavoritesDoctor(int $userId, int $perPage);
+    public function getListFavoritesDoctors(int $userId, int $perPage);
+    public function getListFavoritesPosts(int $userId, int $perPage);
 
     /**
      * Get Detail favorite item
