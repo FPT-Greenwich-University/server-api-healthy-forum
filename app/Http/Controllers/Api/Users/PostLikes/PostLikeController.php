@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\Api\Users\PostLikes;
 
 use App\Http\Controllers\Controller;
-use App\Models\PostLike;
-use Exception;
+use App\Repositories\Interfaces\IPostLikeRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PostLikeController extends Controller
 {
+    private IPostLikeRepository $postLikeRepository;
+
+    public function __construct(IPostLikeRepository $postLikeRepository)
+    {
+        $this->postLikeRepository = $postLikeRepository;
+    }
     /**
      * User like the post
      *
@@ -19,27 +24,16 @@ class PostLikeController extends Controller
      */
     public function likeThePost(Request $request, int $postID): JsonResponse
     {
-        try {
-            $result = $this->checkLikeIsExist($request, $postID);
+        $result = $this->checkLikeIsExist($request, $postID);
 
-            if ($result === false) { // if user not have like this post
-                PostLike::create([
-                    'post_id' => $postID,
-                    'user_id' => $request->user()->id,
-                ]);
-                return response()->json("Like post successful");
-            } else {
-                return response()->json("The user have like post before", 202);
-            }
-        } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'Code' => $exception->getCode(),
-                'File' => $exception->getFile(),
-                'Trace' => $exception->getTrace()
-            ], 500);
-        }
+        if ($result === true) return response()->json("", 204);
+
+        $this->postLikeRepository->create([
+            'post_id' => $postID,
+            'user_id' => $request->user()->id
+        ]);
+
+        return response()->json("Like post success");
     }
 
     /**
@@ -52,14 +46,13 @@ class PostLikeController extends Controller
      */
     public function checkLikeIsExist(Request $request, int $postID): bool
     {
-        $result = PostLike::where('post_id', $postID)->where('user_id', $request->user()->id)->first();
+        $user = $request->user();
+        $result = $this->postLikeRepository->checkIsUserLikePost($postID, $user->id);
 
-        if (!is_null($result)) {
-            return true;
-        }
-        return false; // default
+        if (is_null($result)) return false;
+
+        return true;
     }
-
 
     /**
      * User unlike the post
@@ -70,24 +63,13 @@ class PostLikeController extends Controller
      */
     public function unlikeThePost(Request $request, int $postID): JsonResponse
     {
-        try {
-            $result = $this->checkLikeIsExist($request, $postID);
+        $user = $request->user();
+        $result = $this->checkLikeIsExist($request, $postID);
 
-            if ($result === true) { // if user had liked this post
-                PostLike::where('user_id', $request->user()->id)->where('post_id', $postID)->delete();
-                return response()->json("Unlike post successful");
-            } else {
-                return response()->json("The user not have like this post before", 202);
-            }
-        } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'Code' => $exception->getCode(),
-                'File' => $exception->getFile(),
-                'Trace' => $exception->getTrace()
-            ], 500);
-        }
+        if ($result === false) return response()->json("Not found", 404);
+
+        $this->postLikeRepository->deleteLike($user->id, $postID);
+        return response()->json("Unlike post successful");
     }
 
     /**
@@ -99,21 +81,11 @@ class PostLikeController extends Controller
      */
     public function checkUserLikePost(Request $request, $postID): JsonResponse
     {
-        try {
-            $result = $this->checkLikeIsExist($request, $postID);
-            if ($result === true) {
-                return response()->json(true);
-            } else {
-                return response()->json(false);
-            }
-        } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'Code' => $exception->getCode(),
-                'File' => $exception->getFile(),
-                'Trace' => $exception->getTrace()
-            ], 500);
+        $result = $this->checkLikeIsExist($request, $postID);
+        if ($result === true) {
+            return response()->json(true);
+        } else {
+            return response()->json(false);
         }
     }
 }
