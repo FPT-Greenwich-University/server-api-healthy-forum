@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Events\NotifyNewPost;
 use App\Events\ResetPassword;
 use App\Events\UserVerifyAccount;
 use App\Listeners\ResetPassword\NotifyResetPassword;
+use App\Listeners\SendEmailNotifyNewPost;
 use App\Listeners\VerifyAccount\EmailToUserVerifyAccount;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -31,6 +33,11 @@ class EventServiceProvider extends ServiceProvider
         ResetPassword::class => [
             NotifyResetPassword::class
         ],
+
+        // Send email notify new post publised
+        NotifyNewPost::class => [
+            SendEmailNotifyNewPost::class
+        ],
     ];
 
     /**
@@ -40,7 +47,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
     }
 
     /**

@@ -18,8 +18,6 @@ interface IPostRepository extends IEloquentRepository
 
     public function getPostsByCategory(int $categoryId, int $perPage);
 
-    public function updateStatusPost(int $postId, array $attributes);
-
     public function searchPosts(string $title, int $perPage);
 
     public function assignPostTags(int $postId, array $tags);

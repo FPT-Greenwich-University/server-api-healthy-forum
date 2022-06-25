@@ -90,22 +90,6 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
-    public function updateStatusPost(int $postId, array $attributes)
-    {
-        try {
-            // dd($attributes);
-            $post = parent::findById($postId);
-
-            if (is_null($post)) return false;
-
-            $post->update($attributes);
-            return true;
-        } catch (Exception $exception) {
-            return $exception->getMessage();
-            // logger()->error($exception->getMessage());
-            // return false;
-        }
-    }
 
     public function searchPosts(string $title, int $perPage)
     {
@@ -207,7 +191,7 @@ class PostRepository extends BaseRepository implements IPostRepository
             $post->tags()->delete();
             $post->postLikes()->delete();
             $post->image()->delete(); // Delete image thumbnail
-            $post->delete(); // delete the post 
+            $post->delete(); // delete the post
         } catch (Exception $exception) {
             return $exception->getMessage();
         }

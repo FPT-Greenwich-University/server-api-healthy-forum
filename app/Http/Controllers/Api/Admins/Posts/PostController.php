@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admins\Posts;
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\IPostRepository;
 use Illuminate\Http\JsonResponse;
+use App\Events\NotifyNewPost;
 
 class PostController extends Controller
 {
@@ -36,7 +37,9 @@ class PostController extends Controller
     {
         $post = $this->postRespos->getDetailPost($postID);
 
-        if (is_null($post)) return response()->json("Product not found", 404);
+        if (is_null($post)) {
+            return response()->json("Product not found", 404);
+        }
 
         return response()->json($post);
     }
@@ -49,10 +52,14 @@ class PostController extends Controller
      */
     public function acceptPublishPost($postID): JsonResponse
     {
-        $isPublished = true;
-        $result = $this->postRespos->updateStatusPost($postID, ['is_publishedd' => $isPublished]);
+        $post = $this->postRespos->findById($postID);
 
-        if ($result === false) return response()->json("Post not found", 404);
+        if ($post === null) {
+            return response()->json("Post not found", 404);
+        }
+
+        $this->postRespos->update($postID, ['is_published' => true, 'published_at' => now()]);
+        event(new NotifyNewPost($post));
 
         return response()->json("", 204);
     }
