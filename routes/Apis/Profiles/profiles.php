@@ -5,6 +5,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(ProfileController::class)->group(function () {
     Route::get('users/{userID}/profiles', 'show'); // show current user's profile
-    Route::put('/profiles', 'update')->middleware(['auth:sanctum']);
+    Route::put('users/{userID}/profiles', 'update')->middleware(['auth:sanctum']);
 });
 

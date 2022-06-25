@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
  * Categories
  */
 Route::controller(CategoryController::class)->group(function () {
-    Route::get('/categories', 'index'); // Get all the categories
+    Route::get('/categories', 'getAllCategories'); // Get all the categories
 });
 
 /**
@@ -77,5 +77,5 @@ Route::prefix('/public')->controller(PublicLocationController::class)->group(fun
  */
 Route::controller(SearchController::class)
     ->group(function () {
-        Route::get('/search', 'searchProducts')->withoutMiddleware(['api']);
+        Route::get('/search', 'searchPosts')->withoutMiddleware(['api']);
     });

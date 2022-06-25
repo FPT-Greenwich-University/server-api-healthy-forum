@@ -4,15 +4,26 @@ namespace App\Http\Controllers\Api\Users\Post;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Post\CreatePostRequest;
-use App\Models\Post;
+use App\Repositories\Interfaces\IPostRepository;
+use App\Repositories\Interfaces\IPostTagRepository;
+use App\Services\FileServices\FileServicesContract;
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
+    private IPostRepository $postRepository;
+    private IPostTagRepository $postTagRepository;
+    private FileServicesContract $fileServices;
+    public function __construct(IPostRepository $postRepository, FileServicesContract $fileServicesContract, IPostTagRepository $postTagRepository)
+    {
+        $this->postRepository = $postRepository;
+        $this->postTagRepository = $postTagRepository;
+        $this->fileServices = $fileServicesContract;
+    }
+
     /**
      * Doctor store new post in resources
      *
@@ -24,29 +35,27 @@ class PostController extends Controller
         try {
             DB::beginTransaction();
 
+            $attributes = $request->only(['title', 'body', 'category_id', 'description']);
+            $attributes['user_id'] = $request->user()->id; // assign user_id to array
+
             // Store a post
-            $post = Post::create([
-                'user_id' => $request->user()->id,
-                'title' => $request->input('title'),
-                'body' => $request->input('body'),
-                'category_id' => $request->input('category_id'),
-                'description' => $request->input('description'),
-                'published_at' => now()
-            ]);
+            $post = $this->postRepository->create($attributes);
 
             // Assign tag to post
-            $post->tags()->attach($request->input('tags'));
+            $this->postRepository->assignPostTags($post->id, $request->input('tags'));
 
             // Store a thumbnail
             $file = $request->file('thumbnail'); // retrieve a file
             $fileName = $file->hashName(); // Generate a unique, random name...
             $targetDir = 'posts/thumbnails/'; // set default path
-            $file->move($targetDir, $fileName); // movie file to public folder
+
+            $this->fileServices->storeFile($file, $targetDir, $fileName);
+
             $filePath = $targetDir . $fileName;
-            $post->image()->create(['path' => $filePath]);
+            $this->postRepository->createPostImage($post->id, $filePath);
 
             DB::commit(); // all OK
-            return response()->json('Create post success');
+            return response()->json('Create Success', 201);
         } catch (Exception $exception) {
             DB::rollBack();
             return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'Code' => $exception->getCode(), 'File' => $exception->getFile(), 'Trace' => $exception->getTrace()], 500);
@@ -66,30 +75,27 @@ class PostController extends Controller
         try {
             DB::beginTransaction();
 
-            $post = Post::findOrFail($postID);// return 404 if not found
+            $post = $this->postRepository->findById($postID);
+
+            if (is_null($postID)) return response()->json("Post not found", 404);
 
             $user = $request->user(); // get current user
 
             // Ensure the user has own the post or have role admin
             if ($user->id === $post->user_id || $user->hasRole('admin')) {
-                \File::delete(public_path($post->image->path)); // delete image file
-                $post->image()->delete(); // Delete image thumbnail first
-                DB::table('post_tag')->where('post_id', $postID)->delete();
-                $post->comments()->delete();
-                $post->postRatings()->delete();
-                $post->favorites()->delete();
-                $post->tags()->delete();
-                $post->postLikes()->delete();
-                $post->delete(); // delete the post
+                $this->fileServices->deleteFile($post->image->path); // delete file image
+
+                $this->postTagRepository->deletePostTags($post->id);
+                // DB::table('post_tag')->where('post_id', $postID)->delete();
+
+                $this->postRepository->deletePost($postID);
 
                 // All Good
                 DB::commit();
-                return response()->json('Delete the post successful', 200);
+                return response()->json('Delete the post successful', 204);
             }
 
             return response()->json("You don't have permission to delete this post", 403);
-        } catch (ModelNotFoundException $exception) {
-            return response()->json($exception->getMessage(), 404);
         } catch (Exception $exception) {
             DB::rollBack();
             return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'Code' => $exception->getCode(), 'File' => $exception->getFile(), 'Trace' => $exception->getTrace()], 500);

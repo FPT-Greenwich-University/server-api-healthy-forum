@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             UserSeeder::class,
             AdminAccountSeeder::class,
-            DoctorAccountSeeder::class
+            DoctorAccountSeeder::class,
+            PostSeeder::class,
         ]);
     }
 }

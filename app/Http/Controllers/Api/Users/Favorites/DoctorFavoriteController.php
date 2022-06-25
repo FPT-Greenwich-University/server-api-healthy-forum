@@ -2,17 +2,25 @@
 
 namespace App\Http\Controllers\Api\Users\Favorites;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Users\Favorites\StoreFavoriteDoctorRequest;
-use App\Models\Favorite;
-use App\Models\User;
-use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Repositories\Interfaces\IUserRepository;
+use App\Repositories\Interfaces\IFavoriteRepository;
+use App\Http\Requests\Api\Users\Favorites\StoreFavoriteDoctorRequest;
 
 class DoctorFavoriteController extends Controller
 {
+    private IFavoriteRepository $favoriteRepository;
+    private IUserRepository $userRepository;
+
+
+    public function __construct(IFavoriteRepository $favoriteRepository, IUserRepository $userRepository)
+    {
+        $this->favoriteRepository = $favoriteRepository;
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * User get own list favorite doctors
      *
@@ -21,21 +29,8 @@ class DoctorFavoriteController extends Controller
      */
     public function index($userID): JsonResponse
     {
-        try {
-            $doctors = Favorite::where('favorites.user_id', $userID)
-                ->where('favoriteable_type', 'App\Models\User')
-                ->join('users', 'favorites.favoriteable_id', 'users.id')
-                ->orderBy('favorites.id', 'desc')
-                ->select('users.id', 'users.name', 'users.email', 'image_url')
-                ->paginate(2);
-            return response()->json($doctors);
-        } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'File' => $exception->getFile(),
-            ], 500);
-        }
+        $perPage = 5;
+        return response()->json($this->favoriteRepository->getListFavoritesDoctors($userID, $perPage));
     }
 
     /**
@@ -44,35 +39,28 @@ class DoctorFavoriteController extends Controller
      * @param StoreFavoriteDoctorRequest $request
      * @return JsonResponse
      */
-    public function store(StoreFavoriteDoctorRequest $request): JsonResponse
+    public function addFavoriteItem(StoreFavoriteDoctorRequest $request): JsonResponse
     {
-        try {
-            $user = $request->user();
-            $doctorID = $request->input('doctor_id');
+        $user = $request->user();
 
-            if ($this->checkIsDoctorFavoriteExist($user->id, $doctorID) === false) { // check if post have exits in user's favorite post
-                User::findOrFail($doctorID); // check the doctor is exits in system, return 404 if post not found
-                // Add doctor to favorite list
-                Favorite::create([
-                    'user_id' => $user->id,
-                    'favoriteable_id' => $doctorID,
-                    'favoriteable_type' => "App\Models\User"
-                ]);
-                return response()->json('Add doctor to the favorite successfully');
-            }
+        $doctorID = intval($request->input('doctor_id'));
 
-            // Default
-            return response()->json('The doctor have existed in favorite list', 202);
-        } catch (ModelNotFoundException $exception) {
-            return response()->json($exception->getMessage(), 404);
-        } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'File' => $exception->getFile(),
-                'Trace' => $exception->getTrace()
-            ], 500);
+        if ($doctorID === $user->id) return response()->json("Bad request", 400);
+
+        if ($this->checkIsDoctorFavoriteExist($user->id, $doctorID) === false) { // check if post have exits in user's favorite post
+            $doctor = $this->userRepository->findById($doctorID); // check the doctor is exits in system, return 404 if post not found
+            if (is_null($doctor)) return response()->json("Not Found", 404);
+
+            // Add doctor to favorite list
+            $this->favoriteRepository->create([
+                'user_id' => $user->id,
+                'favoriteable_id' => $doctorID,
+                'favoriteable_type' => "App\Models\User"
+            ]);
+            return response()->json('Add to favorite list successfully', 201);
         }
+        // Default
+        return response()->json("", 204);
     }
 
     /**
@@ -85,40 +73,25 @@ class DoctorFavoriteController extends Controller
      */
     public function checkIsDoctorFavoriteExist($userID, $doctorID): bool
     {
-        $favorite = Favorite::where('user_id', $userID)
-            ->where('favoriteable_id', $doctorID)
-            ->where('favoriteable_type', 'App\Models\User')
-            ->first();
+        $favoriteExisted = $this->favoriteRepository->checkFavoriteExisted($userID, $doctorID, "App\Models\User");
 
-        if (is_null($favorite)) {
-            return false;
-        } else {
-            return true;
-        }
+        if (is_null($favoriteExisted)) return false;
+
+        return true;
     }
 
     /**
      * Check if doctor exits in user favorite list
+     *
      * @param $userID
      * @param $doctorID
      * @return JsonResponse
      */
     public function checkUserFollow($userID, $doctorID): JsonResponse
     {
-        try {
-            if ($this->checkIsDoctorFavoriteExist($userID, $doctorID) === true) {
-                return response()->json(true);
-            } else {
-                return response()->json(false);
-            }
+        if ($this->checkIsDoctorFavoriteExist($userID, $doctorID) === true) return response()->json(true);
 
-        } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'File' => $exception->getFile(),
-            ], 500);
-        }
+        return response()->json(false);
     }
 
     /**
@@ -128,28 +101,13 @@ class DoctorFavoriteController extends Controller
      * @param $doctorID
      * @return JsonResponse
      */
-    public function destroy($userID, $doctorID): JsonResponse
+    public function removeFavoriteItem($userID, $doctorID): JsonResponse
     {
-        try {
-            $favorite = Favorite::where('user_id', '=', $userID)
-                ->where('favoriteable_id', '=', $doctorID)
-                ->first();
+        $favorite = $this->favoriteRepository->getDetailFavorite($userID, $doctorID);
 
-            if (!is_null($favorite)) {
-                $favorite->delete();
-            } else {
-                throw new ModelNotFoundException('Favorite not found in system');
-            }
+        if (is_null($favorite)) return response()->json("Doctor favorite item not found", 404);
 
-            return response()->json('Remove doctor from favorite list success');
-        } catch (ModelNotFoundException $exception) {
-            return response()->json($exception->getMessage(), 404);
-        } catch (Exception $exception) {
-            return response()->json([
-                'Message' => $exception->getMessage(),
-                'Line' => $exception->getLine(),
-                'File' => $exception->getFile(),
-            ], 500);
-        }
+        $this->favoriteRepository->removeFavorite($userID, $doctorID);
+        return response()->json("", 204);
     }
 }

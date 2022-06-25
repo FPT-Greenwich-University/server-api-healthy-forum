@@ -19,9 +19,10 @@ class PostFactory extends Factory
         return [
             'title' => $this->faker->name,
             'description' => $this->faker->text,
+            'user_id' => 22,
             'is_published' => 1,
             'body' => $this->faker->realText,
-            'category_id' => rand(1, 10),
+            'category_id' => rand(5, 10),
             'published_at' => now(),
         ];
     }

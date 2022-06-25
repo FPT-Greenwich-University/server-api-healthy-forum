@@ -91,7 +91,8 @@ Route::prefix('/users')
         Route::get('/{userID}/favorites/doctors', 'index')->withoutMiddleware(['auth:sanctum', 'api']);
         // Check is exits doctor in favorite list
         Route::get('/{userID}/favorites/doctors/{doctorID}', 'checkUserFollow')->withoutMiddleware('auth:sanctum');
-        // store new post to favorite post list
-        Route::post('/favorites/doctors', 'store');
-        Route::delete('{userID}/favorites/doctors/{doctorID}', 'destroy');
+        // add new doctor to favorite list
+        Route::post('/favorites/doctors', 'addFavoriteItem');
+        // Remove doctor from favorite list
+        Route::delete('{userID}/favorites/doctors/{doctorID}', 'removeFavoriteItem');
     });

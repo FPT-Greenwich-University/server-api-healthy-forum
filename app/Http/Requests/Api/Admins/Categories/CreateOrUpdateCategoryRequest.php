@@ -24,7 +24,7 @@ class CreateOrUpdateCategoryRequest extends ApiFormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'min:10'],
+            'name' => ['required', 'min:1'],
             'description' => ['required', 'min:10']
         ];
     }
