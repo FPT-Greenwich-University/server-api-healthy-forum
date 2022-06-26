@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Api\Public\Categories;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
 use App\Repositories\Interfaces\ICategoryRepository;
-use Exception;
 use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
@@ -17,9 +15,9 @@ class CategoryController extends Controller
     }
 
 
-    public function etAllCategories(): JsonResponse
+    public function getAllCategories(): JsonResponse
     {
-            $categories = $this->categoryRepository->getAllCategories();
-            return response()->json($categories);
+        $categories = $this->categoryRepository->getAllCategories();
+        return response()->json($categories);
     }
 }
