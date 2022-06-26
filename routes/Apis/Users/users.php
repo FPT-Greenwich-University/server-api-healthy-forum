@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\Users\Favorites\PostFavoriteController;
 use App\Http\Controllers\Api\Users\Post\PostController;
 use App\Http\Controllers\Api\Users\PostComments\PostCommentController;
 use App\Http\Controllers\Api\Users\PostLikes\PostLikeController;
-use App\Http\Controllers\Api\Users\PostRatings\PostRatingController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -43,18 +42,6 @@ Route::controller(PostLikeController::class)
         Route::post('/posts/{postID}/likes', 'likeThePost');
         // The user unlike the post
         Route::delete('/posts/{postID}/likes', 'unlikeThePost');
-    });
-
-/**
- * Rating the post
- */
-Route::controller(PostRatingController::class)
-    ->middleware(['auth:sanctum'])
-    ->group(function () {
-        // The user rating the post
-        Route::post('/posts/{postID}/ratings', 'ratingThePost');
-        // The user update rating the post
-        Route::put('/posts/{postID}/ratings/', 'updateRatingThePost');
     });
 
 /**
