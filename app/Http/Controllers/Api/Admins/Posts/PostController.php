@@ -9,11 +9,11 @@ use App\Events\NotifyNewPost;
 
 class PostController extends Controller
 {
-    private IPostRepository $postRespos;
+    private IPostRepository $postResponse;
 
     public function __construct(IPostRepository $postRepository)
     {
-        $this->postRespos = $postRepository;
+        $this->postResponse = $postRepository;
     }
 
     /**
@@ -24,7 +24,7 @@ class PostController extends Controller
     public function getPostsIsNotPublished(): JsonResponse
     {
         $perPage = 5;
-        $posts = $this->postRespos->getPostsNotPublish($perPage);
+        $posts = $this->postResponse->getPostsNotPublish($perPage);
         return response()->json($posts);
     }
 
@@ -35,7 +35,7 @@ class PostController extends Controller
      */
     public function show($postID): JsonResponse
     {
-        $post = $this->postRespos->getDetailPost($postID);
+        $post = $this->postResponse->getDetailPost($postID);
 
         if (is_null($post)) {
             return response()->json("Product not found", 404);
@@ -52,13 +52,13 @@ class PostController extends Controller
      */
     public function acceptPublishPost($postID): JsonResponse
     {
-        $post = $this->postRespos->findById($postID);
+        $post = $this->postResponse->findById($postID);
 
         if ($post === null) {
             return response()->json("Post not found", 404);
         }
 
-        $this->postRespos->update($postID, ['is_published' => true, 'published_at' => now()]);
+        $this->postResponse->update($postID, ['is_published' => true, 'published_at' => now()]);
         event(new NotifyNewPost($post));
 
         return response()->json("", 204);
