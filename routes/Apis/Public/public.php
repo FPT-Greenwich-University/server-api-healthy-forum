@@ -3,7 +3,6 @@
 use App\Http\Controllers\Api\Public\Categories\CategoryController;
 use App\Http\Controllers\Api\Public\Comments\PublicCommentController;
 use App\Http\Controllers\Api\Public\PostLikes\PublicPostLikeController;
-use App\Http\Controllers\Api\Public\PostRatings\PublicPostRatingController;
 use App\Http\Controllers\Api\Public\Posts\PublicPostController;
 use App\Http\Controllers\Api\Public\PostTags\PublicPostTagController;
 use App\Http\Controllers\Api\Public\PublicLocationController;
@@ -54,13 +53,6 @@ Route::controller(PublicCommentController::class)->group(function () {
  */
 Route::controller(PublicPostLikeController::class)->group(function () {
     Route::get('/posts/{postID}/total-likes', 'getTotalLike');
-});
-
-/**
- * Post rating routes
- */
-Route::controller(PublicPostRatingController::class)->group(function () {
-    Route::get('/posts/{postID}/ratings', 'getAveragePostRating');
 });
 
 /**

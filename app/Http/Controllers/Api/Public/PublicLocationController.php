@@ -12,7 +12,7 @@ class PublicLocationController extends Controller
 
     public function __construct()
     {
-        $this->domainApi = 'https://thongtindoanhnghiep.co/api/';
+        $this->domainApi = env("LOCATION_API_URL");
     }
 
     /**

@@ -80,16 +80,6 @@ class Post extends Model
     }
 
     /**
-     * Get all the post's rating from the users
-     *
-     * @return HasMany
-     */
-    public function postRatings(): HasMany
-    {
-        return $this->hasMany(PostRating::class, 'post_id');
-    }
-
-    /**
      * Get all the post's liked from the users
      *
      * @return HasMany
@@ -143,10 +133,9 @@ class Post extends Model
     {
         $query->join('post_tag', function ($join) {
             $join->on('posts.id', '=', 'post_tag.post_id');
-        })
-            ->join('tags', function ($join) use ($tagID) {
-                $join->on('post_tag.tag_id', '=', 'tags.id')
-                    ->where('tags.id', $tagID);
-            });
+        })->join('tags', function ($join) use ($tagID) {
+            $join->on('post_tag.tag_id', '=', 'tags.id')
+                ->where('tags.id', $tagID);
+        });
     }
 }

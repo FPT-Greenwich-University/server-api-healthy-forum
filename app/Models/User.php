@@ -116,14 +116,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(PostLike::class);
     }
-
-    /**
-     * Get all post's rating from the user
-     *
-     * @return HasMany
-     */
-    public function postRatings(): HasMany
-    {
-        return $this->hasMany(PostRating::class);
-    }
 }
