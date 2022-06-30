@@ -20,6 +20,7 @@ class SearchController extends Controller
     {
         $perPage = 5;
         $title = $request->query('title');
+
         if ($request->has('title') && !empty($title)) {
             $posts = $this->postRepository->searchPosts($title, $perPage);
             return response()->json($posts);
