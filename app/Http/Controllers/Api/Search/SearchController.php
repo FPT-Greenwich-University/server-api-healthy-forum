@@ -19,7 +19,12 @@ class SearchController extends Controller
     public function searchPosts(Request $request): JsonResponse
     {
         $perPage = 5;
-        $posts = $this->postRepository->searchPosts($request->query('title'), $perPage);
-        return response()->json($posts);
+        $title = $request->query('title');
+        if ($request->has('title') && !empty($title)) {
+            $posts = $this->postRepository->searchPosts($title, $perPage);
+            return response()->json($posts);
+        }
+
+        return response()->json($this->postRepository->getPosts($perPage));
     }
 }
