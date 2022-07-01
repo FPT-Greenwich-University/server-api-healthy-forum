@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Filter\FilterController;
 use App\Http\Controllers\Api\Public\Categories\CategoryController;
 use App\Http\Controllers\Api\Public\Comments\PublicCommentController;
 use App\Http\Controllers\Api\Public\PostLikes\PublicPostLikeController;
@@ -70,4 +71,10 @@ Route::prefix('/public')->controller(PublicLocationController::class)->group(fun
 Route::controller(SearchController::class)
     ->group(function () {
         Route::get('/search', 'searchPosts')->withoutMiddleware(['api']);
+    });
+
+
+Route::controller(FilterController::class)
+    ->group(function () {
+        Route::get("/filters/posts", "filterPosts");
     });

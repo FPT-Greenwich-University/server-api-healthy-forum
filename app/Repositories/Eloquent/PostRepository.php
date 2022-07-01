@@ -6,6 +6,8 @@ use App\Models\Post;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\IPostRepository;
 use Exception;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class PostRepository extends BaseRepository implements IPostRepository
 {
@@ -213,6 +215,22 @@ class PostRepository extends BaseRepository implements IPostRepository
             $post->favorites()->create(['user_id' => $userId]);
         } catch (Exception $exception) {
             return $exception->getMessage();
+        }
+    }
+
+    public function filterPosts(int $perPage)
+    {
+        try {
+            return QueryBuilder::for(Post::class)
+                ->allowedFilters([
+                    AllowedFilter::scope('is_published'),
+                    AllowedFilter::exact('category_id')
+                ])
+                ->with(['image', 'category', 'user'])
+                ->allowedSorts('published_at')
+                ->paginate($perPage);
+        } catch (Exception $exception) {
+            return $exception;
         }
     }
 }
