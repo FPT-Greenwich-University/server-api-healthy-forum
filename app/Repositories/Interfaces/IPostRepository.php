@@ -31,11 +31,17 @@ interface IPostRepository extends IEloquentRepository
     public function updatePost($postId, array $attributes);
 
     public function createPostImage(int $postId, string $filePath);
+
     public function updatePostImage(int $postId, string $filePath);
+
     /**
      * Delete post with all related relationship constraint
      */
     public function deletePost(int $postId);
+
     public function storePostComment(int $postId, array $attributes);
+
     public function addFavoritePost(int $postId, int $userId);
+
+    public function filterPosts(int $perPage);
 }
