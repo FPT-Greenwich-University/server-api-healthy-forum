@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\ICategoryRepository;
 use App\Repositories\Interfaces\IPostRepository;
 use App\Repositories\Interfaces\ITagRepository;
-use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -48,7 +46,7 @@ class PublicPostController extends Controller
             return response()->json($this->postRepos->getPostsByCategory($request->input('category'), 5));
         }
 
-        return response()->json($this->postRepos->getPosts(10)); // default
+        return response()->json($this->postRepos->filterPosts(10)); // default
     }
 
     /**
