@@ -214,6 +214,7 @@ class PostRepository extends BaseRepository implements IPostRepository
         try {
             $post = $this->model->find($postId);
             $post->favorites()->create(['user_id' => $userId]);
+            return true;
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -225,9 +226,10 @@ class PostRepository extends BaseRepository implements IPostRepository
             return QueryBuilder::for(Post::class)
                 ->allowedFilters([
                     AllowedFilter::scope('is_published'),
-                    AllowedFilter::exact('category_id')
+                    AllowedFilter::exact('category_id'),
+                    AllowedFilter::exact('tag_id', 'tags.id', true)
                 ])
-                ->with(['image', 'category', 'user'])
+                ->with(['image', 'category', 'user', 'tags'])
                 ->allowedSorts('published_at')
                 ->paginate($perPage);
         } catch (Exception $exception) {
