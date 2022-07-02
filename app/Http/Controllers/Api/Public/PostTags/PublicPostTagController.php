@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Public\PostTags;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\TagResource;
 use App\Repositories\Interfaces\IPostRepository;
 use App\Repositories\Interfaces\ITagRepository;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +21,7 @@ class PublicPostTagController extends Controller
 
     public function index()
     {
-        return response()->json($this->tagRepos->getAll());
+        return response()->json(TagResource::collection($this->tagRepos->getAll()));
     }
 
     /**
