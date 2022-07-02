@@ -72,9 +72,3 @@ Route::controller(SearchController::class)
     ->group(function () {
         Route::get('/search', 'searchPosts')->withoutMiddleware(['api']);
     });
-
-
-Route::controller(FilterController::class)
-    ->group(function () {
-        Route::get("/filters/posts", "filterPosts");
-    });

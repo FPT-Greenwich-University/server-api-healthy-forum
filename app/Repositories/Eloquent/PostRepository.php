@@ -194,6 +194,7 @@ class PostRepository extends BaseRepository implements IPostRepository
             $post->postLikes()->delete();
             $post->image()->delete(); // Delete image thumbnail
             $post->delete(); // delete the post
+            return true;
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
