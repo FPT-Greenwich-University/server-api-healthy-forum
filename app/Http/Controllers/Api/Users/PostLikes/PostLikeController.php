@@ -15,6 +15,7 @@ class PostLikeController extends Controller
     {
         $this->postLikeRepository = $postLikeRepository;
     }
+
     /**
      * User like the post
      *
@@ -69,7 +70,7 @@ class PostLikeController extends Controller
         if ($result === false) return response()->json("Not found", 404);
 
         $this->postLikeRepository->deleteLike($user->id, $postID);
-        return response()->json("Unlike post successful");
+        return response()->json("", 204);
     }
 
     /**

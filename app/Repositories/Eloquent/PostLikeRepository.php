@@ -2,9 +2,9 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Models\PostLike;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\IPostLikeRepository;
-use App\Models\PostLike;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -51,9 +51,10 @@ class PostLikeRepository extends BaseRepository implements IPostLikeRepository
     public function deleteLike(int $userId, int $postId)
     {
         try {
-            return  $this->model->where("user_id", "=", $userId)
+            $this->model->where("user_id", "=", $userId)
                 ->where("post_id", "=", $postId)
                 ->delete();
+            return true;
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
