@@ -88,7 +88,6 @@ class PostRepository extends BaseRepository implements IPostRepository
             return $this->model->where('category_id', '=', $categoryId)->pluck('id');
         } catch (Exception $exception) {
             return $exception->getMessage();
-            // logger()->error($exception->getMessage());
         }
     }
 
@@ -220,6 +219,15 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
+    public function doctorGetDetailPost(int $postId)
+    {
+        try {
+            return $this->model->with(['image', 'category', 'user'])->find($postId);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
     public function filterPosts(int $perPage)
     {
         try {
@@ -233,7 +241,9 @@ class PostRepository extends BaseRepository implements IPostRepository
                 ->allowedSorts('published_at')
                 ->paginate($perPage);
         } catch (Exception $exception) {
-            return $exception;
+            return $exception->getMessage();
         }
     }
+
+
 }

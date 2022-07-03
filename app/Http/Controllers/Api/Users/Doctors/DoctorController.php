@@ -8,8 +8,8 @@ use App\Repositories\Interfaces\IPostRepository;
 use App\Repositories\Interfaces\IUserRepository;
 use App\Services\FileServices\FileServicesContract;
 use Exception;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class DoctorController extends Controller
 {
@@ -50,7 +50,7 @@ class DoctorController extends Controller
     {
         $post = $this->postRepository->getDetailPostByUser($userID, $postID);
 
-        if (is_null($post)) return response()->json("Post not found", 404);
+        if (is_null($post) || $post->user_id !== $userID) return response()->json("Post not found", 404);
 
         return response()->json($post);
     }
