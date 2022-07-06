@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Api\Users\Favorites;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Repositories\Interfaces\IUserRepository;
-use App\Repositories\Interfaces\IFavoriteRepository;
 use App\Http\Requests\Api\Users\Favorites\StoreFavoriteDoctorRequest;
+use App\Repositories\Interfaces\IFavoriteRepository;
+use App\Repositories\Interfaces\IUserRepository;
+use Illuminate\Http\JsonResponse;
 
 class DoctorFavoriteController extends Controller
 {
-    private IFavoriteRepository $favoriteRepository;
-    private IUserRepository $userRepository;
+    private readonly IFavoriteRepository $favoriteRepository;
+    private readonly IUserRepository $userRepository;
 
 
     public function __construct(IFavoriteRepository $favoriteRepository, IUserRepository $userRepository)
@@ -89,7 +88,7 @@ class DoctorFavoriteController extends Controller
      */
     public function checkUserFollow($userID, $doctorID): JsonResponse
     {
-        if ($this->checkIsDoctorFavoriteExist($userID, $doctorID) === true) return response()->json(true);
+        if ($this->checkIsDoctorFavoriteExist($userID, $doctorID)) return response()->json(true);
 
         return response()->json(false);
     }

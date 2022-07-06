@@ -63,6 +63,7 @@ class DoctorController extends Controller
         $post = $this->postRepository->findById($postID);
 
         if (is_null($post)) return response()->json("Post Not found", 404);
+
         if ($post->user_id != $userID) return response()->json("Bad request user not found", 404);
 
         if (!$this->postService->updatePost($postID, $request)) return response()->json("Bad request update post information", 400);
