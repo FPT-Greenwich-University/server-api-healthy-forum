@@ -58,7 +58,7 @@ class PostController extends Controller
         $post = $this->postRepository->findById($postID);
         if (is_null($post)) return response()->json("Post Not found", 404);
 
-        if (!$this->fileServices->deleteFile($post->image->path)) return response()->json("Bad Request to delete image", 400); // delete file image
+        $this->fileServices->deleteFile($post->image->path); // delete file image
 
         if (!$this->postService->deletePost($userID, $postID, $request)) return response()->json("Bad request", 400);
 
