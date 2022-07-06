@@ -53,8 +53,7 @@ class PostController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public
-    function deletePost($userID, $postID, Request $request): JsonResponse
+    public function deletePost($userID, $postID, Request $request): JsonResponse
     {
         $post = $this->postRepository->findById($postID);
         if (is_null($post)) return response()->json("Post Not found", 404);
