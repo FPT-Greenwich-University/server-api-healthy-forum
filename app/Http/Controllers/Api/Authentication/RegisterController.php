@@ -16,6 +16,7 @@ class RegisterController extends Controller
     /**
      * Get the list of register user who request to become doctor role
      *
+     * @param Request $request
      * @return JsonResponse
      */
     public function getListRegisterDoctorRoles(Request $request): JsonResponse

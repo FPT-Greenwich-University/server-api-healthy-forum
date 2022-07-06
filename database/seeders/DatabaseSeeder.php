@@ -17,10 +17,10 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             TagSeeder::class,
             RolePermissionSeeder::class,
-            UserSeeder::class,
+//            UserSeeder::class,
             AdminAccountSeeder::class,
             DoctorAccountSeeder::class,
-            PostSeeder::class,
+//            PostSeeder::class,
         ]);
     }
 }

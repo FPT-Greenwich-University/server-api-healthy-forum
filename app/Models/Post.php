@@ -106,7 +106,7 @@ class Post extends Model
      * @param $query
      * @return void
      */
-    public function scopeIsPublished($query)
+    public function scopeIsPublished($query): void
     {
         $query->where('posts.is_published', 1);
     }
@@ -117,7 +117,7 @@ class Post extends Model
      * @param $query
      * @return void
      */
-    public function scopeIsNotPublished($query)
+    public function scopeIsNotPublished($query): void
     {
         $query->where('posts.is_published', 0);
     }
@@ -129,7 +129,7 @@ class Post extends Model
      * @param $tagID -- The id of tags tables
      * @return void
      */
-    public function scopeTag($query, $tagID)
+    public function scopeTag($query, $tagID): void
     {
         $query->join('post_tag', function ($join) {
             $join->on('posts.id', '=', 'post_tag.post_id');

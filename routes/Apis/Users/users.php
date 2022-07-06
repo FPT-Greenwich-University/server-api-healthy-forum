@@ -27,7 +27,7 @@ Route::controller(DoctorController::class)
 /**
  * Admin or doctor delete post
  */
-Route::delete('/posts/{postID}', [PostController::class, 'deletePost'])
+Route::delete('/users/{userID}/posts/{postID}', [PostController::class, 'deletePost'])
     ->middleware(['auth:sanctum', 'has.any.roles:admin,doctor']);
 
 /**

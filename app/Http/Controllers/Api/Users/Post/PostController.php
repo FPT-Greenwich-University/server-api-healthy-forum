@@ -5,23 +5,22 @@ namespace App\Http\Controllers\Api\Users\Post;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Post\CreatePostRequest;
 use App\Repositories\Interfaces\IPostRepository;
-use App\Repositories\Interfaces\IPostTagRepository;
 use App\Services\FileServices\FileServicesContract;
-use Exception;
+use App\Services\PostServices\PostServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
     private IPostRepository $postRepository;
-    private IPostTagRepository $postTagRepository;
     private FileServicesContract $fileServices;
-    public function __construct(IPostRepository $postRepository, FileServicesContract $fileServicesContract, IPostTagRepository $postTagRepository)
+    private readonly PostServiceInterface $postService;
+
+    public function __construct(IPostRepository $postRepository, FileServicesContract $fileServicesContract, PostServiceInterface $postService)
     {
         $this->postRepository = $postRepository;
-        $this->postTagRepository = $postTagRepository;
         $this->fileServices = $fileServicesContract;
+        $this->postService = $postService;
     }
 
     /**
@@ -32,73 +31,38 @@ class PostController extends Controller
      */
     public function createPost(CreatePostRequest $request): JsonResponse
     {
-        try {
-            DB::beginTransaction();
+        $file = $request->file('thumbnail'); // retrieve a file
+        $fileName = $file->hashName(); // Generate a unique, random name...
+        $targetDir = 'posts/thumbnails/'; // set default path
 
-            $attributes = $request->only(['title', 'body', 'category_id', 'description']);
-            $attributes['user_id'] = $request->user()->id; // assign user_id to array
+        if (!$this->fileServices->storeFile($file, $targetDir, $fileName)) return response()->json("Bad request store a image", 400);
 
-            // Store a post
-            $post = $this->postRepository->create($attributes);
+        $filePath = $targetDir . $fileName;
 
-            // Assign tag to post
-            $this->postRepository->assignPostTags($post->id, $request->input('tags'));
+        if (!$this->postService->createNewPost($filePath, $request)) return response()->json("Bad request store post information", 400); // Store post into database
 
-            // Store a thumbnail
-            $file = $request->file('thumbnail'); // retrieve a file
-            $fileName = $file->hashName(); // Generate a unique, random name...
-            $targetDir = 'posts/thumbnails/'; // set default path
-
-            $this->fileServices->storeFile($file, $targetDir, $fileName);
-
-            $filePath = $targetDir . $fileName;
-            $this->postRepository->createPostImage($post->id, $filePath);
-
-            DB::commit(); // all OK
-            return response()->json('Create Success', 201);
-        } catch (Exception $exception) {
-            DB::rollBack();
-            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'Code' => $exception->getCode(), 'File' => $exception->getFile(), 'Trace' => $exception->getTrace()], 500);
-        }
+        return response()->json('Create Success', 201); // Success
     }
 
 
     /**
      * Doctor deletes the post in resources
      *
-     * @param Request $request
+     * @param $userID
      * @param $postID
+     * @param Request $request
      * @return JsonResponse
      */
-    public function deletePost(Request $request, $postID): JsonResponse
+    public
+    function deletePost($userID, $postID, Request $request): JsonResponse
     {
-        try {
-            DB::beginTransaction();
+        $post = $this->postRepository->findById($postID);
+        if (is_null($post)) return response()->json("Post Not found", 404);
 
-            $post = $this->postRepository->findById($postID);
+        if (!$this->fileServices->deleteFile($post->image->path)) return response()->json("Bad Request to delete image", 400); // delete file image
 
-            if (is_null($postID)) return response()->json("Post not found", 404);
+        if (!$this->postService->deletePost($userID, $postID, $request)) return response()->json("Bad request", 400);
 
-            $user = $request->user(); // get current user
-
-            // Ensure the user has own the post or have role admin
-            if ($user->id === $post->user_id || $user->hasRole('admin')) {
-                $this->fileServices->deleteFile($post->image->path); // delete file image
-
-                $this->postTagRepository->deletePostTags($post->id);
-                // DB::table('post_tag')->where('post_id', $postID)->delete();
-
-                $this->postRepository->deletePost($postID);
-
-                // All Good
-                DB::commit();
-                return response()->json('Delete the post successful', 204);
-            }
-
-            return response()->json("You don't have permission to delete this post", 403);
-        } catch (Exception $exception) {
-            DB::rollBack();
-            return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'Code' => $exception->getCode(), 'File' => $exception->getFile(), 'Trace' => $exception->getTrace()], 500);
-        }
+        return response()->json("", 204);
     }
 }

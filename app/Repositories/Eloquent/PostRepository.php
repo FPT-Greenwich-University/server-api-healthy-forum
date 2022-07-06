@@ -176,24 +176,7 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function assignPostTags(int $postId, array $tags)
     {
         try {
-            return $this->model->find($postId)->tags()->attach($tags);
-        } catch (Exception $exception) {
-            return $exception->getMessage();
-        }
-    }
-
-    public function deletePost(int $postId)
-    {
-        try {
-            $post = $this->model->find($postId);
-            $post->comments()->delete();
-            $post->postRatings()->delete();
-            $post->favorites()->delete();
-            $post->tags()->delete();
-            $post->postLikes()->delete();
-            $post->image()->delete(); // Delete image thumbnail
-            $post->delete(); // delete the post
-            return true;
+            return $this->model->find($postId)->tags()->attach($tags, ['created_at' => now(), 'updated_at' => now()]);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -222,7 +205,7 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function doctorGetDetailPost(int $postId)
     {
         try {
-            return $this->model->with(['image', 'category', 'user'])->find($postId);
+            return $this->model->with(['image', 'category', 'user', 'tags'])->find($postId);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -233,11 +216,11 @@ class PostRepository extends BaseRepository implements IPostRepository
         try {
             return QueryBuilder::for(Post::class)
                 ->allowedFilters([
-                    AllowedFilter::scope('is_published'),
                     AllowedFilter::exact('category_id'),
                     AllowedFilter::exact('tag_id', 'tags.id', true)
                 ])
                 ->with(['image', 'category', 'user', 'tags'])
+                ->isPublished()
                 ->allowedSorts('published_at')
                 ->paginate($perPage);
         } catch (Exception $exception) {

@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -69,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => env('APP_TIMEZONE','UTC'),
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------
@@ -179,6 +179,7 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         \App\Providers\RepositoryServiceProvider::class,
         \App\Providers\FileManagerServiceProvider::class,
+        \App\Providers\PostServiceProvider::class,
     ],
 
     /*

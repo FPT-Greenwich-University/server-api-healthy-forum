@@ -12,6 +12,8 @@ interface IPostRepository extends IEloquentRepository
 
     public function getDetailPost(int $id);
 
+    public function doctorGetDetailPost(int $postId);
+
     public function getListPostIdByTag(int $tagId);
 
     public function getPostsByTag(int $tagId, int $perPage);
@@ -33,11 +35,6 @@ interface IPostRepository extends IEloquentRepository
     public function createPostImage(int $postId, string $filePath);
 
     public function updatePostImage(int $postId, string $filePath);
-
-    /**
-     * Delete post with all related relationship constraint
-     */
-    public function deletePost(int $postId);
 
     public function storePostComment(int $postId, array $attributes);
 
