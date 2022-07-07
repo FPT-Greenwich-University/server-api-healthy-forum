@@ -37,7 +37,8 @@ class DoctorController extends Controller
 
         if (is_null($user)) return response()->json("User not found", 404);
 
-        $posts = $this->postRepository->getPostsByUser($userID);
+        $perPage = 5;
+        $posts = $this->postRepository->getPostsByUser($userID, $perPage);
         return response()->json($posts);
     }
 
