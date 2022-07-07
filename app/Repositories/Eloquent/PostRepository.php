@@ -91,6 +91,22 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
+    /**
+     * Doctor get their posts
+     *
+     * @param integer $userId
+     * @param integer $itemPerPage the total number item in per page
+     */
+    public function doctorGetOwnPosts(int $userId, int $itemPerPage)
+    {
+        try {
+            return $this->model->where('user_id', $userId)
+                ->with(['image', 'category', 'user'])
+                ->paginate($itemPerPage);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 
     public function searchPosts(string $title, int $perPage)
     {
@@ -227,6 +243,4 @@ class PostRepository extends BaseRepository implements IPostRepository
             return $exception->getMessage();
         }
     }
-
-
 }

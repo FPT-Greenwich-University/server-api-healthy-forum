@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\Filter\FilterController;
 use App\Http\Controllers\Api\Public\Categories\CategoryController;
 use App\Http\Controllers\Api\Public\Comments\PublicCommentController;
 use App\Http\Controllers\Api\Public\PostLikes\PublicPostLikeController;
@@ -28,9 +27,9 @@ Route::controller(PublicPostController::class)->group(function () {
 });
 
 /**
- * Doctor get all post
+ * Get all published post of doctor
  */
-Route::get('/users/{userID}/posts', [DoctorController::class, 'getPosts']); // get doctor post
+Route::get('/users/{userID}/published-posts', [DoctorController::class, 'getPublishedPostsByUser']); // get doctor post
 
 /**
  * Post tag routes

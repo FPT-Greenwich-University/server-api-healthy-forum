@@ -12,6 +12,8 @@ interface IPostRepository extends IEloquentRepository
 
     public function getDetailPost(int $id);
 
+    public function doctorGetOwnPosts(int $userId, int $itemPerPage);
+
     public function doctorGetDetailPost(int $postId);
 
     public function getListPostIdByTag(int $tagId);
