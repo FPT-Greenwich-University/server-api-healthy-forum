@@ -9,6 +9,7 @@ use App\Repositories\Interfaces\IUserRepository;
 use App\Services\FileServices\FileServicesContract;
 use App\Services\PostServices\PostServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DoctorController extends Controller
 {
@@ -26,17 +27,26 @@ class DoctorController extends Controller
     }
 
     /**
-     * Get posts of doctor
+     * Get published posts of doctor
      * @param $userID
      * @return JsonResponse
      */
-    public function getPosts($userID): JsonResponse
+    public function getPublishedPostsByUser($userID): JsonResponse
     {
         $user = $this->userRepository->findById($userID);
 
         if (is_null($user)) return response()->json("User not found", 404);
 
         $posts = $this->postRepository->getPostsByUser($userID);
+        return response()->json($posts);
+    }
+
+    public function doctorGetOwnPosts(int $userId, Request $request): JsonResponse
+    {
+        if ($userId != $request->user()->id) return response()->json("Not found", 404);
+
+        $itemPerPage = 5;
+        $posts = $this->postRepository->doctorGetOwnPosts($userId, $itemPerPage);
         return response()->json($posts);
     }
 

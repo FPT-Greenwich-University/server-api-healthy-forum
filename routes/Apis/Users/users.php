@@ -20,6 +20,7 @@ Route::controller(PostController::class)
 Route::controller(DoctorController::class)
     ->middleware(['auth:sanctum', 'role:doctor'])
     ->group(function () {
+        Route::get('/users/{userId}/posts', 'doctorGetOwnPosts');
         Route::get('/users/{userID}/posts/{postID}', 'getDetailPost');
         Route::post('/users/{userID}/posts/{postID}', 'update');
     });
