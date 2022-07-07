@@ -26,7 +26,7 @@ interface IPostRepository extends IEloquentRepository
 
     public function assignPostTags(int $postId, array $tags);
 
-    public function getPostsByUser(int $userId);
+    public function getPostsByUser(int $userId, int $perPage);
 
     public function getDetailPostByUser(int $userId, int $postId);
 

@@ -121,14 +121,14 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
-    public function getPostsByUser(int $userId)
+    public function getPostsByUser(int $userId, int $perPage)
     {
         try {
             return $this->model->with(['image'])
                 ->where('user_id', $userId)
                 ->orderBy('id', 'desc')
-                ->take(3)
-                ->get();
+                ->isPublished()
+                ->paginate($perPage);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
