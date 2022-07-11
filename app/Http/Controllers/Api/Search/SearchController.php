@@ -16,16 +16,23 @@ class SearchController extends Controller
         $this->postRepository = $postRepository;
     }
 
+    /**
+     * Search the posts by title
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function searchPosts(Request $request): JsonResponse
     {
-        $perPage = 5;
-        $title = $request->query('title');
+        $perPage = 5; // The total in one page
+        $title = $request->query('title'); // Retrieve query title from url
 
+        // If request have query title and it not empty string
         if ($request->has('title') && !empty($title)) {
             $posts = $this->postRepository->searchPosts($title, $perPage);
             return response()->json($posts);
         }
 
-        return response()->json($this->postRepository->getPosts($perPage));
+        return response()->json($this->postRepository->getPosts($perPage)); // Return the posts
     }
 }

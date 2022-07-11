@@ -45,5 +45,5 @@ Route::controller(VerifyAccountController::class)->group(function () {
 Route::controller(RegisterController::class)->middleware(['auth:sanctum'])->group(function () {
     Route::get('/register/doctor-role', 'getListRegisterDoctorRoles')->middleware('role:admin');
     Route::post('/register/doctor-role', 'registerWithRoleDoctor');
-    Route::put('/register/doctor-role/{registerUserID}', 'acceptRegisterDoctorRole')->middleware('role:admin');
+    Route::put('/register/doctor-role/{registeruserId}', 'acceptRegisterDoctorRole')->middleware('role:admin');
 });

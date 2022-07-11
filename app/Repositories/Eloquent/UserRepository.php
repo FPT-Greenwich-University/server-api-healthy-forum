@@ -23,18 +23,17 @@ class UserRepository extends BaseRepository implements IUserRepository
         }
     }
 
-    public function getUsersWithoutAdmin(string $roleName, array $list_id)
+    public function getUsersWithoutAdmin(string $roleName, array $listIds)
     {
         try {
             return $this->model->role($roleName)
-                ->whereNotIn('id', $list_id)
+                ->whereNotIn('id', $listIds)
                 ->where('email_verified_at', '!=', null)
                 ->paginate(10)
                 ->withQueryString();
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
-
     }
 
     public function getUserWithRolePermission(int $userId)
@@ -68,7 +67,6 @@ class UserRepository extends BaseRepository implements IUserRepository
     public function getUserWithProfile(int $userId)
     {
         try {
-
             return $this->model->with(["profile"])->find($userId);
         } catch (Exception $exception) {
             return $exception->getMessage();

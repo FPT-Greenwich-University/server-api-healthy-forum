@@ -21,14 +21,14 @@ Route::controller(DoctorController::class)
     ->middleware(['auth:sanctum', 'role:doctor'])
     ->group(function () {
         Route::get('/users/{userId}/posts', 'doctorGetOwnPosts');
-        Route::get('/users/{userID}/posts/{postID}', 'getDetailPost');
-        Route::post('/users/{userID}/posts/{postID}', 'update');
+        Route::get('/users/{userId}/posts/{postId}', 'getDetailPost');
+        Route::post('/users/{userId}/posts/{postId}', 'update');
     });
 
 /**
  * Admin or doctor delete post
  */
-Route::delete('/users/{userID}/posts/{postID}', [PostController::class, 'deletePost'])
+Route::delete('/users/{userId}/posts/{postId}', [PostController::class, 'deletePost'])
     ->middleware(['auth:sanctum', 'has.any.roles:admin,doctor']);
 
 /**
@@ -38,11 +38,11 @@ Route::controller(PostLikeController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
         // Check user like is exits
-        Route::get('/posts/{postID}/likes/is-exist', 'checkUserLikePost');
+        Route::get('/posts/{postId}/likes/is-exist', 'checkUserLikePost');
         // The user like the post
-        Route::post('/posts/{postID}/likes', 'likeThePost');
+        Route::post('/posts/{postId}/likes', 'likeThePost');
         // The user unlike the post
-        Route::delete('/posts/{postID}/likes', 'unlikeThePost');
+        Route::delete('/posts/{postId}/likes', 'unlikeThePost');
     });
 
 /**
@@ -51,8 +51,8 @@ Route::controller(PostLikeController::class)
 Route::controller(PostCommentController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
-        Route::post('/posts/{postID}/comments', 'storePostComment');
-        Route::post('/posts/{postID}/comments/{commentID}/reply', 'replyPostComment');
+        Route::post('/posts/{postId}/comments', 'storePostComment');
+        Route::post('/posts/{postId}/comments/{commentId}/reply', 'replyPostComment');
     });
 
 /**
@@ -62,11 +62,11 @@ Route::prefix('/users')
     ->controller(PostFavoriteController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
-        Route::get('/{userID}/favorites/posts', 'index')->withoutMiddleware(['auth:sanctum', 'api']);
+        Route::get('/{userId}/favorites/posts', 'index')->withoutMiddleware(['auth:sanctum', 'api']);
         // Check is exits the post in favorite list
-        Route::get('/{userID}/favorites/posts/{postID}', 'checkUserFollow')->withoutMiddleware('auth:sanctum');
+        Route::get('/{userId}/favorites/posts/{postId}', 'checkUserFollow')->withoutMiddleware('auth:sanctum');
         Route::post('/favorites/posts', 'store'); // store new post to favorite post list
-        Route::delete('{userID}/favorites/posts/{postID}', 'destroy');
+        Route::delete('{userId}/favorites/posts/{postId}', 'destroy');
     });
 
 /**
@@ -76,11 +76,11 @@ Route::prefix('/users')
     ->controller(DoctorFavoriteController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
-        Route::get('/{userID}/favorites/doctors', 'index')->withoutMiddleware(['auth:sanctum', 'api']);
+        Route::get('/{userId}/favorites/doctors', 'index')->withoutMiddleware(['auth:sanctum', 'api']);
         // Check is exits doctor in favorite list
-        Route::get('/{userID}/favorites/doctors/{doctorID}', 'checkUserFollow')->withoutMiddleware('auth:sanctum');
+        Route::get('/{userId}/favorites/doctors/{doctorId}', 'checkUserFollow')->withoutMiddleware('auth:sanctum');
         // add new doctor to favorite list
         Route::post('/favorites/doctors', 'addFavoriteItem');
         // Remove doctor from favorite list
-        Route::delete('{userID}/favorites/doctors/{doctorID}', 'removeFavoriteItem');
+        Route::delete('{userId}/favorites/doctors/{doctorId}', 'removeFavoriteItem');
     });

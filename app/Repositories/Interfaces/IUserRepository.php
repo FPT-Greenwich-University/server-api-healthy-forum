@@ -11,10 +11,10 @@ interface IUserRepository extends IEloquentRepository
 
     /**
      * @param string $roleName
-     * @param array $list_id list id user not include in return result
+     * @param array $listIds list id user not include in return result
      * @return mixed
      */
-    public function getUsersWithoutAdmin(string $roleName, array $list_id);
+    public function getUsersWithoutAdmin(string $roleName, array $listIds);
 
     /**
      * @param int $userId

@@ -11,9 +11,9 @@ use Illuminate\Http\Request;
 
 class PublicPostController extends Controller
 {
-    private IPostRepository $postRepos;
-    private ITagRepository $tagRepos;
-    private ICategoryRepository $categoryRepos;
+    private readonly IPostRepository $postRepos;
+    private readonly ITagRepository $tagRepos;
+    private readonly ICategoryRepository $categoryRepos;
 
     public function __construct(IPostRepository $IPostRepository, ITagRepository $ITagRepository, ICategoryRepository $categoryRepository)
     {
@@ -30,37 +30,22 @@ class PublicPostController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        if ($request->query('tag')) {
-            $tag = $this->tagRepos->findById($request->input('tag'));
-
-            if (is_null($tag)) return response()->json("Post's tag not found", 404);
-
-            return response()->json($this->postRepos->getPostsByTag($request->input('tag'), 5));
-        }
-
-        if ($request->query('category')) {
-            $category = $this->categoryRepos->findById($request->input('category'));
-
-            if (is_null($category)) return response()->json("Post's category not found");
-
-            return response()->json($this->postRepos->getPostsByCategory($request->input('category'), 5));
-        }
-
-        return response()->json($this->postRepos->filterPosts(10)); // default
+        $perPage = 10; // the total post in one page
+        return response()->json($this->postRepos->filterPosts($perPage));
     }
 
     /**
      * Display the specified the post.
      *
-     * @param $postID
+     * @param integer $postId
      * @return JsonResponse
      */
-    public function show($postID): JsonResponse
+    public function show(int $postId): JsonResponse
     {
-        $result = $this->postRepos->getDetailPost($postID);
+        $post = $this->postRepos->getDetailPost($postId); // Get the detail post
 
-        if (is_null($result)) return response()->json("Post not found", 404);
+        if (is_null($post)) return response()->json("Post not found", 404);
 
-        return response()->json($result);
+        return response()->json($post);
     }
 }

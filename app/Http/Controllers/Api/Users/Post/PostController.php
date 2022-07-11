@@ -48,19 +48,19 @@ class PostController extends Controller
     /**
      * Doctor deletes the post in resources
      *
-     * @param $userID
-     * @param $postID
+     * @param int $userId
+     * @param int $postId
      * @param Request $request
      * @return JsonResponse
      */
-    public function deletePost($userID, $postID, Request $request): JsonResponse
+    public function deletePost(int $userId, int $postId, Request $request): JsonResponse
     {
-        $post = $this->postRepository->findById($postID);
+        $post = $this->postRepository->findById($postId);
         if (is_null($post)) return response()->json("Post Not found", 404);
 
         $this->fileServices->deleteFile($post->image->path); // delete file image
 
-        if (!$this->postService->deletePost($userID, $postID, $request)) return response()->json("Bad request", 400);
+        if (!$this->postService->deletePost($userId, $postId, $request)) return response()->json("Bad request", 400);
 
         return response()->json("", 204);
     }

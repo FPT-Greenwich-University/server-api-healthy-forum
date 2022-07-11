@@ -27,12 +27,12 @@ class CommentRepository extends BaseRepository implements ICommentRepository
         }
     }
 
-    public function getReplyComments(int $postId, int $rootCommentId)
+    public function getReplyComments(int $postId, int $rootcommentId)
     {
         try {
             return $this->model->with(['user.image'])
                 ->where('post_id', '=', $postId)
-                ->where('parent_comment_id', '=', $rootCommentId)
+                ->where('parent_comment_id', '=', $rootcommentId)
                 ->get();
         } catch (Exception $exception) {
             return $exception->getMessage();

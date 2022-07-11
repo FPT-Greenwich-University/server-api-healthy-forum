@@ -38,10 +38,11 @@ class GoogleAuthController extends Controller
                     'image_url' => $request->image_url,
                     'email_verified_at' => now()
                 ]);
-                $user = User::where('email', $request->email)->first();
+                $user = User::where('email', $request->email)->first(); // Get the user
             }
+
             $token = $user->createToken('auth-token')->plainTextToken; // give a token for user to access backend
-            return response()->json(['token' => $token] );
+            return response()->json(['token' => $token]);
         } catch (Exception $e) {
             return response()->json($e->getMessage(), 500);
         }

@@ -126,16 +126,16 @@ class Post extends Model
      * Scope a query to get only the posts with tag name
      *
      * @param $query
-     * @param $tagID -- The id of tags tables
+     * @param $tagId -- The id of tags tables
      * @return void
      */
-    public function scopeTag($query, $tagID): void
+    public function scopeTag($query, $tagId): void
     {
         $query->join('post_tag', function ($join) {
             $join->on('posts.id', '=', 'post_tag.post_id');
-        })->join('tags', function ($join) use ($tagID) {
+        })->join('tags', function ($join) use ($tagId) {
             $join->on('post_tag.tag_id', '=', 'tags.id')
-                ->where('tags.id', $tagID);
+                ->where('tags.id', $tagId);
         });
     }
 }

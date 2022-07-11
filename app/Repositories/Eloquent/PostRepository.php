@@ -47,9 +47,9 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getPostsByTag(int $tagId, int $perPage)
     {
         try {
-            $listPostIds = $this->getListPostIdByTag($tagId);
+            $listpostIds = $this->getListpostIdByTag($tagId);
             return Post::with(['image', 'category', 'user', 'tags'])
-                ->whereIn('posts.id', $listPostIds)
+                ->whereIn('posts.id', $listpostIds)
                 ->isPublished()
                 ->orderBy('posts.id', 'desc')
                 ->paginate($perPage)
@@ -59,7 +59,7 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
-    public function getListPostIdByTag(int $tagId)
+    public function getListpostIdByTag(int $tagId)
     {
         try {
             return $this->model->tag($tagId)->pluck('posts.id');
@@ -71,9 +71,9 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getPostsByCategory(int $categoryId, int $perPage)
     {
         try {
-            $listPostIds = $this->getListPostIdByCategory($categoryId);
+            $listpostIds = $this->getListpostIdByCategory($categoryId);
             return Post::with(['image', 'category', 'user'])
-                ->whereIn('posts.id', $listPostIds)
+                ->whereIn('posts.id', $listpostIds)
                 ->orderBy('posts.id', 'desc')
                 ->paginate($perPage)
                 ->withQueryString();
@@ -82,7 +82,7 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
-    public function getListPostIdByCategory(int $categoryId)
+    public function getListpostIdByCategory(int $categoryId)
     {
         try {
             return $this->model->where('category_id', '=', $categoryId)->pluck('id');

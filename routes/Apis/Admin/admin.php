@@ -15,8 +15,8 @@ Route::prefix('/admins')
     ->middleware(['role:admin', 'auth:sanctum'])
     ->group(function () {
         Route::get('/posts/not-published', 'getPostsIsNotPublished'); // Get posts where are not published
-        Route::get('/posts/{postID}', 'show');
-        Route::put('/posts/{postID}/publish', 'acceptPublishPost')->where('postID', '[0-9]+'); // Published post by update status => true for the post
+        Route::get('/posts/{postId}', 'show');
+        Route::put('/posts/{postId}/publish', 'acceptPublishPost')->where('postId', '[0-9]+'); // Published post by update status => true for the post
     });
 
 /*
@@ -27,8 +27,8 @@ Route::prefix('/admins')
     ->middleware(['role:admin', 'auth:sanctum'])
     ->group(function () {
         Route::post('/categories', 'store');
-        Route::put('/categories/{categoryID}', 'update');
-        Route::delete('/categories/{categoryID}', 'destroy');
+        Route::put('/categories/{categoryId}', 'update');
+        Route::delete('/categories/{categoryId}', 'destroy');
     });
 
 /**
@@ -41,8 +41,8 @@ Route::prefix('/admins')
         Route::get('/users', 'index'); // List all users
         Route::get('/roles', 'getRoles');
         Route::post('/permissions', 'getPermissionsByRole'); // get all the permissions by the roles
-        Route::get('/users/{userID}/roles', 'getUserRoles');
-        Route::put('/users/{userID}/permissions', 'updatePermission'); // Update permission of the user
+        Route::get('/users/{userId}/roles', 'getUserRoles');
+        Route::put('/users/{userId}/permissions', 'updatePermission'); // Update permission of the user
     });
 
 /**

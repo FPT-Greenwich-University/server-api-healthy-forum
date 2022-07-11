@@ -22,14 +22,14 @@ class ProfileController extends Controller
     /**
      * Get Authenticated user information.
      *
-     * @param $userID
+     * @param $userId
      * @return JsonResponse
      */
-    public function show($userID): JsonResponse
+    public function show($userId): JsonResponse
     {
-        $user = $this->userRepository->getUserWithProfile($userID);
+        $user = $this->userRepository->getUserWithProfile($userId);
 
-        if ($user === null) return response()->json("User Not found", 404);
+        if ($user === null) return response()->json("Not found", 404);
 
         return response()->json($user);
     }
@@ -37,20 +37,21 @@ class ProfileController extends Controller
     /**
      * Update authenticated user information.
      *
-     * @param $userID
+     * @param $userId
      * @param UpdateProfileRequest $request
      * @return JsonResponse
      */
-    public function update($userID, UpdateProfileRequest $request): JsonResponse
+    public function update($userId, UpdateProfileRequest $request): JsonResponse
     {
-        $userId = $request->user()->id; // Get user id
-        $user = $this->userRepository->findById($userID);
-        $attributes = $request->only(['phone', 'description', 'age', 'gender', 'city', 'district', 'ward', 'street']);
-        $attributes['user_id'] = $userId;
+        $userId = $request->user()->id; // Get user's id
+        $user = $this->userRepository->findById($userId); // Get the current user
 
-        if ($userId != $userID || is_null($user)) return response()->json("User not found", 404);
+        $attributes = $request->only(['phone', 'description', 'age', 'gender', 'city', 'district', 'ward', 'street']); // Get body field from http request
+        $attributes['user_id'] = $userId; // Set
 
-        $userProfile = $this->profileRepository->getUserProfile($userId);
+        if ($userId != $userId || is_null($user)) return response()->json("User not found", 404); // Check existed user?
+
+        $userProfile = $this->profileRepository->getUserProfile($userId);  // Get the current user's profile
 
         if (is_null($userProfile)) {
             $this->profileRepository->create($attributes);

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CommentFactory extends Factory
 {
-    public array $listUserID = [];
+    public array $listuserId = [];
 
     /**
      * Define the model's default state.
@@ -20,7 +20,7 @@ class CommentFactory extends Factory
      */
     public function definition()
     {
-        $listUserID = User::all()->pluck('id')->toArray();
+        $listuserId = User::all()->pluck('id')->toArray();
 
         return [
             'content' => $this->faker->colorName,

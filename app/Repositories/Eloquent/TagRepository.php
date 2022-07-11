@@ -28,6 +28,5 @@ class TagRepository extends BaseRepository implements ITagRepository
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
-
     }
 }

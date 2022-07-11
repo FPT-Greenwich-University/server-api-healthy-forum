@@ -28,17 +28,17 @@ class DoctorController extends Controller
 
     /**
      * Get published posts of doctor
-     * @param $userID
+     * @param $userId
      * @return JsonResponse
      */
-    public function getPublishedPostsByUser($userID): JsonResponse
+    public function getPublishedPostsByUser(int $userId): JsonResponse
     {
-        $user = $this->userRepository->findById($userID);
+        $user = $this->userRepository->findById($userId);
 
         if (is_null($user)) return response()->json("User not found", 404);
 
         $perPage = 5;
-        $posts = $this->postRepository->getPostsByUser($userID, $perPage);
+        $posts = $this->postRepository->getPostsByUser($userId, $perPage);
         return response()->json($posts);
     }
 
@@ -54,30 +54,30 @@ class DoctorController extends Controller
     /**
      * Detail post by user id
      *
-     * @param $userID
-     * @param $postID
+     * @param $userId
+     * @param $postId
      * @return JsonResponse
      */
-    public function getDetailPost($userID, $postID): JsonResponse
+    public function getDetailPost(int $userId, int $postId): JsonResponse
     {
-        $post = $this->postRepository->doctorGetDetailPost($postID);
+        $post = $this->postRepository->doctorGetDetailPost($postId);
 
-        if (is_null($post) || $post->user_id != $userID) return response()->json("Post not found", 404);
+        if (is_null($post) || $post->user_id != $userId) return response()->json("Post not found", 404);
 
         return response()->json($post);
     }
 
 
-    public function update(UpdatePostRequest $request, $userID, $postID)
+    public function update(UpdatePostRequest $request, int $userId, int $postId)
     {
 
-        $post = $this->postRepository->findById($postID);
+        $post = $this->postRepository->findById($postId);
 
         if (is_null($post)) return response()->json("Post Not found", 404);
 
-        if ($post->user_id != $userID) return response()->json("Bad request user not found", 404);
+        if ($post->user_id != $userId) return response()->json("Bad request user not found", 404);
 
-        if (!$this->postService->updatePost($postID, $request)) return response()->json("Bad request update post information", 400);
+        if (!$this->postService->updatePost($postId, $request)) return response()->json("Bad request update post information", 400);
 
         // If user want update a thumbnail of the post
         if ($request->hasFile('thumbnail')) {
@@ -93,7 +93,7 @@ class DoctorController extends Controller
 
             $filePath = $targetDir . $fileName; // set file path
 
-            $this->postRepository->updatePostImage($postID, $filePath); // update current path image
+            $this->postRepository->updatePostImage($postId, $filePath); // update current path image
         }
 
         return response()->json("", 204);

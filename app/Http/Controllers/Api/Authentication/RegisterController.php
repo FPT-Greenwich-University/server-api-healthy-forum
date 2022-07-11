@@ -16,10 +16,9 @@ class RegisterController extends Controller
     /**
      * Get the list of register user who request to become doctor role
      *
-     * @param Request $request
      * @return JsonResponse
      */
-    public function getListRegisterDoctorRoles(Request $request): JsonResponse
+    public function getListRegisterDoctorRoles(): JsonResponse
     {
         try {
             $users = RegisterDoctorRole::with(['user'])
@@ -60,22 +59,22 @@ class RegisterController extends Controller
     /**
      * Admin accept request register doctor role from normal user
      *
-     * @param $registerUserID
+     * @param $registeruserId
      * @return JsonResponse
      */
-    public function acceptRegisterDoctorRole($registerUserID): JsonResponse
+    public function acceptRegisterDoctorRole($registeruserId): JsonResponse
     {
         try {
             $registerUser = DB::table('register_doctor_role_drafts')
-                ->where('user_id', $registerUserID)
+                ->where('user_id', $registeruserId)
                 ->where('is_accept', false)
                 ->first();
 
             if (!is_null($registerUser)) {  // If exist user then
                 DB::table('register_doctor_role_drafts')
-                    ->where('user_id', $registerUserID)
+                    ->where('user_id', $registeruserId)
                     ->update(['is_accept' => true]);
-                $user = User::findOrFail($registerUserID);
+                $user = User::findOrFail($registeruserId);
                 $user->assignRole('doctor'); // Assign doctor role
                 $user->givePermissionTo('create a post', 'update a post', 'delete a post'); // Give permission of doctor role
                 return response()->json('Accept success');

@@ -33,13 +33,13 @@ class PublicLocationController extends Controller
     /**
      * Get all the districts of the city
      *
-     * @param $cityID
+     * @param $cityId
      * @return mixed
      */
-    public function getDistricts($cityID): mixed
+    public function getDistricts(int $cityId): mixed
     {
         try {
-            $response = Http::get("$this->domainApi/city/$cityID/district");
+            $response = Http::get("$this->domainApi/city/$cityId/district");
             return $response->json();
         } catch (Exception $exception) {
             return response()->json($exception->getMessage(), 500);
@@ -49,13 +49,13 @@ class PublicLocationController extends Controller
     /**
      * Get all the wards of the distinct
      *
-     * @param $distinctID
+     * @param $distinctId
      * @return mixed
      */
-    public function getWards($distinctID): mixed
+    public function getWards(int $distinctId): mixed
     {
         try {
-            $response = Http::get("$this->domainApi/district/$distinctID/ward");
+            $response = Http::get("$this->domainApi/district/$distinctId/ward");
             return $response->json();
         } catch (Exception $exception) {
             return response()->json($exception->getMessage(), 500);
