@@ -28,7 +28,7 @@ class PublicPostLikeController extends Controller
     {
         $post = $this->postRepository->findById($postId); // Get the post
 
-        if (is_null($post)) return response()->json("Post not found", 404); // If post is not exitsed return not found http
+        if (is_null($post)) return response()->json("Post not found", 404); // If post is not exits return not found http
 
         $totalLikes = $this->postLikeRepository->getTotalLike($postId); // Get the total like of the post
 
