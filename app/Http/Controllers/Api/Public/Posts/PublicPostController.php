@@ -48,4 +48,20 @@ class PublicPostController extends Controller
 
         return response()->json($post);
     }
+
+    /**
+     * Get random list related posts
+     *
+     * @param int $categoryId
+     * @return JsonResponse
+     */
+    public function getRelatedPosts(int $categoryId): JsonResponse
+    {
+        $category = $this->categoryRepos->findById($categoryId);
+
+        if (is_null($category)) return response()->json("Not found", 404);
+
+        $limitItem = 6;
+        return response()->json($this->postRepos->getRelatedPostsByCategory($categoryId, $limitItem)); // get random related post
+    }
 }

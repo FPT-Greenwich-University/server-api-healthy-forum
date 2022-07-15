@@ -26,6 +26,20 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
+    public function getRelatedPostsByCategory(int $categoryId, int $limitItem)
+    {
+        try {
+            return $this->model->with(["image", "category", "user"])
+                ->isPublished()
+                ->where("category_id", $categoryId)
+                ->inRandomOrder()
+                ->limit($limitItem)
+                ->get();
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
     public function getPostsNotPublish(int $per_page)
     {
         try {
@@ -59,7 +73,7 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
-    public function getListpostIdByTag(int $tagId)
+    public function getListPostIdByTag(int $tagId)
     {
         try {
             return $this->model->tag($tagId)->pluck('posts.id');
