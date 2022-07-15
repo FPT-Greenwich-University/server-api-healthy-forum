@@ -22,8 +22,8 @@ Route::controller(CategoryController::class)->group(function () {
  */
 Route::controller(PublicPostController::class)->group(function () {
     Route::get('/posts', 'index');
-    Route::get('/posts/tags/{tagId}', 'getPostsByTag'); // get the posts by tag
     Route::get('/posts/{postId}', 'show');
+    Route::get("/related-posts/{categoryId}", "getRelatedPosts");
 });
 
 /**

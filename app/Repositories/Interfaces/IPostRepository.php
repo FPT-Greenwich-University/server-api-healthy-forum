@@ -8,6 +8,8 @@ interface IPostRepository extends IEloquentRepository
 {
     public function getPosts(int $per_page);
 
+    public function getRelatedPostsByCategory(int $categoryId, int $limitItem);
+
     public function getPostsNotPublish(int $per_page);
 
     public function getDetailPost(int $id);
@@ -16,7 +18,7 @@ interface IPostRepository extends IEloquentRepository
 
     public function doctorGetDetailPost(int $postId);
 
-    public function getListpostIdByTag(int $tagId);
+    public function getListPostIdByTag(int $tagId);
 
     public function getPostsByTag(int $tagId, int $perPage);
 
