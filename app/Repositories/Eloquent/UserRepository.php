@@ -72,4 +72,13 @@ class UserRepository extends BaseRepository implements IUserRepository
             return $exception->getMessage();
         }
     }
+
+    public function updatePassword(int $userId, string $password)
+    {
+        try {
+            $this->model->where('id', $userId)->update(['password' => bcrypt($password)]);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }

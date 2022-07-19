@@ -180,6 +180,7 @@ return [
         \App\Providers\RepositoryServiceProvider::class,
         \App\Providers\FileManagerServiceProvider::class,
         \App\Providers\PostServiceProvider::class,
+        \App\Providers\CustomAuthServicesProvider::class,
     ],
 
     /*
