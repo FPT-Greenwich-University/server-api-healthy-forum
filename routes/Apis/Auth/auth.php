@@ -22,6 +22,15 @@ Route::controller(AuthController::class)->group(function () {
  */
 Route::post('/login/google', [GoogleAuthController::class, 'login']);
 
+
+/**
+ * Change password
+ */
+Route::controller(\App\Http\Controllers\Api\Authentication\ChangePasswordController::class)
+    ->group(function () {
+        Route::put("/users/{userId}/passwords", "updatePassword");
+    });
+
 /**
  * Reset password
  */

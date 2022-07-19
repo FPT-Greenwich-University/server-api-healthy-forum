@@ -28,7 +28,7 @@ class DoctorController extends Controller
 
     /**
      * Get published posts of doctor
-     * @param $userId
+     * @param int $userId
      * @return JsonResponse
      */
     public function getPublishedPostsByUser(int $userId): JsonResponse
