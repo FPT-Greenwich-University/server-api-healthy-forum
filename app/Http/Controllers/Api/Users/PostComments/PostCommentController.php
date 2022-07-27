@@ -24,47 +24,48 @@ class PostCommentController extends Controller
      * Create a new comment into the post
      *
      * @param CreatePostCommentRequest $request
-     * @param $postID
+     * @param int $postId
      * @return JsonResponse
      */
-    public function storePostComment(CreatePostCommentRequest $request, $postID): JsonResponse
+    public function storePostComment(CreatePostCommentRequest $request, int $postId): JsonResponse
     {
-        $post = $this->postRepository->findById($postID);
+        $post = $this->postRepository->findById($postId);
 
         if (is_null($post)) return response()->json("Post not found", 404);
 
         $attributes = [
             'content' => $request->input('content'),
             'user_id' => $request->user()->id,
-            'post_id' => $postID,
+            'post_id' => $postId,
         ];
-        $this->postRepository->storePostComment($postID, $attributes);
-        return response()->json('Comment success');
+
+        $this->postRepository->storePostComment($postId, $attributes);
+        return response()->json('Success', 201);
     }
 
     /**
      * Create a new child comment into the post
      *
-     * @param $postID
-     * @param $commentID
+     * @param $postId
+     * @param $commentId
      * @param ReplyPostCommentRequest $request
      * @return JsonResponse
      */
-    public function replyPostComment($postID, $commentID, ReplyPostCommentRequest $request): JsonResponse
+    public function replyPostComment(int $postId, int $commentId, ReplyPostCommentRequest $request): JsonResponse
     {
-        $post = $this->postRepository->findById($postID);
-        $rootComment = $this->commentRepository->findById($commentID); // root comment of reply comment
+        $post = $this->postRepository->findById($postId);
+        $rootComment = $this->commentRepository->findById($commentId); // root comment of reply comment
 
         if (is_null($post) || is_null($rootComment)) return response()->json("Not found", 404);
 
         $attributes = [
             'content' => $request->input('content'),
             'user_id' => $request->user()->id,
-            'post_id' => $postID,
-            'parent_comment_id' => $request->input('parent_comment_id') // root comment id
+            'post_id' => $postId,
+            'parent_comment_id' => $commentId // root comment id
         ];
 
-        $this->postRepository->storePostComment($postID, $attributes);
-        return response()->json("Create reply comment success", 201);
+        $this->postRepository->storePostComment($postId, $attributes);
+        return response()->json("Success", 201);
     }
 }

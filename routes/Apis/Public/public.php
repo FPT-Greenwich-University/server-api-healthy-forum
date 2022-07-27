@@ -3,7 +3,6 @@
 use App\Http\Controllers\Api\Public\Categories\CategoryController;
 use App\Http\Controllers\Api\Public\Comments\PublicCommentController;
 use App\Http\Controllers\Api\Public\PostLikes\PublicPostLikeController;
-use App\Http\Controllers\Api\Public\PostRatings\PublicPostRatingController;
 use App\Http\Controllers\Api\Public\Posts\PublicPostController;
 use App\Http\Controllers\Api\Public\PostTags\PublicPostTagController;
 use App\Http\Controllers\Api\Public\PublicLocationController;
@@ -23,29 +22,29 @@ Route::controller(CategoryController::class)->group(function () {
  */
 Route::controller(PublicPostController::class)->group(function () {
     Route::get('/posts', 'index');
-    Route::get('/posts/tags/{tagID}', 'getPostsByTag'); // get the posts by tag
-    Route::get('/posts/{postID}', 'show');
+    Route::get('/posts/{postId}', 'show');
+    Route::get("/related-posts/{categoryId}", "getRelatedPosts");
 });
 
 /**
- * Doctor get all post
+ * Get all published post of doctor
  */
-Route::get('/users/{userID}/posts', [DoctorController::class, 'getPosts']); // get doctor post
+Route::get('/users/{userId}/published-posts', [DoctorController::class, 'getPublishedPostsByUser']); // get doctor post
 
 /**
  * Post tag routes
  */
 Route::controller(PublicPostTagController::class)->group(function () {
     Route::get('/tags', 'index');
-    Route::get('/posts/{postID}/tags', 'getPostTags'); // get the tags of the post
+    Route::get('/posts/{postId}/tags', 'getPostTags'); // get the tags of the post
 });
 
 /**
  * Comment routes
  */
 Route::controller(PublicCommentController::class)->group(function () {
-    Route::get('/posts/{postID}/comments', 'index');
-    Route::get('/posts/{postID}/comments/{commentID}/reply', 'getReplyComments');
+    Route::get('/posts/{postId}/comments', 'index');
+    Route::get('/posts/{postId}/comments/{commentId}/reply', 'getReplyComments');
 });
 
 
@@ -53,14 +52,7 @@ Route::controller(PublicCommentController::class)->group(function () {
  * Post like routes
  */
 Route::controller(PublicPostLikeController::class)->group(function () {
-    Route::get('/posts/{postID}/total-likes', 'getTotalLike');
-});
-
-/**
- * Post rating routes
- */
-Route::controller(PublicPostRatingController::class)->group(function () {
-    Route::get('/posts/{postID}/ratings', 'getAveragePostRating');
+    Route::get('/posts/{postId}/total-likes', 'getTotalLike');
 });
 
 /**
@@ -68,8 +60,8 @@ Route::controller(PublicPostRatingController::class)->group(function () {
  */
 Route::prefix('/public')->controller(PublicLocationController::class)->group(function () {
     Route::get('/cities', 'getCities');
-    Route::get('/cities/{cityID}/districts', 'getDistricts');
-    Route::get('/districts/{districtsID}/wards', 'getWards');
+    Route::get('/cities/{cityId}/districts', 'getDistricts');
+    Route::get('/districts/{districtsId}/wards', 'getWards');
 });
 
 /**

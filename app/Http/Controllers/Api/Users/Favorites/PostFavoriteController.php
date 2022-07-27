@@ -28,10 +28,10 @@ class PostFavoriteController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function index($userID): JsonResponse
+    public function index(int $userId): JsonResponse
     {
         $perPage = 5;
-        return response()->json($this->favoriteRepository->getListFavoritesPosts($userID, $perPage));
+        return response()->json($this->favoriteRepository->getListFavoritesPosts($userId, $perPage));
     }
 
     /**
@@ -59,14 +59,14 @@ class PostFavoriteController extends Controller
     /**
      * Check post have existed in the favorite list
      *
-     * @param $userID --User id
-     * @param $postID --Post id
+     * @param $userId --User id
+     * @param $postId --Post id
      * @return bool true if existed
      * otherwise false
      */
-    public function checkIsPostFavoriteExist($userID, $postID): bool
+    public function checkIsPostFavoriteExist(int $userId, int $postId): bool
     {
-        $favorite = $this->favoriteRepository->checkFavoriteExisted($userID, $postID, "App\Models\Post");
+        $favorite = $this->favoriteRepository->checkFavoriteExisted($userId, $postId, "App\Models\Post");
 
         if (is_null($favorite)) return false;
 
@@ -75,13 +75,13 @@ class PostFavoriteController extends Controller
 
     /**
      * Check if the post exits in user favorite list
-     * @param $userID
-     * @param $doctorID
+     * @param $userId
+     * @param $doctorId
      * @return JsonResponse
      */
-    public function checkUserFollow($userID, $postID): JsonResponse
+    public function checkUserFollow(int $userId, int $postId): JsonResponse
     {
-        if ($this->checkIsPostFavoriteExist($userID, $postID) === true) return response()->json(true);
+        if ($this->checkIsPostFavoriteExist($userId, $postId) === true) return response()->json(true);
 
         return response()->json(false);
     }
@@ -92,13 +92,13 @@ class PostFavoriteController extends Controller
      * @param $favoriteID
      * @return JsonResponse
      */
-    public function destroy($userID, $postID): JsonResponse
+    public function destroy(int $userId, int $postId): JsonResponse
     {
-        $favorite = $this->favoriteRepository->getDetailFavorite($userID, $postID);
+        $favorite = $this->favoriteRepository->getDetailFavorite($userId, $postId);
 
         if (is_null($favorite)) return response()->json("Resource not found", 404);
 
-        $this->favoriteRepository->removeFavorite($userID, $postID);
+        $this->favoriteRepository->removeFavorite($userId, $postId);
         return response()->json("", 204);
     }
 }

@@ -6,6 +6,8 @@ use App\Models\Post;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\IPostRepository;
 use Exception;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class PostRepository extends BaseRepository implements IPostRepository
 {
@@ -19,6 +21,20 @@ class PostRepository extends BaseRepository implements IPostRepository
     {
         try {
             return $this->model->with(['image', 'category', 'user'])->isPublished()->orderBy('id', 'desc')->paginate($per_page);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function getRelatedPostsByCategory(int $categoryId, int $limitItem)
+    {
+        try {
+            return $this->model->with(["image", "category", "user"])
+                ->isPublished()
+                ->where("category_id", $categoryId)
+                ->inRandomOrder()
+                ->limit($limitItem)
+                ->get();
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -45,9 +61,9 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getPostsByTag(int $tagId, int $perPage)
     {
         try {
-            $listPostIds = $this->getListPostIdByTag($tagId);
+            $listpostIds = $this->getListpostIdByTag($tagId);
             return Post::with(['image', 'category', 'user', 'tags'])
-                ->whereIn('posts.id', $listPostIds)
+                ->whereIn('posts.id', $listpostIds)
                 ->isPublished()
                 ->orderBy('posts.id', 'desc')
                 ->paginate($perPage)
@@ -69,9 +85,9 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getPostsByCategory(int $categoryId, int $perPage)
     {
         try {
-            $listPostIds = $this->getListPostIdByCategory($categoryId);
+            $listpostIds = $this->getListpostIdByCategory($categoryId);
             return Post::with(['image', 'category', 'user'])
-                ->whereIn('posts.id', $listPostIds)
+                ->whereIn('posts.id', $listpostIds)
                 ->orderBy('posts.id', 'desc')
                 ->paginate($perPage)
                 ->withQueryString();
@@ -80,30 +96,29 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
-    public function getListPostIdByCategory(int $categoryId)
+    public function getListpostIdByCategory(int $categoryId)
     {
         try {
             return $this->model->where('category_id', '=', $categoryId)->pluck('id');
         } catch (Exception $exception) {
             return $exception->getMessage();
-            // logger()->error($exception->getMessage());
         }
     }
 
-    public function updateStatusPost(int $postId, array $attributes)
+    /**
+     * Doctor get their posts
+     *
+     * @param integer $userId
+     * @param integer $itemPerPage the total number item in per page
+     */
+    public function doctorGetOwnPosts(int $userId, int $itemPerPage)
     {
         try {
-            // dd($attributes);
-            $post = parent::findById($postId);
-
-            if (is_null($post)) return false;
-
-            $post->update($attributes);
-            return true;
+            return $this->model->where('user_id', $userId)
+                ->with(['image', 'category', 'user'])
+                ->paginate($itemPerPage);
         } catch (Exception $exception) {
             return $exception->getMessage();
-            // logger()->error($exception->getMessage());
-            // return false;
         }
     }
 
@@ -120,14 +135,14 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
-    public function getPostsByUser(int $userId)
+    public function getPostsByUser(int $userId, int $perPage)
     {
         try {
             return $this->model->with(['image'])
                 ->where('user_id', $userId)
                 ->orderBy('id', 'desc')
-                ->take(3)
-                ->get();
+                ->isPublished()
+                ->paginate($perPage);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -191,23 +206,7 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function assignPostTags(int $postId, array $tags)
     {
         try {
-            return $this->model->find($postId)->tags()->attach($tags);
-        } catch (Exception $exception) {
-            return $exception->getMessage();
-        }
-    }
-
-    public function deletePost(int $postId)
-    {
-        try {
-            $post = $this->model->find($postId);
-            $post->comments()->delete();
-            $post->postRatings()->delete();
-            $post->favorites()->delete();
-            $post->tags()->delete();
-            $post->postLikes()->delete();
-            $post->image()->delete(); // Delete image thumbnail
-            $post->delete(); // delete the post 
+            return $this->model->find($postId)->tags()->attach($tags, ['created_at' => now(), 'updated_at' => now()]);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -227,6 +226,42 @@ class PostRepository extends BaseRepository implements IPostRepository
         try {
             $post = $this->model->find($postId);
             $post->favorites()->create(['user_id' => $userId]);
+            return true;
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function doctorGetDetailPost(int $postId)
+    {
+        try {
+            return $this->model->with(['image', 'category', 'user', 'tags'])->find($postId);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function filterPosts(int $perPage)
+    {
+        try {
+            return QueryBuilder::for(Post::class)
+                ->allowedFilters([
+                    AllowedFilter::exact('category_id'),
+                    AllowedFilter::exact('tag_id', 'tags.id', true)
+                ])
+                ->with(['image', 'category', 'user', 'tags'])
+                ->isPublished()
+                ->allowedSorts('published_at')
+                ->paginate($perPage);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function increasePostViewCount(int $id)
+    {
+        try {
+            $this->model->increment("total_view");
         } catch (Exception $exception) {
             return $exception->getMessage();
         }

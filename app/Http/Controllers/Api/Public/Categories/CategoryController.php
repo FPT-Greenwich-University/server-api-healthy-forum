@@ -3,23 +3,21 @@
 namespace App\Http\Controllers\Api\Public\Categories;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
 use App\Repositories\Interfaces\ICategoryRepository;
-use Exception;
 use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
-    private ICategoryRepository  $categoryRepository;
+    private readonly ICategoryRepository  $categoryRepository;
     public function __construct(ICategoryRepository $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
     }
 
 
-    public function etAllCategories(): JsonResponse
+    public function getAllCategories(): JsonResponse
     {
-            $categories = $this->categoryRepository->getAllCategories();
-            return response()->json($categories);
+        $categories = $this->categoryRepository->getAllCategories(); // Get the categories
+        return response()->json($categories);
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * @method static where(string $string, int $userID)
+ * @method static where(string $string, int $userId)
  */
 class Favorite extends Model
 {

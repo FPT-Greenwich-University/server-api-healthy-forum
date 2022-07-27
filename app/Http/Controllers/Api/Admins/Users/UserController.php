@@ -7,19 +7,14 @@ use App\Http\Requests\Api\Admins\Users\Permissions\FetchPermissionsRequest;
 use App\Http\Requests\Api\Admins\Users\Permissions\UpdatePermissionRequest;
 use App\Models\User;
 use App\Repositories\Interfaces\IUserRepository;
-use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use App\Repositories\Interfaces\IRoleRepository;
 
 class UserController extends Controller
 {
-    private IRoleRepository $roleRepos;
-    private IUserRepository $userRepos;
+    private readonly IRoleRepository $roleRepos;
+    private readonly IUserRepository $userRepos;
 
 
     public function __construct(IUserRepository $userRepository, IRoleRepository $roleRepository)
@@ -60,17 +55,16 @@ class UserController extends Controller
     }
 
     /**
-     * Get the detail user with role
+     * Get the detail user include roles and permissions
      *
-     * @param $userID
+     * @param $userId
      * @return JsonResponse
      */
-    public function getUserRoles($userID): JsonResponse
+    public function getUserRoles(int $userId): JsonResponse
     {
+        $result = $this->userRepos->getUserWithRolePermission($userId); // Get detail user
 
-        $result = $this->userRepos->getUserWithRolePermission($userID);
-
-        if ($result === false) return response()->json("User not found", 404);
+        if ($result === false) return response()->json("User not found", 404); // return 404 if not found user in resources
 
         return response()->json($result);
     }
@@ -83,26 +77,25 @@ class UserController extends Controller
      */
     public function getPermissionsByRole(FetchPermissionsRequest $request): JsonResponse
     {
-        $roleId = $request->input('role_id'); // list role id
-        return response()->json($this->roleRepos->getPermissionByRoleId($roleId));
+        $roleId = $request->input('role_id'); // get list role id
+        return response()->json($this->roleRepos->getPermissionByRoleId($roleId)); // Get list permissions by role's id
     }
 
     /**
      * Admin update list permission of user
      *
      * @param UpdatePermissionRequest $request
-     * @param $userID
+     * @param $userId
      * @return JsonResponse
      */
-    public function updatePermission(UpdatePermissionRequest $request, $userID)
+    public function updatePermission(UpdatePermissionRequest $request, int $userId)
     {
-            // Get list permission from request of user
-            $permissions = $request->input('permissions');
+        $permissions = $request->input('permissions'); // Get list permission from request of user
 
-            $result = $this->userRepos->syncPermissions($userID, $permissions);
+        $result = $this->userRepos->syncPermissions($userId, $permissions); // sync permission based on list permission
 
-            if($result === false) return response()->json("User not found", 404);
+        if ($result === false) return response()->json("User not found", 404);
 
-            return response()->json("", 204);
+        return response()->json("", 204);
     }
 }

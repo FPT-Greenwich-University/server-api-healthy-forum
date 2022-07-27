@@ -9,8 +9,8 @@ use Illuminate\Http\JsonResponse;
 
 class PublicCommentController extends Controller
 {
-    private ICommentRepository $commentRepository;
-    private IPostRepository $postRepository;
+    private readonly ICommentRepository $commentRepository;
+    private readonly IPostRepository $postRepository;
 
     public function __construct(ICommentRepository $commentRepository, IPostRepository $postRepository)
     {
@@ -21,33 +21,39 @@ class PublicCommentController extends Controller
     /**
      * Get the parent comment of the post
      *
-     * @param $postID
+     * @param integer $postId
      * @return JsonResponse
      */
-    public function index($postID): JsonResponse
+    public function index(int $postId): JsonResponse
     {
-        $post = $this->postRepository->findById($postID);
+        $post = $this->postRepository->findById($postId); // Get the post
 
         if (is_null($post)) return response()->json("Post not found", 404);
 
 
         $perPage = 5; // Number item in once page
-        $result = $this->commentRepository->getAllComments($postID, $perPage);
+        $result = $this->commentRepository->getAllComments($postId, $perPage);
 
         return response()->json($result);
-
     }
 
-    public function getReplyComments($postID, $commentID): JsonResponse
+    /**
+     * Get the reply comment
+     *
+     * @param integer $postId
+     * @param integer $commentId
+     * @return JsonResponse
+     */
+    public function getReplyComments(int $postId, int $commentId): JsonResponse
     {
-        $post = $this->postRepository->findById($postID);
-        $rootComment = $this->commentRepository->findById($commentID);
+        $post = $this->postRepository->findById($postId); // Get the post
+        $rootComment = $this->commentRepository->findById($commentId); // Get the comment
 
         if (is_null($post)) return response()->json("Post not found", 404);
 
         if (is_null($rootComment)) return response()->json("Root comment not found", 404);
 
-        $result = $this->commentRepository->getReplyComments($postID, $commentID);
+        $result = $this->commentRepository->getReplyComments($postId, $commentId); // Get the reply comment base on the comment id
 
         return response()->json($result);
     }

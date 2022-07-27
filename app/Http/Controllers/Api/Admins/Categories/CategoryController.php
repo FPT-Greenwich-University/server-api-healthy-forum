@@ -10,8 +10,8 @@ use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
-    private ICategoryRepository $categoryRepos;
-    private IPostRepository $postRepository;
+    private readonly ICategoryRepository $categoryRepos;
+    private readonly IPostRepository $postRepository;
 
     public function __construct(ICategoryRepository $categoryRepository, IPostRepository $postRepository)
     {
@@ -35,33 +35,33 @@ class CategoryController extends Controller
      * Admin update information of category in resources
      *
      * @param CreateOrUpdateCategoryRequest $request
-     * @param $categoryID
+     * @param int $categoryId
      * @return JsonResponse
      */
-    public function update(CreateOrUpdateCategoryRequest $request, $categoryID): JsonResponse
+    public function update(CreateOrUpdateCategoryRequest $request, int $categoryId): JsonResponse
     {
-        $attributes = $request->only(['name', 'description']);
+        $attributes = $request->only(['name', 'description']); // Get field from body http
 
-        $result = $this->categoryRepos->update($categoryID, $attributes);
+        $result = $this->categoryRepos->updateCategory($categoryId, $attributes); // Update category infomation if category is exitsed
 
-        if ($result === false) return response()->json("Category not found", 404);
+        if ($result === false) return response()->json("Category not found", 404); // Return not found if no result record
 
-        return response()->json("", 204);
+        return response()->json("", 204); // Return http response with status 204
     }
 
     /**
      * Admin handle delete the category where is not used by post
      *
-     * @param $categoryID
+     * @param int $categoryId
      * @return JsonResponse
      */
-    public function destroy($categoryID): JsonResponse
+    public function destroy(int $categoryId): JsonResponse
     {
-        $posts = $this->postRepository->getPostsByCategory($categoryID, 5);
+        $posts = $this->postRepository->getPostsByCategory($categoryId, 5); // Get all the posts with category's id
 
-        if ($posts->total() !== 0) return response()->json("Category is used by post", 400);
+        if ($posts->total() !== 0) return response()->json("Category is used by post", 400); // If exits the posts then return bad request
 
-        $result =  $this->categoryRepos->handleDeleteCategory($categoryID);
+        $result =  $this->categoryRepos->handleDeleteCategory($categoryId); // delete category infomation if category is exitsed
 
         if ($result === false) return response()->json("Category not found", 404);
 

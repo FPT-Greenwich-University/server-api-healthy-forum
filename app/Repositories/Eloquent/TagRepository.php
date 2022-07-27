@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\Tag;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\ITagRepository;
+use Exception;
 
 class TagRepository extends BaseRepository implements ITagRepository
 {
@@ -24,9 +25,8 @@ class TagRepository extends BaseRepository implements ITagRepository
                 })
                 ->select('tags.*')
                 ->get();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return $exception->getMessage();
         }
-
     }
 }

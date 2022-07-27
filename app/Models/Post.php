@@ -80,16 +80,6 @@ class Post extends Model
     }
 
     /**
-     * Get all the post's rating from the users
-     *
-     * @return HasMany
-     */
-    public function postRatings(): HasMany
-    {
-        return $this->hasMany(PostRating::class, 'post_id');
-    }
-
-    /**
      * Get all the post's liked from the users
      *
      * @return HasMany
@@ -116,7 +106,7 @@ class Post extends Model
      * @param $query
      * @return void
      */
-    public function scopeIsPublished($query)
+    public function scopeIsPublished($query): void
     {
         $query->where('posts.is_published', 1);
     }
@@ -127,7 +117,7 @@ class Post extends Model
      * @param $query
      * @return void
      */
-    public function scopeIsNotPublished($query)
+    public function scopeIsNotPublished($query): void
     {
         $query->where('posts.is_published', 0);
     }
@@ -136,17 +126,16 @@ class Post extends Model
      * Scope a query to get only the posts with tag name
      *
      * @param $query
-     * @param $tagID -- The id of tags tables
+     * @param $tagId -- The id of tags tables
      * @return void
      */
-    public function scopeTag($query, $tagID)
+    public function scopeTag($query, $tagId): void
     {
         $query->join('post_tag', function ($join) {
             $join->on('posts.id', '=', 'post_tag.post_id');
-        })
-            ->join('tags', function ($join) use ($tagID) {
-                $join->on('post_tag.tag_id', '=', 'tags.id')
-                    ->where('tags.id', $tagID);
-            });
+        })->join('tags', function ($join) use ($tagId) {
+            $join->on('post_tag.tag_id', '=', 'tags.id')
+                ->where('tags.id', $tagId);
+        });
     }
 }

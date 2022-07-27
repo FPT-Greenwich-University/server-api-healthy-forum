@@ -22,6 +22,15 @@ Route::controller(AuthController::class)->group(function () {
  */
 Route::post('/login/google', [GoogleAuthController::class, 'login']);
 
+
+/**
+ * Change password
+ */
+Route::controller(\App\Http\Controllers\Api\Authentication\ChangePasswordController::class)
+    ->group(function () {
+        Route::put("/users/{userId}/passwords", "updatePassword");
+    });
+
 /**
  * Reset password
  */
@@ -45,5 +54,5 @@ Route::controller(VerifyAccountController::class)->group(function () {
 Route::controller(RegisterController::class)->middleware(['auth:sanctum'])->group(function () {
     Route::get('/register/doctor-role', 'getListRegisterDoctorRoles')->middleware('role:admin');
     Route::post('/register/doctor-role', 'registerWithRoleDoctor');
-    Route::put('/register/doctor-role/{registerUserID}', 'acceptRegisterDoctorRole')->middleware('role:admin');
+    Route::put('/register/doctor-role/{registeruserId}', 'acceptRegisterDoctorRole')->middleware('role:admin');
 });

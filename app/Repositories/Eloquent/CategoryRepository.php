@@ -28,6 +28,7 @@ class CategoryRepository extends BaseRepository implements ICategoryRepository
     {
         try {
             $existingCategory = parent::findById($id);
+
             if (is_null($existingCategory)) return false;
 
             parent::delete($id);
@@ -41,6 +42,7 @@ class CategoryRepository extends BaseRepository implements ICategoryRepository
     {
         try {
             $existingCategory = parent::findById($id);
+
             if (is_null($existingCategory)) return false;
 
             parent::update($id, $attributes);

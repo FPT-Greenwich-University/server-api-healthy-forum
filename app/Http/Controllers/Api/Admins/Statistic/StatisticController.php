@@ -10,10 +10,11 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticController extends Controller
 {
-    private IPostLikeRepository $postLikeRepos;
+    private readonly IPostLikeRepository $postLikeRepos;
+
     public function __construct(IPostLikeRepository $postLikeRepository)
     {
-       $this->postLikeRepos = $postLikeRepository;
+        $this->postLikeRepos = $postLikeRepository;
     }
 
     /**
@@ -23,9 +24,9 @@ class StatisticController extends Controller
      */
     public function getPostsMostLiked(): JsonResponse
     {
-        $perPage = 5;
-        $result = $this->postLikeRepos->handleGetPostsMostLiked($perPage);
+        $perPage = 5; // item post in one page
+        $posts = $this->postLikeRepos->handleGetPostsMostLiked($perPage); // Get the posts have most liked
 
-        return response()->json($result);
+        return response()->json($posts);
     }
 }
