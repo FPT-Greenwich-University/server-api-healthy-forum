@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->longText('body');
             $table->foreignId('user_id')->constrained();
             $table->foreignId('category_id')->constrained();
-            $table->integer('total_view')->nullable();
+            $table->integer('total_view')->default(0);
             $table->boolean('is_published')->default(false);
             $table->date('published_at')->nullable();
             $table->timestamps();
