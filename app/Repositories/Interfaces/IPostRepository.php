@@ -40,6 +40,8 @@ interface IPostRepository extends IEloquentRepository
 
     public function updatePostImage(int $postId, string $filePath);
 
+    public function increasePostViewCount(int $id);
+
     public function storePostComment(int $postId, array $attributes);
 
     public function addFavoritePost(int $postId, int $userId);

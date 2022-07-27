@@ -257,4 +257,13 @@ class PostRepository extends BaseRepository implements IPostRepository
             return $exception->getMessage();
         }
     }
+
+    public function increasePostViewCount(int $id)
+    {
+        try {
+            $this->model->increment("total_view");
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }

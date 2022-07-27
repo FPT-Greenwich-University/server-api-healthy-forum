@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Public\Posts;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\UpdatePostViewCount;
 use App\Repositories\Interfaces\ICategoryRepository;
 use App\Repositories\Interfaces\IPostRepository;
 use Illuminate\Http\JsonResponse;
@@ -41,6 +42,7 @@ class PublicPostController extends Controller
 
         if (is_null($post)) return response()->json("Post not found", 404);
 
+        dispatch(new UpdatePostViewCount($post->id));
         return response()->json($post);
     }
 
