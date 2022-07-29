@@ -38,4 +38,15 @@ class CommentRepository extends BaseRepository implements ICommentRepository
             return $exception->getMessage();
         }
     }
+
+    public function updateComment(int $postId, int $commentId, array $attributes)
+    {
+        try {
+           $this->model->where('post_id', $postId)
+                       ->where('id', $commentId)
+                       ->update($attributes);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }
