@@ -51,8 +51,9 @@ Route::controller(PostLikeController::class)
 Route::controller(PostCommentController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
-        Route::post('/posts/{postId}/comments', 'storePostComment');
-        Route::post('/posts/{postId}/comments/{commentId}/reply', 'replyPostComment');
+        Route::post('/posts/{postId}/comments', 'storePostComment'); // Create new comment
+        Route::post('/posts/{postId}/comments/{commentId}/reply', 'replyPostComment'); // Create reply comment
+        Route::put('/posts/{postId}/comments/{commentId}', 'updateComment'); // Edit comment
     });
 
 /**
