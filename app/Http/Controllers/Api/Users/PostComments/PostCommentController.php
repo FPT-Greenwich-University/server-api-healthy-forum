@@ -22,6 +22,44 @@ class PostCommentController extends Controller
     }
 
     /**
+     * Get detail comment
+     *
+     * @param int $postId
+     * @param int $commentId
+     * @return JsonResponse
+     */
+    public function getDetailComment(int $postId, int $commentId): JsonResponse
+    {
+        // If not found then return 404 HTTP
+        if ($this->checkExistedComment($postId, $commentId) === false) {
+            return response()->json("Not found", 404);
+        }
+
+        $existedComment = $this->commentRepository->getDetail($postId, $commentId);
+        return response()->json($existedComment);
+    }
+
+    /**
+     * <p>Check the comment of the post is exist</p>
+     *
+     * @param int $postId
+     * @param int $commentId
+     * @return bool Returns <b>TRUE</b> if comment is exits
+     * Otherwise <b>false</b></p>
+     */
+    private function checkExistedComment(int $postId, int $commentId): bool
+    {
+        $existedPost = $this->postRepository->findById($postId); // Find the post
+        $existedComment = $this->commentRepository->findById($commentId); // root comment of reply comment
+
+        if (is_null($existedPost) || is_null($existedComment)) { // If one of them not found then return false
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Create a new child comment into the post
      *
      * @param int $postId
@@ -45,26 +83,6 @@ class PostCommentController extends Controller
 
         $this->postRepository->storePostComment($postId, $attributes);
         return response()->json("Success", 201);
-    }
-
-    /**
-     * <p>Check the comment of the post is exist</p>
-     *
-     * @param int $postId
-     * @param int $commentId
-     * @return bool Returns <b>TRUE</b> if comment is exits
-     * Otherwise <b>false</b></p>
-     */
-    private function checkExistedComment(int $postId, int $commentId): bool
-    {
-        $existedPost = $this->postRepository->findById($postId); // Find the post
-        $existedComment = $this->commentRepository->findById($commentId); // root comment of reply comment
-
-        if (is_null($existedPost) || is_null($existedComment)) { // If one of them not found then return false
-            return false;
-        }
-
-        return true;
     }
 
     /**
