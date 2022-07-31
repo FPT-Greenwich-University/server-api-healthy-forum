@@ -2,9 +2,9 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Models\Comment;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\ICommentRepository;
-use App\Models\Comment;
 use Exception;
 
 class CommentRepository extends BaseRepository implements ICommentRepository
@@ -42,9 +42,20 @@ class CommentRepository extends BaseRepository implements ICommentRepository
     public function updateComment(int $postId, int $commentId, array $attributes)
     {
         try {
-           $this->model->where('post_id', $postId)
-                       ->where('id', $commentId)
-                       ->update($attributes);
+            $this->model->where('post_id', $postId)
+                ->where('id', $commentId)
+                ->update($attributes);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function getDetail(int $postId, int $commentId)
+    {
+        try {
+            return $this->model->where('post_id', $postId)
+                ->where('id', $commentId)
+                ->first();
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
