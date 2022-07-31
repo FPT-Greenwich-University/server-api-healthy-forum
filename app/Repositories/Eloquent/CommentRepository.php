@@ -60,4 +60,19 @@ class CommentRepository extends BaseRepository implements ICommentRepository
             return $exception->getMessage();
         }
     }
+
+    public function deleteComment(int $postId, int $commentId)
+    {
+        try {
+            // Delete comment
+            $this->model->where('post_id', $postId)
+                ->where('id', $commentId)
+                ->delete();
+
+            // Delete reply comment
+            $this->model->where('parent_comment_id', $commentId)->delete();
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }
