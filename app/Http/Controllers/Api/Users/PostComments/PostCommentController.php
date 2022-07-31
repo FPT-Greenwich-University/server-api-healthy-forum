@@ -157,4 +157,21 @@ class PostCommentController extends Controller
 
         return true;
     }
+
+    /**
+     * Delete comment and reply comment
+     *
+     * @param int $postId
+     * @param int $commentId
+     * @return JsonResponse
+     */
+    public function deleteComment(int $postId, int $commentId): JsonResponse
+    {
+        if ($this->checkExistedComment($postId, $commentId) === false) {
+            return response()->json("Not found", 404);
+        }
+
+        $this->commentRepository->deleteComment($postId, $commentId);
+        return response()->json("", 204);
+    }
 }
