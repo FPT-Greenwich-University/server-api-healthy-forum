@@ -56,7 +56,7 @@ class PostController extends Controller
 
         $this->postResponse->update($postId, ['is_published' => true, 'published_at' => now()]); // update publlished status
 
-        event(new NotifyNewPost($post)); // throw event for notifacation new post to all user via email
+        event(new NotifyNewPost($post)); // throw event for notification new post to all user via email
 
         return response()->json("", 204);
     }

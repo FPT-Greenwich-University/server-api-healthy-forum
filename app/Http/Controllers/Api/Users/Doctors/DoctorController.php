@@ -54,8 +54,8 @@ class DoctorController extends Controller
     /**
      * Detail post by user id
      *
-     * @param $userId
-     * @param $postId
+     * @param int $userId
+     * @param int $postId
      * @return JsonResponse
      */
     public function getDetailPost(int $userId, int $postId): JsonResponse
@@ -68,7 +68,7 @@ class DoctorController extends Controller
     }
 
 
-    public function update(UpdatePostRequest $request, int $userId, int $postId)
+    public function update(UpdatePostRequest $request, int $userId, int $postId): JsonResponse
     {
 
         $post = $this->postRepository->findById($postId);

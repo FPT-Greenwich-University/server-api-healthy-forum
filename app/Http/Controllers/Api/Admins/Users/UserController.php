@@ -57,14 +57,14 @@ class UserController extends Controller
     /**
      * Get the detail user include roles and permissions
      *
-     * @param $userId
+     * @param int $userId
      * @return JsonResponse
      */
     public function getUserRoles(int $userId): JsonResponse
     {
         $result = $this->userRepos->getUserWithRolePermission($userId); // Get detail user
 
-        if ($result === false) return response()->json("User not found", 404); // return 404 if not found user in resources
+        if (!$result) return response()->json("User not found", 404); // return 404 if not found user in resources
 
         return response()->json($result);
     }
@@ -85,10 +85,10 @@ class UserController extends Controller
      * Admin update list permission of user
      *
      * @param UpdatePermissionRequest $request
-     * @param $userId
+     * @param int $userId
      * @return JsonResponse
      */
-    public function updatePermission(UpdatePermissionRequest $request, int $userId)
+    public function updatePermission(UpdatePermissionRequest $request, int $userId): JsonResponse
     {
         $permissions = $request->input('permissions'); // Get list permission from request of user
 
