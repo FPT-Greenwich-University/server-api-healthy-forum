@@ -56,6 +56,10 @@ class RouteServiceProvider extends ServiceProvider
                 ->middleware('api')
                 ->group(base_path('routes/Apis/Users/users.php'));
 
+            // Mail
+            Route::prefix('api')
+                ->middleware('api')
+                ->group(base_path('routes/Apis/Mail/mail-routes.php'));
         });
     }
 
