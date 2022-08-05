@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\Api\Categories\CategoryController;
-use App\Http\Controllers\Api\Comments\CommentController;
-use App\Http\Controllers\Api\PostLikes\PostLikeController;
-use App\Http\Controllers\Api\Posts\PostController;
-use App\Http\Controllers\Api\PostTags\PostTagController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\LocationController;
-use App\Http\Controllers\Api\Search\SearchController;
+use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\PostLikeController;
+use App\Http\Controllers\Api\PostTagController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\Users\Doctors\DoctorController;
 use Illuminate\Support\Facades\Route;
 

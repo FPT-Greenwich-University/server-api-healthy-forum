@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Search;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\IPostRepository;

@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\Mail\SendMailController;
+use App\Http\Controllers\Api\MailController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/contract-doctor', [SendMailController::class, 'sendEmailContract']);
+Route::post('/contract-doctor', [MailController::class, 'sendEmailContract']);

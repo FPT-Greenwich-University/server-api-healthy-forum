@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\Mail;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Mails\SendEmailContractRequest;
 use App\Jobs\SendMailContract;
 use Illuminate\Http\JsonResponse;
 
-class SendMailController extends Controller
+class MailController extends Controller
 {
     public function sendEmailContract(SendEmailContractRequest $request): JsonResponse
     {
