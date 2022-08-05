@@ -12,7 +12,6 @@ class DoctorFavoriteController extends Controller
 {
     private readonly IFavoriteRepository $favoriteRepository;
     private readonly IUserRepository $userRepository;
-    private $demo;
 
     public function __construct(IFavoriteRepository $favoriteRepository, IUserRepository $userRepository)
     {
@@ -40,11 +39,11 @@ class DoctorFavoriteController extends Controller
      */
     public function addFavoriteItem(StoreFavoriteDoctorRequest $request): JsonResponse
     {
-        $user = $request->user(); // Retrive the current user authenticated
+        $user = $request->user(); // Retrieve the current user authenticated
 
-        $doctorId = intval($request->input('doctor_id')); // Retrive doctor id from http request
+        $doctorId = intval($request->input('doctor_id')); // Retrieve doctor id from http request
 
-        // The user can't not add themself to themeself favorite list
+        // The user can't add themselves to themselves favorite list
         if ($doctorId === $user->id) return response()->json("Bad request", 400); // Return bad request if the doctor's id equal user's id
 
         if ($this->checkIsDoctorFavoriteExist($user->id, $doctorId) === false) { // check if post have exits in user's favorite post
@@ -57,7 +56,7 @@ class DoctorFavoriteController extends Controller
             return response()->json('Add to favorite list successfully', 201); // Add success
         }
 
-        return response()->json("", 204); // Return http no content if the user is have exits in favorite list
+        return response()->json("", 204); // Return http no content if the user is had exits in favorite list
     }
 
     /**

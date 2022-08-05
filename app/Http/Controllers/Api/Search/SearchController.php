@@ -4,16 +4,19 @@ namespace App\Http\Controllers\Api\Search;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\IPostRepository;
+use App\Repositories\Interfaces\IUserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
-    private IPostRepository $postRepository;
+    private readonly IPostRepository $postRepository;
+    private readonly IUserRepository $userRepository;
 
-    public function __construct(IPostRepository $postRepository)
+    public function __construct(IPostRepository $postRepository, IUserRepository $userRepository)
     {
         $this->postRepository = $postRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -33,6 +36,18 @@ class SearchController extends Controller
             return response()->json($posts);
         }
 
-        return response()->json($this->postRepository->getPosts($perPage)); // Return the posts
+        return response()->json('', 204); // Return http 204 if empty title
+    }
+
+    public function searchUsers(Request $request): JsonResponse
+    {
+        $query = $request->query('query'); // Retrieve query from input user
+
+        if ($request->has('query') && !empty($query)) {
+            $users = $this->userRepository->searchUser(query: $query, perPage: 10);
+            return response()->json($users);
+        }
+
+        return response()->json('', 204); // Return http 204 no content if empty query
     }
 }

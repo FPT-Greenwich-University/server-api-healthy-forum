@@ -76,7 +76,20 @@ class UserRepository extends BaseRepository implements IUserRepository
     public function updatePassword(int $userId, string $password)
     {
         try {
-            $this->model->where('id', $userId)->update(['password' => bcrypt($password)]);
+            return $this->model->where('id', $userId)->update(['password' => bcrypt($password)]);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    public function searchUser(string $query, int $perPage)
+    {
+        try {
+            return $this->model->with(['profile', 'image'])
+                ->where('email', 'like', '%' . $query . '%')
+                ->orWhere('name', 'like', '%' . $query . '%')
+                ->paginate($perPage)
+                ->appends(['query' => $query]);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
