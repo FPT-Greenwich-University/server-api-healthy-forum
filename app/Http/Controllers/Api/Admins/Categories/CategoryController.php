@@ -28,7 +28,7 @@ class CategoryController extends Controller
     public function store(CreateOrUpdateCategoryRequest $request): JsonResponse
     {
         $this->categoryRepos->create($request->only(['name', 'description']));
-        return response()->json('Create new category successful');
+        return response()->json('Create new category successful', 201);
     }
 
     /**
@@ -42,7 +42,7 @@ class CategoryController extends Controller
     {
         $attributes = $request->only(['name', 'description']); // Get field from body http
 
-        $result = $this->categoryRepos->updateCategory($categoryId, $attributes); // Update category information if category is exitsed
+        $result = $this->categoryRepos->updateCategory($categoryId, $attributes); // Update category information if category is existed
 
         if ($result === false) return response()->json("Category not found", 404); // Return not found if no result record
 

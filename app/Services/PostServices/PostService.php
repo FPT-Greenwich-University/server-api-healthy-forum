@@ -94,4 +94,9 @@ class PostService implements PostServiceInterface
             return $exception->getMessage();
         }
     }
+
+    public function updatePostView(int $postId)
+    {
+        return Post::where("id", $postId)->increment("total_view");
+    }
 }

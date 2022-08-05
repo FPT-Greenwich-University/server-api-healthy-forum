@@ -51,7 +51,10 @@ class PostController extends Controller
     {
         $post = $this->postResponse->findById($postId); // find the post
 
-        if (is_null($post)) return response()->json("Post not found", 404); // return http status not found
+        // Return http status not found
+        if (is_null($post)) {
+            return response()->json("Post not found", 404);
+        }
 
         $this->postResponse->update($postId, ['is_published' => true, 'published_at' => now()]); // update published status
 

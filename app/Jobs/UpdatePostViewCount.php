@@ -2,10 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\Post;
-use App\Repositories\Interfaces\IPostRepository;
+use App\Services\PostServices\PostServiceInterface;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,8 +13,7 @@ class UpdatePostViewCount implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $postId;
-//    private readonly IPostRepository $postRepository;
+    protected int $postId;
 
     /**
      * Create a new job instance.
@@ -25,7 +22,7 @@ class UpdatePostViewCount implements ShouldQueue
      */
     public function __construct(int $postId)
     {
-        $this->postId= $postId;
+        $this->postId = $postId;
     }
 
     /**
@@ -33,10 +30,9 @@ class UpdatePostViewCount implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(PostServiceInterface $postService)
     {
-        // TODO :: add service increse post view
-        Post::where("id", $this->postId)->increment("total_view");
+        $postService->updatePostView($this->postId);
     }
 
 }

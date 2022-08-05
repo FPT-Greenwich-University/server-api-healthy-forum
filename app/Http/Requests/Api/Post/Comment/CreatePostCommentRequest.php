@@ -23,9 +23,8 @@ class CreatePostCommentRequest extends FormRequest
      */
     public function rules()
     {
-        //        TODO: min va max content
         return [
-            'content' => ['required'],
+            'content' => ['required', 'min:1'],
         ];
     }
 }
