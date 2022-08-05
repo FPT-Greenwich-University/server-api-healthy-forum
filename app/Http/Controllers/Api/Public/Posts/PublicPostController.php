@@ -26,8 +26,7 @@ class PublicPostController extends Controller
      */
     public function index(): JsonResponse
     {
-        $perPage = 10; // the total post in one page
-        return response()->json($this->postRepos->filterPosts($perPage));
+        return response()->json($this->postRepos->filterPosts(perPage: 10));
     }
 
     /**
@@ -58,7 +57,6 @@ class PublicPostController extends Controller
 
         if (is_null($category)) return response()->json("Not found", 404);
 
-        $limitItem = 6;
-        return response()->json($this->postRepos->getRelatedPostsByCategory($categoryId, $limitItem)); // get random related post
+        return response()->json($this->postRepos->getRelatedPostsByCategory(categoryId: $categoryId, limitItem: 6)); // get random related post
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\Admins\Posts;
 
+use App\Events\NotifyNewPost;
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\IPostRepository;
 use Illuminate\Http\JsonResponse;
-use App\Events\NotifyNewPost;
 
 class PostController extends Controller
 {
@@ -23,8 +23,7 @@ class PostController extends Controller
      */
     public function getPostsIsNotPublished(): JsonResponse
     {
-        $perPage = 5; // the total post item in one page
-        $posts = $this->postResponse->getPostsNotPublish($perPage); // Get the posts have not publihed yet
+        $posts = $this->postResponse->getPostsNotPublish(per_page: 5); // Get the posts have not published yet
         return response()->json($posts);
     }
 
@@ -54,7 +53,7 @@ class PostController extends Controller
 
         if (is_null($post)) return response()->json("Post not found", 404); // return http status not found
 
-        $this->postResponse->update($postId, ['is_published' => true, 'published_at' => now()]); // update publlished status
+        $this->postResponse->update($postId, ['is_published' => true, 'published_at' => now()]); // update published status
 
         event(new NotifyNewPost($post)); // throw event for notification new post to all user via email
 

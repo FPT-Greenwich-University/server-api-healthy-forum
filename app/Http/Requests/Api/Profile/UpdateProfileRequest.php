@@ -25,9 +25,6 @@ class UpdateProfileRequest extends ApiFormRequest
     {
         return [
             'phone' => ['required', 'regex:/((09|03|07|08|05)+([0-9]{8})\b)/'],
-//            'firstName' => ['required'],
-//            'lastName' => ['required'],
-//            'description' => ['required'],
             'age' => ['required', 'regex:/^[1-9][0-9]*$/'],
             'gender' => ['required', 'regex:/^[0-1]?$/'],
             'city' => ['required', 'string'],

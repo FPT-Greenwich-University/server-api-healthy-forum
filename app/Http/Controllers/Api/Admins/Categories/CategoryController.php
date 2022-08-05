@@ -42,7 +42,7 @@ class CategoryController extends Controller
     {
         $attributes = $request->only(['name', 'description']); // Get field from body http
 
-        $result = $this->categoryRepos->updateCategory($categoryId, $attributes); // Update category infomation if category is exitsed
+        $result = $this->categoryRepos->updateCategory($categoryId, $attributes); // Update category information if category is exitsed
 
         if ($result === false) return response()->json("Category not found", 404); // Return not found if no result record
 
@@ -57,11 +57,11 @@ class CategoryController extends Controller
      */
     public function destroy(int $categoryId): JsonResponse
     {
-        $posts = $this->postRepository->getPostsByCategory($categoryId, 5); // Get all the posts with category's id
+        $posts = $this->postRepository->getPostsByCategory(categoryId: $categoryId, perPage: 5); // Get all the posts with category's id
 
         if ($posts->total() !== 0) return response()->json("Category is used by post", 400); // If exits the posts then return bad request
 
-        $result =  $this->categoryRepos->handleDeleteCategory($categoryId); // delete category infomation if category is exitsed
+        $result = $this->categoryRepos->handleDeleteCategory($categoryId); // delete category information if category is existed
 
         if ($result === false) return response()->json("Category not found", 404);
 

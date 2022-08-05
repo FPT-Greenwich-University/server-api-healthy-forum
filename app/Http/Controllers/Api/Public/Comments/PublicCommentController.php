@@ -30,9 +30,7 @@ class PublicCommentController extends Controller
 
         if (is_null($post)) return response()->json("Post not found", 404);
 
-
-        $perPage = 5; // Number item in once page
-        $result = $this->commentRepository->getAllComments($postId, $perPage);
+        $result = $this->commentRepository->getAllComments(postId: $postId, perPage: 5);
 
         return response()->json($result);
     }

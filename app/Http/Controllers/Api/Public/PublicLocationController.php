@@ -12,7 +12,7 @@ class PublicLocationController extends Controller
 
     public function __construct()
     {
-        $this->domainApi = env("LOCATION_API_URL");
+        $this->domainApi = env("LOCATION_API_URL");  // Set base domain url
     }
 
     /**
@@ -33,7 +33,7 @@ class PublicLocationController extends Controller
     /**
      * Get all the districts of the city
      *
-     * @param $cityId
+     * @param int $cityId
      * @return mixed
      */
     public function getDistricts(int $cityId): mixed
@@ -49,7 +49,7 @@ class PublicLocationController extends Controller
     /**
      * Get all the wards of the distinct
      *
-     * @param $distinctId
+     * @param int $distinctId
      * @return mixed
      */
     public function getWards(int $distinctId): mixed
