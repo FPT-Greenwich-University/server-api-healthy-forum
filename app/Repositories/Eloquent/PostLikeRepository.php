@@ -15,15 +15,15 @@ class PostLikeRepository extends BaseRepository implements IPostLikeRepository
         parent::__construct($model);
     }
 
-    public function handleGetPostsMostLiked(int $per_page): mixed
+    public function handleGetPostsMostLiked(int $perPage): mixed
     {
         try {
             return $this->model->join("posts", "post_likes.post_id", "=", "posts.id")
                 ->select(DB::raw("count(post_likes.post_id) as total_liked, posts.*"))
                 ->groupBy("post_likes.post_id")
                 ->orderBy("total_liked", "desc")
-                ->paginate($per_page);
-        } catch (\Exception $exception) {
+                ->paginate($perPage);
+        } catch (Exception $exception) {
             return $exception->getMessage();
         }
     }
@@ -32,7 +32,7 @@ class PostLikeRepository extends BaseRepository implements IPostLikeRepository
     {
         try {
             return $this->model->where('post_id', $postId)->count();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return $exception->getMessage();
         }
     }

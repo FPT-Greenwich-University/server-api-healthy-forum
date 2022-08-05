@@ -4,14 +4,9 @@ namespace App\Http\Controllers\Api\Users\Favorites;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Users\Favorites\StoreFavoritePostRequest;
-use App\Models\Favorite;
 use App\Repositories\Interfaces\IFavoriteRepository;
 use App\Repositories\Interfaces\IPostRepository;
-use Exception;
-use GuzzleHttp\Promise\Is;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class PostFavoriteController extends Controller
 {
@@ -25,13 +20,11 @@ class PostFavoriteController extends Controller
     /**
      * User get own list favorite posts
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function index(int $userId): JsonResponse
     {
-        $perPage = 5;
-        return response()->json($this->favoriteRepository->getListFavoritesPosts($userId, $perPage));
+        return response()->json($this->favoriteRepository->getListFavoritesPosts(userId: $userId, perPage: 5));
     }
 
     /**
@@ -59,8 +52,8 @@ class PostFavoriteController extends Controller
     /**
      * Check post have existed in the favorite list
      *
-     * @param $userId --User id
-     * @param $postId --Post id
+     * @param $userId
+     * @param $postId
      * @return bool true if existed
      * otherwise false
      */

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\Public;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Support\Facades\Http;
 
-class PublicLocationController extends Controller
+class LocationController extends Controller
 {
     protected string $domainApi = '';
 

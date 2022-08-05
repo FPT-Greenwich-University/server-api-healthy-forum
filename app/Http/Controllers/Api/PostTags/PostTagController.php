@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Public\PostTags;
+namespace App\Http\Controllers\Api\PostTags;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TagResource;
@@ -8,7 +8,7 @@ use App\Repositories\Interfaces\IPostRepository;
 use App\Repositories\Interfaces\ITagRepository;
 use Illuminate\Http\JsonResponse;
 
-class PublicPostTagController extends Controller
+class PostTagController extends Controller
 {
     private readonly ITagRepository $tagRepos;
     private readonly IPostRepository $postRepos;

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\Public\PostLikes;
+namespace App\Http\Controllers\Api\PostLikes;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\IPostLikeRepository;
 use App\Repositories\Interfaces\IPostRepository;
 use Illuminate\Http\JsonResponse;
 
-class PublicPostLikeController extends Controller
+class PostLikeController extends Controller
 {
     private readonly IPostRepository $postRepository;
     private readonly IPostLikeRepository $postLikeRepository;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Public\Categories;
+namespace App\Http\Controllers\Api\Categories;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\ICategoryRepository;

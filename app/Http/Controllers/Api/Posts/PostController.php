@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Public\Posts;
+namespace App\Http\Controllers\Api\Posts;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\UpdatePostViewCount;
@@ -8,7 +8,7 @@ use App\Repositories\Interfaces\ICategoryRepository;
 use App\Repositories\Interfaces\IPostRepository;
 use Illuminate\Http\JsonResponse;
 
-class PublicPostController extends Controller
+class PostController extends Controller
 {
     private readonly IPostRepository $postRepos;
     private readonly ICategoryRepository $categoryRepos;

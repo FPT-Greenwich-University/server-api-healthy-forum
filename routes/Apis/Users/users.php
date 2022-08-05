@@ -61,29 +61,27 @@ Route::controller(PostCommentController::class)
 /**
  * User's favorite post
  */
-Route::prefix('/users')
-    ->controller(PostFavoriteController::class)
+Route::controller(PostFavoriteController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
-        Route::get('/{userId}/favorites/posts', 'index')->withoutMiddleware(['auth:sanctum', 'api']);
+        Route::get('/users/{userId}/favorites/posts', 'index')->withoutMiddleware(['auth:sanctum', 'api']);
         // Check is exits the post in favorite list
-        Route::get('/{userId}/favorites/posts/{postId}', 'checkUserFollow')->withoutMiddleware('auth:sanctum');
-        Route::post('/favorites/posts', 'store'); // store new post to favorite post list
-        Route::delete('{userId}/favorites/posts/{postId}', 'destroy');
+        Route::get('/users/{userId}/favorites/posts/{postId}', 'checkUserFollow')->withoutMiddleware('auth:sanctum');
+        Route::post('/users/favorites/posts', 'store'); // store new post to favorite post list
+        Route::delete('/users/{userId}/favorites/posts/{postId}', 'destroy');
     });
 
 /**
  * User's favorite doctor
  */
-Route::prefix('/users')
-    ->controller(DoctorFavoriteController::class)
+Route::controller(DoctorFavoriteController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
-        Route::get('/{userId}/favorites/doctors', 'index')->withoutMiddleware(['auth:sanctum', 'api']);
+        Route::get('/users/{userId}/favorites/doctors', 'index')->withoutMiddleware(['auth:sanctum', 'api']);
         // Check is exits doctor in favorite list
-        Route::get('/{userId}/favorites/doctors/{doctorId}', 'checkUserFollow')->withoutMiddleware('auth:sanctum');
+        Route::get('/users/{userId}/favorites/doctors/{doctorId}', 'checkUserFollow')->withoutMiddleware('auth:sanctum');
         // add new doctor to favorite list
-        Route::post('/favorites/doctors', 'addFavoriteItem');
+        Route::post('/users/favorites/doctors', 'addFavoriteItem');
         // Remove doctor from favorite list
-        Route::delete('{userId}/favorites/doctors/{doctorId}', 'removeFavoriteItem');
+        Route::delete('/users/{userId}/favorites/doctors/{doctorId}', 'removeFavoriteItem');
     });

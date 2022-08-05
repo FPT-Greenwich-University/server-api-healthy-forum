@@ -10,14 +10,14 @@ class ContractDoctor extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $details;
+    protected array $details;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($details)
+    public function __construct(array $details)
     {
         $this->details = $details;
     }

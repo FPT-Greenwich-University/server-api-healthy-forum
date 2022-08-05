@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Modelsl\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -12,12 +11,6 @@ use Illuminate\Queue\SerializesModels;
 class UserVerifyAccount
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    /**
-     * The user instance.
-     *
-     * @var User
-     */
     public $user;
 
     /**

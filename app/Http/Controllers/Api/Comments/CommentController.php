@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\Public\Comments;
+namespace App\Http\Controllers\Api\Comments;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\ICommentRepository;
 use App\Repositories\Interfaces\IPostRepository;
 use Illuminate\Http\JsonResponse;
 
-class PublicCommentController extends Controller
+class CommentController extends Controller
 {
     private readonly ICommentRepository $commentRepository;
     private readonly IPostRepository $postRepository;
