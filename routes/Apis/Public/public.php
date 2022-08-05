@@ -70,4 +70,6 @@ Route::prefix('/public')->controller(PublicLocationController::class)->group(fun
 Route::controller(SearchController::class)
     ->group(function () {
         Route::get('/search', 'searchPosts')->withoutMiddleware(['api']);
+        Route::get('/search/users', 'searchUsers')->withoutMiddleware(['api']);
     });
+
