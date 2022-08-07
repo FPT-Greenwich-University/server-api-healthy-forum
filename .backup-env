@@ -1,4 +1,4 @@
-APP_NAME=LaravelHealthyForum
+APP_NAME=Laravel
 APP_ENV=local
 APP_KEY=base64:bcX1axcnnUuV0VirYhvlETt5yFaxECod8UapOEvVLjI=
 APP_DEBUG=true
@@ -13,8 +13,8 @@ LOG_LEVEL=debug
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=laravel_healthy_forum
-DB_USERNAME=phuoctn
+DB_DATABASE=laravel_healthy_social_api
+DB_USERNAME=root
 DB_PASSWORD=ngocphuocha
 
 BROADCAST_DRIVER=log
