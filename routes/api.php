@@ -3,9 +3,10 @@
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
-/*
+/*b
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
@@ -19,3 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return response()->json(User::with(['roles', 'permissions'])->findOrFail($request->user()->id));
 });
+
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
+
+Route::get('/messages', [App\Http\Controllers\ChatsController::class, 'fetchMessages'])->middleware('auth:sanctum');
+Route::post('/messages', [App\Http\Controllers\ChatsController::class, 'sendMessage'])->middleware('auth:sanctum');

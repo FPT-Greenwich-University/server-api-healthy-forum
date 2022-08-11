@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 class LocationController extends Controller
 {
-    protected string $domainApi = '';
+    protected $domainApi = '';
 
     public function __construct()
     {
