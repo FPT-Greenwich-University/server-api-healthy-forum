@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\Message;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\IMessageRepository;
+use Illuminate\Database\Eloquent\Collection;
 
 class MessageRepository extends BaseRepository implements IMessageRepository
 {
@@ -18,10 +19,15 @@ class MessageRepository extends BaseRepository implements IMessageRepository
         return $this->model->create($attributes);
     }
 
-    public function getDetailMessage(int $sourceId, int $targetId): Message
+    public function getDetailMessage(int $sourceId, int $targetId): Collection|null
     {
         return $this->model->whereRaw('source_id = ? AND target_id = ?', [$sourceId, $targetId])
             ->orWhereRaw('source_id = ? AND target_id = ?', [$targetId, $sourceId])
-            ->first();
+            ->get();
+    }
+
+    public function getTheFirstMessage(int $chatRoomId): Message|null
+    {
+        return $this->model->where('chat_room_id', $chatRoomId)->first();
     }
 }

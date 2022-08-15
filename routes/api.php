@@ -1,6 +1,8 @@
 <?php
 
 
+use App\Http\Controllers\Api\ChatRoomsController;
+use App\Http\Controllers\Api\ChatsController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
@@ -23,5 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
-Route::get('/messages', [App\Http\Controllers\ChatsController::class, 'fetchMessages'])->middleware('auth:sanctum');
-Route::post('/messages', [App\Http\Controllers\ChatsController::class, 'sendMessage'])->middleware('auth:sanctum');
+Route::get('/chat-rooms/{chatRoomId}/messages', [ChatsController::class, 'fetchMessages'])->middleware('auth:sanctum');
+Route::post('/chat-rooms/{chatRoomId}/messages', [ChatsController::class, 'sendMessage'])->middleware('auth:sanctum');
+Route::get('/chat-rooms', [ChatRoomsController::class, 'getRoomChats'])->middleware('auth:sanctum');
+Route::get('/chat-rooms/{chatRoomId}/users', [ChatRoomsController::class, 'getChatRoomUsers'])->middleware('auth:sanctum');

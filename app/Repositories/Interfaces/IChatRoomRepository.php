@@ -4,6 +4,7 @@ namespace App\Repositories\Interfaces;
 
 use App\Models\ChatRoom;
 use App\Repositories\Interfaces\Common\IEloquentRepository;
+use Illuminate\Database\Eloquent\Collection;
 
 interface IChatRoomRepository extends IEloquentRepository
 {
@@ -16,4 +17,6 @@ interface IChatRoomRepository extends IEloquentRepository
     public function createNewRoom(): ChatRoom;
 
     public function getChatRoomId(int $sourceId, int $targetId): int;
+
+    public function getChatRooms(int $sourceId): Collection;
 }
