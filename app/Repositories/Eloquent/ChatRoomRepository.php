@@ -6,7 +6,9 @@ use App\Models\ChatRoom;
 use App\Models\Message;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\IChatRoomRepository;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
 
 class ChatRoomRepository extends BaseRepository implements IChatRoomRepository
 {
@@ -27,5 +29,13 @@ class ChatRoomRepository extends BaseRepository implements IChatRoomRepository
         $messages = Message::where('source_id', $sourceId)->where('target_id', $targetId)->first();
 
         return intval($messages->chat_room_id);
+    }
+
+    public function getChatRooms(int $sourceId): Collection
+    {
+        return $this->model->whereHas('messages', function (Builder $query) use ($sourceId) {
+            $query->where('source_id', '=', $sourceId)
+                ->orWhere('target_id', $sourceId);
+        })->get();
     }
 }
