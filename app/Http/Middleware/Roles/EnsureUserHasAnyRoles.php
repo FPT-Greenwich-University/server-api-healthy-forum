@@ -13,7 +13,6 @@ class EnsureUserHasAnyRoles
      *
      * @param Request $request
      * @param Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return JsonResponse
      */
     public function handle(Request $request, Closure $next, string ...$roles)
     {
