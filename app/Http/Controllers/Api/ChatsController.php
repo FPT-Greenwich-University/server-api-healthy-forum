@@ -48,6 +48,13 @@ class ChatsController extends Controller
      */
     public function sendMessage(Request $request, int $chatRoomId): JsonResponse
     {
+
+        if (is_null($this->chatRoomRepository->findById($chatRoomId))) return response()->json("Chat room not found", 404);
+
+        $permissionName = 'chat-room.' . $chatRoomId;
+
+        if (!$request->user()->can("$permissionName")) return response()->json("Bad request", 400); // Check is user has permission to send message in this chat room
+
         $user = $request->user();
         $targetId = intval($request->input('targetId'));
 
@@ -57,27 +64,5 @@ class ChatsController extends Controller
         broadcast(new MessageSent($user, $message))->toOthers();
 
         return response()->json(['status' => 'Message Sent!'], 201);
-    }
-
-    /**
-     * <p>Check the room is exist</p>
-     * @param int $sourceId
-     * @param int $targetId
-     * @return int
-     */
-    private function checkExistedRoom(int $sourceId, int $targetId): int
-    {
-        $message = $this->messageRepository->getDetailMessage(sourceId: $sourceId, targetId: $targetId);
-
-        // If the message is null, the room is not exist
-        if (is_null($message)) {
-            $room = $this->chatRoomRepository->createNewRoom();
-
-            $this->messageRepository->createNewMessage(['message' => 'Hello', 'chat_room_id' => $room->id, 'source_id' => $sourceId, 'target_id' => $targetId,]);
-
-            return intval($room->id);
-        }
-
-        return intval($message->chat_room_id);  // Return chat room id if message is not null
     }
 }

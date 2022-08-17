@@ -38,4 +38,12 @@ class ChatRoomRepository extends BaseRepository implements IChatRoomRepository
                 ->orWhere('target_id', $sourceId);
         })->get();
     }
+
+    public function getRoomByUserId(int $sourceId, int $targetId): ChatRoom|null
+    {
+        return $this->model->whereHas('messages', function (Builder $query) use ($sourceId, $targetId) {
+            $query->whereRaw('source_id = ? AND target_id = ?', [$sourceId, $targetId])
+                ->orWhereRaw('source_id = ? AND target_id = ?', [$targetId, $sourceId]);
+        })->first();
+    }
 }
