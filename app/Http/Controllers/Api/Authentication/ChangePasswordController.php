@@ -19,14 +19,18 @@ class ChangePasswordController extends Controller
         $this->authentication = $authentication;
     }
 
-    public function updatePassword(UpdatePasswordRequest $request, int $userId): JsonResponse
+    final public function updatePassword(UpdatePasswordRequest $request, int $userId): JsonResponse
     {
         $user = $this->userRepository->findById($userId); // Find user
 
-        if (is_null($user)) return response()->json("User not found", 404); // Return http 404
+        if (is_null($user)) {
+            return response()->json("User not found", 404); // Return http 404
+        }
 
         // Check current password input from user is correct
-        if (!$this->authentication->checkValidPassword($userId, $request->input("current_password"))) return response()->json("Bad request", 400);
+        if (!$this->authentication->checkValidPassword($userId, $request->input("current_password"))) {
+            return response()->json("Bad request, current password is wrong!", 400);
+        }
 
         $this->userRepository->updatePassword($userId, $request->input("password")); // Update new password
 

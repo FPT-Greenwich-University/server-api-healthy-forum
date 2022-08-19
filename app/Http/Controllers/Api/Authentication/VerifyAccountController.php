@@ -19,7 +19,7 @@ class VerifyAccountController extends Controller
      * @param VerifyAccountRequest $request
      * @return JsonResponse
      */
-    public function verifyEmail(VerifyAccountRequest $request): JsonResponse
+    final public function verifyEmail(VerifyAccountRequest $request): JsonResponse
     {
         try {
             $plainTextToken = $request->input('token'); // get plain text token
@@ -32,22 +32,22 @@ class VerifyAccountController extends Controller
             $user = User::where('email', $accountToken->email)->first();
             if (!$user) {
                 return response()->json("User doesn't exist!", 404);
-            } else {
-                $user->update(['email_verified_at' => now()]); // Verified email
-                return response()->json(['message' => 'Verify account successful']);
             }
+
+            $user->update(['email_verified_at' => now()]); // Update verified email
+            return response()->json(['message' => 'Verify account successful']);
         } catch (Exception $exception) {
             return response()->json($exception->getMessage());
         }
     }
 
     /**
-     * Handle update verify of account
+     * Handle send email update verify of user account
      *
      * @param Request $request
      * @return JsonResponse
      */
-    public function resendVerifyEmail(Request $request): JsonResponse
+    final public function resendVerifyEmail(Request $request): JsonResponse
     {
         try {
             $user = User::where('email', $request->email)->first();

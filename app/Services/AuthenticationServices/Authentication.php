@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 
 class Authentication implements AuthenticationInterface
 {
-    public function checkValidPassword(int $userId, string $password): bool
+    final public function checkValidPassword(int $userId, string $password): bool
     {
         $user = User::find($userId);
 
@@ -17,4 +17,5 @@ class Authentication implements AuthenticationInterface
 
         return true;
     }
+
 }

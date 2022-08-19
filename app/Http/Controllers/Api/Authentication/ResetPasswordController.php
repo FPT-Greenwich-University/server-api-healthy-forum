@@ -20,7 +20,7 @@ class ResetPasswordController extends Controller
      * @param ForgotPasswordRequest $request
      * @return JsonResponse
      */
-    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    final public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
         $email = $request->input('email');
         try {
@@ -30,14 +30,8 @@ class ResetPasswordController extends Controller
             }
 
             $token = Str::random(20); // Else generate token
-            DB::table('password_resets')->insert([
-                'email' => $email,
-                'token' => $token,
-                'created_at' => now()
-            ]);
-            $data = [
-                'client_url' => env('CLIENT_APP_URL') . '/reset-password?token=' . $token,
-            ];
+            DB::table('password_resets')->insert(['email' => $email, 'token' => $token, 'created_at' => now()]);
+            $data = ['client_url' => env('CLIENT_APP_URL') . '/reset-password?token=' . $token,];
             // Send link reset password vie email
             event(new ResetPassword($user, $data));
             return response()->json('send mail success');
@@ -52,7 +46,7 @@ class ResetPasswordController extends Controller
      * @param ResetPasswordRequest $request
      * @return JsonResponse
      */
-    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    final public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
         $token = $request->input('token');
         $passwordReset = DB::table('password_resets')->where('token', '=', $token)->first();
@@ -62,17 +56,14 @@ class ResetPasswordController extends Controller
         }
         // Check user is existed
         $user = User::where('email', '=', $passwordReset->email)->first();
+
         if (!$user) {
-            return response()->json([
-                'message' => "User doesn't exist!"
-            ], 404);
+            return response()->json(['message' => "User doesn't exist!"], 404);
         }
 
         $user->password = bcrypt($request->input('password'));
         $user->save();
 
-        return response()->json([
-            'message' => 'Reset password success',
-        ]);
+        return response()->json(['message' => 'Reset password success',]);
     }
 }
