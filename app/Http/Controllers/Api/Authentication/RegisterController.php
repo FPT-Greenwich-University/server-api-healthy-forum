@@ -18,7 +18,7 @@ class RegisterController extends Controller
      *
      * @return JsonResponse
      */
-    public function getListRegisterDoctorRoles(): JsonResponse
+    final public function getListRegisterDoctorRoles(): JsonResponse
     {
         try {
             $users = RegisterDoctorRole::with(['user'])
@@ -36,7 +36,7 @@ class RegisterController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function registerWithRoleDoctor(Request $request): JsonResponse
+    final public function registerWithRoleDoctor(Request $request): JsonResponse
     {
         try {
             User::findOrFail($request->user()->id);
@@ -62,7 +62,7 @@ class RegisterController extends Controller
      * @param $registeruserId
      * @return JsonResponse
      */
-    public function acceptRegisterDoctorRole($registeruserId): JsonResponse
+    final public function acceptRegisterDoctorRole($registeruserId): JsonResponse
     {
         try {
             $registerUser = DB::table('register_doctor_role_drafts')
@@ -78,9 +78,9 @@ class RegisterController extends Controller
                 $user->assignRole('doctor'); // Assign doctor role
                 $user->givePermissionTo('create a post', 'update a post', 'delete a post'); // Give permission of doctor role
                 return response()->json('Accept success');
-            } else {
-                return response()->json('User not found or not have request register doctor role!', 404); // Return response 404
             }
+
+            return response()->json('User not found or not have request register doctor role!', 404); // Return response 404
         } catch (ModelNotFoundException) {
             return response()->json('User not found', 404);
         } catch (Exception $exception) {

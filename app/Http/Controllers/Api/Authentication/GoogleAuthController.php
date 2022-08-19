@@ -16,7 +16,7 @@ class GoogleAuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function login(Request $request): JsonResponse
+    final public function login(Request $request): JsonResponse
     {
         try {
             $googleUser = User::where('email', '=', $request->email)->first();
