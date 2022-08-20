@@ -24,7 +24,7 @@ class PostController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    final public function index(): JsonResponse
     {
         return response()->json($this->postRepos->filterPosts(perPage: 10));
     }
@@ -35,11 +35,13 @@ class PostController extends Controller
      * @param integer $postId
      * @return JsonResponse
      */
-    public function show(int $postId): JsonResponse
+    final public function show(int $postId): JsonResponse
     {
         $post = $this->postRepos->getDetailPost($postId); // Get the detail post
 
-        if (is_null($post)) return response()->json("Post not found", 404);
+        if (is_null($post)) {
+            return response()->json("Post not found", 404);
+        }
 
         dispatch(new UpdatePostViewCount($post->id));
         return response()->json($post);
@@ -51,11 +53,13 @@ class PostController extends Controller
      * @param int $categoryId
      * @return JsonResponse
      */
-    public function getRelatedPosts(int $categoryId): JsonResponse
+    final public function getRelatedPosts(int $categoryId): JsonResponse
     {
         $category = $this->categoryRepos->findById($categoryId);
 
-        if (is_null($category)) return response()->json("Not found", 404);
+        if (is_null($category)) {
+            return response()->json("Not found", 404);
+        }
 
         return response()->json($this->postRepos->getRelatedPostsByCategory(categoryId: $categoryId, limitItem: 6)); // get random related post
     }

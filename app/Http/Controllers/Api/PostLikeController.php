@@ -24,14 +24,13 @@ class PostLikeController extends Controller
      * @param integer $postId
      * @return JsonResponse
      */
-    public function getTotalLike(int $postId): JsonResponse
+    final public function getTotalLike(int $postId): JsonResponse
     {
-        $post = $this->postRepository->findById($postId); // Get the post
+        if (is_null($this->postRepository->findById($postId))) {
+            return response()->json("Post not found", 404); // If post is not exits return not found http
+        }
 
-        if (is_null($post)) return response()->json("Post not found", 404); // If post is not exits return not found http
-
-        $totalLikes = $this->postLikeRepository->getTotalLike($postId); // Get the total like of the post
-
-        return response()->json($totalLikes);
+        // Get the total like of the post
+        return response()->json($this->postLikeRepository->getTotalLike($postId));
     }
 }

@@ -8,16 +8,16 @@ use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
-    private readonly ICategoryRepository  $categoryRepository;
+    private readonly ICategoryRepository $categoryRepository;
+
     public function __construct(ICategoryRepository $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
     }
 
 
-    public function getAllCategories(): JsonResponse
+    final public function getAllCategories(): JsonResponse
     {
-        $categories = $this->categoryRepository->getAllCategories(); // Get the categories
-        return response()->json($categories);
+        return response()->json($this->categoryRepository->getAllCategories());
     }
 }

@@ -19,7 +19,7 @@ class PostTagController extends Controller
         $this->postRepos = $postRepository;
     }
 
-    public function index(): JsonResponse
+    final public function index(): JsonResponse
     {
         return response()->json(TagResource::collection($this->tagRepos->getAll()));
     }
@@ -30,13 +30,13 @@ class PostTagController extends Controller
      * @param int $postId
      * @return JsonResponse
      */
-    public function getPostTags(int $postId): JsonResponse
+    final public function getPostTags(int $postId): JsonResponse
     {
-        $post = $this->postRepos->findById($postId); // Find the post in resources
+        if (is_null($this->postRepos->findById($postId))) {
+            return response()->json("Post not found", 404);
+        }
 
-        if (is_null($post)) return response()->json("Post not found", 404);  // Return HTTP 404 if the post not found
-
-        $tags = $this->tagRepos->getPostTags($postId); // Get all the tags by the post
-        return response()->json($tags);
+        // Get all the tags by the post
+        return response()->json($this->tagRepos->getPostTags($postId));
     }
 }

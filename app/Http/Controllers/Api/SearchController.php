@@ -25,29 +25,27 @@ class SearchController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function searchPosts(Request $request): JsonResponse
+    final public function searchPosts(Request $request): JsonResponse
     {
-        $perPage = 5; // The total in one page
-        $title = $request->query('title'); // Retrieve query title from url
+        // The total in one page
+        $title = trim($request->query('title')); // Retrieve query title from url
 
         // If request have query title and it not empty string
-        if ($request->has('title') && !empty($title)) {
-            $posts = $this->postRepository->searchPosts($title, $perPage);
-            return response()->json($posts);
+        if (empty($title) || !$request->has('title')) {
+            return response()->json('', 204); // Return http 204 if empty title
         }
 
-        return response()->json('', 204); // Return http 204 if empty title
+        return response()->json($this->postRepository->searchPosts(title: $title, perPage: 5));
     }
 
-    public function searchUsers(Request $request): JsonResponse
+    final public function searchUsers(Request $request): JsonResponse
     {
-        $query = $request->query('query'); // Retrieve query from input user
+        $query = trim($request->query('query')); // Retrieve query from input user
 
-        if ($request->has('query') && !empty($query)) {
-            $users = $this->userRepository->searchUser(query: $query, perPage: 10);
-            return response()->json($users);
+        if (!empty($query) || !$request->has('query')) {
+            return response()->json('', 204); // Return http 204 no content if empty query
         }
 
-        return response()->json('', 204); // Return http 204 no content if empty query
+        return response()->json($this->userRepository->searchUser(query: $query, perPage: 10));
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 class LocationController extends Controller
 {
-    protected $domainApi = '';
+    protected string $domainApi = '';
 
     public function __construct()
     {
@@ -20,11 +20,10 @@ class LocationController extends Controller
      *
      * @return mixed
      */
-    public function getCities(): mixed
+    final public function getCities(): mixed
     {
         try {
-            $response = Http::get("$this->domainApi/city");
-            return $response->json();
+            return Http::get("$this->domainApi/city")->json();
         } catch (Exception $exception) {
             return response()->json($exception->getMessage(), 500);
         }
@@ -36,11 +35,10 @@ class LocationController extends Controller
      * @param int $cityId
      * @return mixed
      */
-    public function getDistricts(int $cityId): mixed
+    final public function getDistricts(int $cityId): mixed
     {
         try {
-            $response = Http::get("$this->domainApi/city/$cityId/district");
-            return $response->json();
+            return Http::get("$this->domainApi/city/$cityId/district")->json();
         } catch (Exception $exception) {
             return response()->json($exception->getMessage(), 500);
         }
@@ -52,11 +50,10 @@ class LocationController extends Controller
      * @param int $distinctId
      * @return mixed
      */
-    public function getWards(int $distinctId): mixed
+    final public function getWards(int $distinctId): mixed
     {
         try {
-            $response = Http::get("$this->domainApi/district/$distinctId/ward");
-            return $response->json();
+            return Http::get("$this->domainApi/district/$distinctId/ward")->json();
         } catch (Exception $exception) {
             return response()->json($exception->getMessage(), 500);
         }

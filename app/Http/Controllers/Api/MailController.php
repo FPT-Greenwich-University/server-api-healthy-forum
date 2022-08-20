@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 
 class MailController extends Controller
 {
-    public function sendEmailContract(SendEmailContractRequest $request): JsonResponse
+    final public function sendEmailContract(SendEmailContractRequest $request): JsonResponse
     {
         $details = [
             'title' => $request->input('title'),
@@ -19,7 +19,7 @@ class MailController extends Controller
             'receiver_email' => $request->input('receiver_email')
         ];
 
-        $this->dispatch(new SendMailContract($details));
+        $this->dispatch(new SendMailContract($details));  // Send mail with queue job
 
         return response()->json('Send email success', 201);
     }

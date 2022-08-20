@@ -19,7 +19,7 @@ Route::controller(PostController::class)
     });
 
 /*
- * Admin mananger the post's category
+ * Admin manager the post's category
  */
 Route::controller(CategoryController::class)
     ->prefix('/admins')

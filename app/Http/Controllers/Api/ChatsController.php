@@ -34,7 +34,7 @@ class ChatsController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function fetchMessages(int $chatRoomId): JsonResponse
+    final public function fetchMessages(int $chatRoomId): JsonResponse
     {
         if (is_null($this->chatRoomRepository->findById($chatRoomId))) {
             return response()->json("Chat Room Not Found", 404);
@@ -51,12 +51,13 @@ class ChatsController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function sendMessage(StoreMessageRequest $request, int $chatRoomId): JsonResponse
+    final public function sendMessage(StoreMessageRequest $request, int $chatRoomId): JsonResponse
     {
         if (is_null($this->chatRoomRepository->findById($chatRoomId))) return response()->json("Chat room not found", 404);
 
         $permissionName = 'chat-room.' . $chatRoomId;
 
+        // Check user have permission to send message in room
         if (!$request->user()->can("$permissionName")) return response()->json("Bad request", 400); // Check is user has permission to send message in this chat room
 
         $user = $request->user();
@@ -72,6 +73,7 @@ class ChatsController extends Controller
 
                 $array[$key]['path'] = $targetDir . $fileName;
             }
+
             // Insert data to File table with relationship
             $message->files()->createMany($array);
         }

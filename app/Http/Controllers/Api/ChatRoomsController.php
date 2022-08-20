@@ -23,7 +23,7 @@ class ChatRoomsController extends Controller
         $this->chatRoomRepository = $chatRoomRepository;
     }
 
-    public function getChatRoomUsers(int $chatRoomId): JsonResponse
+    final public function getChatRoomUsers(int $chatRoomId): JsonResponse
     {
         if (is_null($this->chatRoomRepository->findById($chatRoomId))) {
             return response()->json("Chat Room Not Found", 404);
@@ -31,26 +31,27 @@ class ChatRoomsController extends Controller
 
         $message = $this->messageRepository->getTheFirstMessage($chatRoomId); // Get the first message to get users in chat room
 
-        if (is_null($message)) return response()->json("Message Not found", 404);
+        if (is_null($message)) {
+            return response()->json("Message Not found", 404);
+        }
 
         $users = ['source_id' => $message->source_id, 'target_id' => $message->target_id];
 
         return response()->json(['chat_room_users' => $users]);
     }
 
-    public function getRoomChats(Request $request): JsonResponse
+    final public function getRoomChats(Request $request): JsonResponse
     {
         return response()->json($this->chatRoomRepository->getChatRooms($request->user()->id));
     }
 
-    public function createChatRoom(CreateChatRoomRequest $request): JsonResponse
+    final public function createChatRoom(CreateChatRoomRequest $request): JsonResponse
     {
-        $sourceId = intval($request->input('sourceId'));
-        $targetId = intval($request->input('targetId'));
+        $sourceId = (int)($request->input('sourceId'));
+        $targetId = (int)($request->input('targetId'));
 
-        $existedChatRoom = $this->chatRoomRepository->getRoomByUserId(sourceId: $sourceId, targetId: $targetId);
-
-        if (is_null($existedChatRoom)) {
+        // Create chat room if room not existed
+        if (is_null($this->chatRoomRepository->getRoomByUserId(sourceId: $sourceId, targetId: $targetId))) {
             $newChatRoom = $this->chatRoomRepository->createNewRoom();
 
             $this->messageRepository->createNewMessage(['message' => 'Hello', 'chat_room_id' => $newChatRoom->id, 'source_id' => $sourceId, 'target_id' => $targetId]);
@@ -60,8 +61,7 @@ class ChatRoomsController extends Controller
 
             $request->user()->givePermissionTo($permissionName); // Give permission access this room to current user
 
-            $targetUser = User::find($targetId);
-            $targetUser->givePermissionTo($permissionName); // Giver permission access this room to target user
+            User::find($targetId)->givePermissionTo($permissionName); // Giver permission access this room to target user
 
             return response()->json(['ChatRoom' => $newChatRoom], 201);
         }

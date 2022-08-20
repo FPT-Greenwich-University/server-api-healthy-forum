@@ -22,38 +22,42 @@ class ProfileController extends Controller
     /**
      * Get Authenticated user information.
      *
-     * @param $userId
+     * @param int $userId
      * @return JsonResponse
      */
-    public function show($userId): JsonResponse
+    final public function show(int $userId): JsonResponse
     {
         $user = $this->userRepository->getUserWithProfile($userId);
 
-        if ($user === null) return response()->json("Not found", 404);
+        if (is_null($user)) {
+            return response()->json("Not found", 404);
+        }
 
         return response()->json($user);
     }
 
     /**
-     * Update authenticated user information.
+     * User update Profile
      *
-     * @param $userId
+     * @param int $userId
      * @param UpdateProfileRequest $request
      * @return JsonResponse
      */
-    public function update($userId, UpdateProfileRequest $request): JsonResponse
+    final public function update(int $userId, UpdateProfileRequest $request): JsonResponse
     {
-        $userId = $request->user()->id; // Get user's id
+        $authUserId = $request->user()->id; // Get user's id
         $user = $this->userRepository->findById($userId); // Get the current user
 
         $attributes = $request->only(['phone', 'description', 'age', 'gender', 'city', 'district', 'ward', 'street']); // Get body field from http request
         $attributes['user_id'] = $userId; // Set
 
-        if ($userId != $userId || is_null($user)) return response()->json("User not found", 404); // Check existed user?
+        // Check existed user or is owner of profile
+        if ($authUserId !== $userId || is_null($user)) {
+            return response()->json("User not found", 404);
+        }
 
-        $userProfile = $this->profileRepository->getUserProfile($userId);  // Get the current user's profile
-
-        if (is_null($userProfile)) {
+        // Get the current user's profile
+        if (is_null($this->profileRepository->getUserProfile($userId))) {
             $this->profileRepository->create($attributes);
         } else {
             $this->profileRepository->updateProfileUser($userId, $attributes);

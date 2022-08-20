@@ -26,15 +26,11 @@ class CommentController extends Controller
      */
     final public function index(int $postId): JsonResponse
     {
-        $post = $this->postRepository->findById($postId); // Get the post
-
-        if (is_null($post)) {
+        if (is_null($this->postRepository->findById($postId))) {
             return response()->json("Post not found", 404);
         }
 
-        $result = $this->commentRepository->getAllComments(postId: $postId, perPage: 5);
-
-        return response()->json($result);
+        return response()->json($this->commentRepository->getAllComments(postId: $postId, perPage: 5));
     }
 
     /**
@@ -46,19 +42,15 @@ class CommentController extends Controller
      */
     final public function getReplyComments(int $postId, int $commentId): JsonResponse
     {
-        $post = $this->postRepository->findById($postId); // Get the post
-        $rootComment = $this->commentRepository->findById($commentId); // Get the comment
-
-        if (is_null($post)) {
+        if (is_null($this->postRepository->findById($postId))) {
             return response()->json("Post not found", 404);
         }
 
-        if (is_null($rootComment)) {
+        if (is_null($this->commentRepository->findById($commentId))) {
             return response()->json("Root comment not found", 404);
         }
 
-        $result = $this->commentRepository->getReplyComments($postId, $commentId); // Get the reply comment base on the comment id
-
-        return response()->json($result);
+        // Get the reply comment base on the comment id
+        return response()->json($this->commentRepository->getReplyComments($postId, $commentId));
     }
 }
