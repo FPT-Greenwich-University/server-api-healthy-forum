@@ -32,7 +32,7 @@ class PostController extends Controller
     /**
      * Display the specified the post.
      *
-     * @param integer $postId
+     * @param int $postId
      * @return JsonResponse
      */
     final public function show(int $postId): JsonResponse
@@ -43,6 +43,7 @@ class PostController extends Controller
             return response()->json("Post not found", 404);
         }
 
+        // Update view count
         dispatch(new UpdatePostViewCount($post->id));
         return response()->json($post);
     }
@@ -55,9 +56,7 @@ class PostController extends Controller
      */
     final public function getRelatedPosts(int $categoryId): JsonResponse
     {
-        $category = $this->categoryRepos->findById($categoryId);
-
-        if (is_null($category)) {
+        if (is_null($this->categoryRepos->findById($categoryId))) {
             return response()->json("Not found", 404);
         }
 

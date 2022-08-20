@@ -55,10 +55,10 @@ class ChatsController extends Controller
     {
         if (is_null($this->chatRoomRepository->findById($chatRoomId))) return response()->json("Chat room not found", 404);
 
-        $permissionName = 'chat-room.' . $chatRoomId;
+        (string)$permissionName = 'chat-room.' . $chatRoomId;
 
         // Check user have permission to send message in room
-        if (!$request->user()->can("$permissionName")) return response()->json("Bad request", 400); // Check is user has permission to send message in this chat room
+        if (!$request->user()->hasPermissionTo($permissionName, 'web')) return response()->json("Bad request", 400); // Check is user has permission to send message in this chat room
 
         $user = $request->user();
         $targetId = intval($request->input('targetId'));

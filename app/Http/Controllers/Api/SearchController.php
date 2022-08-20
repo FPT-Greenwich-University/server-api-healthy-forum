@@ -42,7 +42,7 @@ class SearchController extends Controller
     {
         $query = trim($request->query('query')); // Retrieve query from input user
 
-        if (!empty($query) || !$request->has('query')) {
+        if (empty($query) || !$request->has('query')) {
             return response()->json('', 204); // Return http 204 no content if empty query
         }
 

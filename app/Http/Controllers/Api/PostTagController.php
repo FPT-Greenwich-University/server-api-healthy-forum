@@ -36,7 +36,6 @@ class PostTagController extends Controller
             return response()->json("Post not found", 404);
         }
 
-        // Get all the tags by the post
         return response()->json($this->tagRepos->getPostTags($postId));
     }
 }
