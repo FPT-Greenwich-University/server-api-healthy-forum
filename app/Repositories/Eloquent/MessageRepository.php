@@ -30,4 +30,9 @@ class MessageRepository extends BaseRepository implements IMessageRepository
     {
         return $this->model->where('chat_room_id', $chatRoomId)->first();
     }
+
+    public function getMessagesByChatRoom(int $chatRoomId): Collection|null
+    {
+        return $this->model->with(['user'])->where('chat_room_id', $chatRoomId)->get();
+    }
 }

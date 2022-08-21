@@ -40,9 +40,7 @@ class ChatsController extends Controller
             return response()->json("Chat Room Not Found", 404);
         }
 
-        $messages = Message::with(['user', 'chatRoom'])->where('chat_room_id', $chatRoomId)->get();
-
-        return response()->json($messages);
+        return response()->json($this->messageRepository->getMessagesByChatRoom($chatRoomId));
     }
 
     /**

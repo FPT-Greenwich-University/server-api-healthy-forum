@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\ChatRoomCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Chats\CreateChatRoomRequest;
-use App\Models\User;
 use App\Repositories\Interfaces\IChatRoomRepository;
 use App\Repositories\Interfaces\IMessageRepository;
+use App\Repositories\Interfaces\IPermissionRepository;
+use App\Repositories\Interfaces\IUserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
@@ -16,11 +18,15 @@ class ChatRoomsController extends Controller
 {
     private readonly IMessageRepository $messageRepository;
     private readonly IChatRoomRepository $chatRoomRepository;
+    private readonly IUserRepository $userRepository;
+    private readonly IPermissionRepository $permissionRepository;
 
-    public function __construct(IMessageRepository $messageRepository, IChatRoomRepository $chatRoomRepository)
+    public function __construct(IMessageRepository $messageRepository, IChatRoomRepository $chatRoomRepository, IUserRepository $userRepository, IPermissionRepository $permissionRepository)
     {
         $this->messageRepository = $messageRepository;
         $this->chatRoomRepository = $chatRoomRepository;
+        $this->userRepository = $userRepository;
+        $this->permissionRepository = $permissionRepository;
     }
 
     final public function getChatRoomUsers(int $chatRoomId): JsonResponse
@@ -57,11 +63,12 @@ class ChatRoomsController extends Controller
             $this->messageRepository->createNewMessage(['message' => 'Hello', 'chat_room_id' => $newChatRoom->id, 'source_id' => $sourceId, 'target_id' => $targetId]);
 
             $permissionName = 'chat-room.' . $newChatRoom->id;
-            Permission::create(['name' => $permissionName, 'guard_name' => 'web']);
+            $this->permissionRepository->create(['name' => $permissionName, 'guard_name' => 'web']); // Create new permission
 
-            $request->user()->givePermissionTo($permissionName); // Give permission access this room to current user
+            $this->userRepository->setDirectPermission($request->user()->id, $permissionName); // Give permission access this room to current user
+            $this->userRepository->setDirectPermission($targetId, $permissionName); // Giver permission access this room to target user
 
-            User::find($targetId)->givePermissionTo($permissionName); // Giver permission access this room to target user
+            broadcast(new ChatRoomCreated(chatRoom: $newChatRoom, targetUserIdId: $targetId))->toOthers();
 
             return response()->json(['ChatRoom' => $newChatRoom], 201);
         }

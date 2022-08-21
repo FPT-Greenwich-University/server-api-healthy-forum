@@ -22,3 +22,7 @@ Broadcast::channel('chat', function () {
     return Auth::check();
 });
 
+Broadcast::channel('chat-room', function () {
+    return Auth::check();
+});
+
