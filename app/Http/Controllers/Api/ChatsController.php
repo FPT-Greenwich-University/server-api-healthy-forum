@@ -61,7 +61,7 @@ class ChatsController extends Controller
         $user = $request->user();
         $targetId = intval($request->input('targetId'));
 
-        $message = $this->messageRepository->createNewMessage(['chat_room_id' => $chatRoomId, 'source_id' => $user->id, 'target_id' => $targetId, 'message' => $request->input('message')]);
+        $message = $this->messageRepository->createNewMessage(['chat_room_id' => $chatRoomId, 'source_id' => $user->id, 'target_id' => $targetId, 'message' => trim($request->input('message'))]);
 
         if ($request->hasFile("files")) {
             foreach ($request->file("files") as $key => $file) {

@@ -33,6 +33,6 @@ class MessageRepository extends BaseRepository implements IMessageRepository
 
     public function getMessagesByChatRoom(int $chatRoomId): Collection|null
     {
-        return $this->model->with(['user'])->where('chat_room_id', $chatRoomId)->get();
+        return $this->model->with(['user', 'files'])->where('chat_room_id', $chatRoomId)->get();
     }
 }
