@@ -65,11 +65,13 @@ class ChatsController extends Controller
 
         if ($request->hasFile("files")) {
             foreach ($request->file("files") as $key => $file) {
-                $fileName = $file->hashName(); // Hash file's name
+                $originFileName = $file->getClientOriginalName();
+                $hashFileName = $file->hashName(); // Hash file's name
                 $targetDir = 'messages/files/'; // Set default target directory
-                $this->fileServices->storeFile($file, $targetDir, $fileName);
+                $this->fileServices->storeFile($file, $targetDir, $hashFileName);
 
-                $array[$key]['path'] = $targetDir . $fileName;
+                $array[$key]['name'] = $originFileName;
+                $array[$key]['path'] = $targetDir . $hashFileName;
             }
 
             // Insert data to File table with relationship

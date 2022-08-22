@@ -10,7 +10,7 @@ class File extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['fileable_id', 'fileable_type', 'path'];
+    protected $fillable = ['name', 'fileable_id', 'fileable_type', 'path'];
 
     public function fileable(): MorphTo
     {
