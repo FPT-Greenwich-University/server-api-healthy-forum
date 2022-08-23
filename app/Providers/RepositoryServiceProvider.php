@@ -6,6 +6,7 @@ use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Eloquent\CategoryRepository;
 use App\Repositories\Eloquent\ChatRoomRepository;
 use App\Repositories\Eloquent\CommentRepository;
+use App\Repositories\Eloquent\FileManagerRepository;
 use App\Repositories\Eloquent\MessageRepository;
 use App\Repositories\Eloquent\PermissionRepository;
 use App\Repositories\Eloquent\PostLikeRepository;
@@ -20,6 +21,7 @@ use App\Repositories\Interfaces\ICategoryRepository;
 use App\Repositories\Interfaces\IChatRoomRepository;
 use App\Repositories\Interfaces\ICommentRepository;
 use App\Repositories\Interfaces\IFavoriteRepository;
+use App\Repositories\Interfaces\IFileManagerRepository;
 use App\Repositories\Interfaces\IMessageRepository;
 use App\Repositories\Interfaces\IPermissionRepository;
 use App\Repositories\Interfaces\IPostLikeRepository;
@@ -55,6 +57,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IFavoriteRepository::class, FavoriteRepository::class);
         $this->app->bind(IMessageRepository::class, MessageRepository::class);
         $this->app->bind(IChatRoomRepository::class, ChatRoomRepository::class);
+        $this->app->bind(IFileManagerRepository::class, FileManagerRepository::class);
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Http\Requests\Api\Chats\StoreMessageRequest;
 use App\Models\File;
 use App\Models\Message;
 use App\Repositories\Interfaces\IChatRoomRepository;
+use App\Repositories\Interfaces\IFileManagerRepository;
 use App\Repositories\Interfaces\IMessageRepository;
 use App\Services\FileServices\FileServicesContract;
 use Illuminate\Http\JsonResponse;
@@ -20,12 +21,14 @@ class ChatsController extends Controller
     private readonly IChatRoomRepository $chatRoomRepository;
     private readonly IMessageRepository $messageRepository;
     private readonly FileServicesContract $fileServices;
+    private readonly IFileManagerRepository $fileManagerRepository;
 
-    public function __construct(IChatRoomRepository $chatRoomRepository, IMessageRepository $messageRepository, FileServicesContract $fileServicesContract)
+    public function __construct(IChatRoomRepository $chatRoomRepository, IMessageRepository $messageRepository, FileServicesContract $fileServicesContract, IFileManagerRepository $fileManagerRepository)
     {
         $this->chatRoomRepository = $chatRoomRepository;
         $this->messageRepository = $messageRepository;
         $this->fileServices = $fileServicesContract;
+        $this->fileManagerRepository = $fileManagerRepository;
     }
 
     /**
@@ -81,5 +84,19 @@ class ChatsController extends Controller
         broadcast(new MessageSent($user, $message))->toOthers();
 
         return response()->json(['status' => 'Message Sent!'], 201);
+    }
+
+
+    final public function downloadFile(int $fileId)
+    {
+        $file = $this->fileManagerRepository->findById($fileId);
+
+        if (is_null($file)) {
+            return response()->json("File not found", 404);
+        }
+
+        $filePath = public_path() . "/" . $file->path;
+        return response()->download($filePath);
+
     }
 }

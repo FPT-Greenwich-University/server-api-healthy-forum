@@ -3,9 +3,10 @@
 namespace App\Repositories\Interfaces;
 
 use App\Models\Message;
+use App\Repositories\Interfaces\Common\IEloquentRepository;
 use Illuminate\Database\Eloquent\Collection;
 
-interface IMessageRepository
+interface IMessageRepository extends IEloquentRepository
 {
     public function createNewMessage(array $attributes): Message;
 
