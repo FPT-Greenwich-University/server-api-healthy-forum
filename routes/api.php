@@ -30,3 +30,4 @@ Route::post('/chat-rooms/{chatRoomId}/messages', [ChatsController::class, 'sendM
 Route::get('/chat-rooms', [ChatRoomsController::class, 'getRoomChats'])->middleware('auth:sanctum');
 Route::get('/chat-rooms/{chatRoomId}/users', [ChatRoomsController::class, 'getChatRoomUsers'])->middleware('auth:sanctum');
 Route::post('/chat-rooms', [ChatRoomsController::class, 'createChatRoom'])->middleware('auth:sanctum');
+Route::get('/files/{fileId}', [ChatsController::class, 'downloadFile']);
