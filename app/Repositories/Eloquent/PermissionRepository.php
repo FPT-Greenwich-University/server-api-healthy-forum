@@ -12,4 +12,9 @@ class PermissionRepository extends BaseRepository implements IPermissionReposito
     {
         parent::__construct($model);
     }
+
+    public function findByName(string $name)
+    {
+        return $this->model->where('name', '=', $name)->first();
+    }
 }
