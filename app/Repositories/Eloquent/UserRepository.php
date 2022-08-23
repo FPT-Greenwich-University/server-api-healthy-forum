@@ -97,10 +97,6 @@ class UserRepository extends BaseRepository implements IUserRepository
 
     public function setDirectPermission(int $userId, string $permissionName)
     {
-        try {
-            return $this->model->find($userId)->givePermissionTo($permissionName);
-        } catch (Exception $exception) {
-            return $exception->getMessage();
-        }
+        $this->model->find($userId)->givePermissionTo($permissionName);
     }
 }

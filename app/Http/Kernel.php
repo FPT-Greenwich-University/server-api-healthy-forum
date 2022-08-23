@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'role' => \App\Http\Middleware\Roles\EnsureUserHasRole::class,
         'has.any.roles' => \App\Http\Middleware\Roles\EnsureUserHasAnyRoles::class,
         'has.permission' => \App\Http\Middleware\Permissions\EnsureUserHasPermissions::class,
+        'chat.room.permission' => \App\Http\Middleware\Permissions\AccessChatRoomPermission::class,
     ];
 }

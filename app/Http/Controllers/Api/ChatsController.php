@@ -15,6 +15,8 @@ use App\Services\FileServices\FileServicesContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use ZipArchive;
 
 class ChatsController extends Controller
 {
@@ -58,9 +60,6 @@ class ChatsController extends Controller
 
         (string)$permissionName = 'chat-room.' . $chatRoomId;
 
-        // Check user have permission to send message in room
-        if (!$request->user()->hasPermissionTo($permissionName, 'web')) return response()->json("Bad request", 400); // Check is user has permission to send message in this chat room
-
         $user = $request->user();
         $targetId = intval($request->input('targetId'));
 
@@ -87,16 +86,61 @@ class ChatsController extends Controller
     }
 
 
-    final public function downloadFile(int $fileId)
+    /**
+     * <p>Download the <b>Single File</b> in message chat<p>
+     *
+     * @param int $chatRoomId
+     * @param int $messageId
+     * @param int $fileId
+     * @return JsonResponse|BinaryFileResponse
+     */
+    final public function downloadFile(int $chatRoomId, int $messageId, int $fileId)
     {
+        if (is_null($this->messageRepository->findById($messageId))) {
+            return response()->json("Message not found", 404);
+        }
+
         $file = $this->fileManagerRepository->findById($fileId);
 
         if (is_null($file)) {
             return response()->json("File not found", 404);
         }
 
-        $filePath = public_path() . "/" . $file->path;
-        return response()->download($filePath);
+        return response()->download(public_path() . "/" . $file->path);  // Return the file
 
+    }
+
+    /**
+     * <p>Download all <b>The Files</b> of message<p>
+     *
+     * @param int $chatRoomId
+     * @param int $messageId
+     * @return JsonResponse|BinaryFileResponse
+     */
+    final public function downloadZip(int $chatRoomId, int $messageId)
+    {
+        $message = $this->messageRepository->findById($messageId);
+
+        // Check the message is existed?
+        if (is_null($message)) {
+            return response()->json("Message not found", 404);
+        }
+
+        $zip = new ZipArchive(); // Create new object of ZipArchive class
+
+        $fileName = 'files.zip'; // Set the default name of file zip
+
+        $files = $message->files->toArray(); // Get array files infomation from the message
+
+        // Open the file zip
+        if ($zip->open($fileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+            foreach ($files as $key => $file) {
+                $zip->addFile(public_path() . '/' . $file['path'], $file['name']); // Add each the file to the zip file
+            }
+
+            $zip->close();
+        }
+
+        return response()->download($fileName); // Return file zip
     }
 }

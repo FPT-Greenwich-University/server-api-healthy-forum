@@ -26,7 +26,9 @@ class StoreMessageRequest extends ApiFormRequest
         return [
             "targetId" => ["required"],
             "message" => ["required", "string"],
-//            TODO:: Should limit the size of each file
+            "files" => ["array", "nullable", "max:2"],
+            "files.*" => ["file", "max:2000"]
+            //TODO fix file size
         ];
     }
 }
