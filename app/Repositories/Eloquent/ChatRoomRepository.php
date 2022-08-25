@@ -3,7 +3,6 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\ChatRoom;
-use App\Models\Message;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\IChatRoomRepository;
 use Illuminate\Database\Eloquent\Collection;
@@ -18,20 +17,12 @@ class ChatRoomRepository extends BaseRepository implements IChatRoomRepository
     }
 
 
-    public function createNewRoom(): ChatRoom
+    final public function createNewRoom(): ChatRoom
     {
-        $name = Str::random(20) . time();
-        return $this->model::create(['name' => $name]);
+        return $this->model::create(['name' => Str::random(20) . time()]);
     }
 
-    public function getChatRoomId(int $sourceId, int $targetId): int
-    {
-        $messages = Message::where('source_id', $sourceId)->where('target_id', $targetId)->first();
-
-        return intval($messages->chat_room_id);
-    }
-
-    public function getChatRooms(int $sourceId): Collection
+    final public function getChatRooms(int $sourceId): Collection
     {
         return $this->model->whereHas('messages', function (Builder $query) use ($sourceId) {
             $query->where('source_id', '=', $sourceId)
@@ -39,7 +30,7 @@ class ChatRoomRepository extends BaseRepository implements IChatRoomRepository
         })->get();
     }
 
-    public function getRoomByUserId(int $sourceId, int $targetId): ChatRoom|null
+    final public function getRoomByUserId(int $sourceId, int $targetId): ChatRoom|null
     {
         return $this->model->whereHas('messages', function (Builder $query) use ($sourceId, $targetId) {
             $query->whereRaw('source_id = ? AND target_id = ?', [$sourceId, $targetId])

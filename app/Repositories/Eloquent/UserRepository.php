@@ -41,7 +41,9 @@ class UserRepository extends BaseRepository implements IUserRepository
         try {
             $result = $this->model->with(['roles', 'permissions'])->find($userId);
 
-            if (is_null($result)) return false;
+            if (is_null($result)) {
+                return false;
+            }
 
             return $result;
         } catch (Exception $exception) {
@@ -54,7 +56,9 @@ class UserRepository extends BaseRepository implements IUserRepository
         try {
             $user = $this->model->find($userId);
 
-            if (is_null($user)) return false;
+            if (is_null($user)) {
+                return false;
+            }
 
             $user->syncPermissions($permissions);
 

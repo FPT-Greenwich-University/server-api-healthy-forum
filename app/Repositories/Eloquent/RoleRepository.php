@@ -19,8 +19,7 @@ class RoleRepository extends BaseRepository implements IRoleRepository
     public function handleGetExceptRoleByName(array $name)
     {
         try {
-            $roles = $this->model->whereNotIn('name', $name)->get();
-            return $roles;
+            return $this->model->whereNotIn('name', $name)->get();
         } catch (Exception $exception) {
             return $exception->getMessage();
         }

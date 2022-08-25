@@ -12,7 +12,6 @@ use App\Repositories\Interfaces\IPermissionRepository;
 use App\Repositories\Interfaces\IUserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Permission;
 
 class ChatRoomsController extends Controller
 {
