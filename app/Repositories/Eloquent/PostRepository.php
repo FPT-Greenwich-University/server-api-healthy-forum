@@ -145,7 +145,7 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getPostsByUser(int $userId, int $perPage)
     {
         try {
-            return $this->model->with(['image'])
+            return $this->model->with(['user', 'category', 'image'])
                 ->where('user_id', $userId)
                 ->orderBy('id', 'desc')
                 ->isPublished()

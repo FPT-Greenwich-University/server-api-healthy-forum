@@ -25,9 +25,9 @@ class ChatRoomRepository extends BaseRepository implements IChatRoomRepository
     final public function getChatRooms(int $sourceId): Collection
     {
         return $this->model->whereHas('messages', function (Builder $query) use ($sourceId) {
-            $query->where('source_id', '=', $sourceId)
-                ->orWhere('target_id', $sourceId);
-        })->get();
+                $query->where('source_id', '=', $sourceId)
+                    ->orWhere('target_id', $sourceId);
+            })->get();
     }
 
     final public function getRoomByUserId(int $sourceId, int $targetId): ChatRoom|null

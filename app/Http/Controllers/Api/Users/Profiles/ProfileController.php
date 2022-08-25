@@ -65,4 +65,13 @@ class ProfileController extends Controller
 
         return response()->json("", 204);
     }
+
+    final public function getUserRoles(int $userId): JsonResponse
+    {
+        if (is_null($this->userRepository->findById($userId))) {
+            return response()->json("User not found", 404);
+        }
+
+        return response()->json($this->userRepository->getUserWithRolePermission($userId));
+    }
 }
