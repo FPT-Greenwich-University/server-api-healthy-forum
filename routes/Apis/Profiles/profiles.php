@@ -7,3 +7,4 @@ Route::controller(ProfileController::class)->group(function () {
     Route::get('/users/{userId}/profiles', 'show'); // show current user's profile
     Route::put('/users/{userId}/profiles', 'update')->middleware(['auth:sanctum']);
 });
+Route::get('/users/{userId}/roles', [ProfileController::class, 'getUserRoles']);

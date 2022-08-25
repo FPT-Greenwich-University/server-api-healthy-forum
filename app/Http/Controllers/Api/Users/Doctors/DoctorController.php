@@ -49,7 +49,7 @@ class DoctorController extends Controller
      */
     final public function doctorGetOwnPosts(int $userId, Request $request): JsonResponse
     {
-        if (!(((int)$request->user()->id) !== $userId)) {
+        if ((((int)$request->user()->id) !== $userId)) {
             return response()->json("Not found", 404);
         }
 

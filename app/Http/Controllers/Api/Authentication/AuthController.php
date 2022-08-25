@@ -64,6 +64,9 @@ class AuthController extends Controller
             $user = User::create($fields);
             $user->assignRole('customer'); // Assign customer role
             $user->givePermissionTo('view all posts', 'view a post');
+
+            // Set default avatar
+            $user->image()->create(['path' => "default/avatar/user-avatar.png"]);
             // send link verify account
             event(new UserVerifyAccount($user));
             return response()->json("Register successfully", 201);

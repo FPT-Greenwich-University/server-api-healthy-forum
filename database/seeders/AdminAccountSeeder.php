@@ -32,5 +32,7 @@ class AdminAccountSeeder extends Seeder
             'ward' => 'Cam Chau',
             'street' => '213 Cua Dai',
         ]);
+        // Set default avatar
+        $admin->image()->create(['path' => "default/avatar/user-avatar.png"]);
     }
 }
