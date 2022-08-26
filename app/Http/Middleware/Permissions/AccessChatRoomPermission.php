@@ -27,16 +27,21 @@ class AccessChatRoomPermission
      */
     public function handle(Request $request, Closure $next)
     {
-
+        // Retrieve the permission name from URL
         $permissionName = 'chat-room.' . $request->route()->parameter('chatRoomId');
 
+        // Check the permission name is existed in database
         if (is_null($this->permissionRepository->findByName($permissionName))) {
             return response()->json("Permission not found", 404);
         }
 
+        // If the current user had permission then allow user access the chat room
         if (!$request->user()->hasPermissionTo($permissionName, 'web')) {
+            // Return HTTP 403 if user not had permission
             return response()->json("You don't have permission to access the room", 403);
         }
+
+        // Continue the next request
         return $next($request);
     }
 }

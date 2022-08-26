@@ -13,6 +13,12 @@ class UpdatePostViewCount implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+
+    /**
+     * The post instance
+     *
+     * @var integer
+     */
     protected int $postId;
 
     /**
@@ -32,7 +38,7 @@ class UpdatePostViewCount implements ShouldQueue
      */
     public function handle(PostServiceInterface $postService)
     {
+        // Update the total view of the post
         $postService->updatePostView($this->postId);
     }
-
 }

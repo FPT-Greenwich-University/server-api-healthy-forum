@@ -15,7 +15,11 @@ class CategoryController extends Controller
         $this->categoryRepository = $categoryRepository;
     }
 
-
+    /**
+     * Get all the categories
+     *
+     * @return JsonResponse
+     */
     final public function getAllCategories(): JsonResponse
     {
         return response()->json($this->categoryRepository->getAllCategories());

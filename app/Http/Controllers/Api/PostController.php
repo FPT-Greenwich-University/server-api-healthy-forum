@@ -39,12 +39,14 @@ class PostController extends Controller
     {
         $post = $this->postRepos->getDetailPost($postId); // Get the detail post
 
+        // Check the post is existed?
         if (is_null($post)) {
             return response()->json("Post not found", 404);
         }
 
-        // Update view count
+        // Update view count in background
         dispatch(new UpdatePostViewCount($post->id));
+
         return response()->json($post);
     }
 
@@ -56,10 +58,12 @@ class PostController extends Controller
      */
     final public function getRelatedPosts(int $categoryId): JsonResponse
     {
+        // Check is existed category?
         if (is_null($this->categoryRepos->findById($categoryId))) {
             return response()->json("Not found", 404);
         }
 
-        return response()->json($this->postRepos->getRelatedPostsByCategory(categoryId: $categoryId, limitItem: 6)); // get random related post
+        // Return the random related posts
+        return response()->json($this->postRepos->getRelatedPostsByCategory(categoryId: $categoryId, limitItem: 6));
     }
 }

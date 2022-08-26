@@ -11,7 +11,7 @@ class MailController extends Controller
 {
     final public function sendEmailContract(SendEmailContractRequest $request): JsonResponse
     {
-        // Send mail with queue job
+        // Send mail with queue job (background task)
         dispatch(new SendMailContract([
             'title' => $request->input('title'),
             'from_email' => $request->input('from_email'),
@@ -20,6 +20,6 @@ class MailController extends Controller
             'receiver_email' => $request->input('receiver_email')
         ]));
 
-        return response()->json('Send email success', 201);
+        return response()->json('Send email success', 201); // Return 201 created success status
     }
 }

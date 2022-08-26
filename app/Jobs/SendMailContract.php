@@ -14,6 +14,11 @@ class SendMailContract implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * Detail the message of mail
+     *     *
+     * @var array
+     */
     protected array $details;
 
     /**
@@ -33,6 +38,7 @@ class SendMailContract implements ShouldQueue
      */
     public function handle()
     {
+        // Send the email
         Mail::to($this->details['receiver_email'])->send(new ContractDoctor($this->details));
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
@@ -41,10 +42,12 @@ class ChatsController extends Controller
      */
     final public function fetchMessages(int $chatRoomId): JsonResponse
     {
+        // Check the chat room is existed?
         if (is_null($this->chatRoomRepository->findById($chatRoomId))) {
             return response()->json("Chat Room Not Found", 404);
         }
 
+        // Return the messages by chat room
         return response()->json($this->messageRepository->getMessagesByChatRoom($chatRoomId));
     }
 
@@ -56,15 +59,26 @@ class ChatsController extends Controller
      */
     final public function sendMessage(StoreMessageRequest $request, int $chatRoomId): JsonResponse
     {
-        if (is_null($this->chatRoomRepository->findById($chatRoomId))) return response()->json("Chat room not found", 404);
+        // Check the chat room is existed?
+        if (is_null($this->chatRoomRepository->findById($chatRoomId))) {
+            return response()->json("Chat room not found", 404);
+        }
 
-        (string)$permissionName = 'chat-room.' . $chatRoomId;
+        (string)$permissionName = 'chat-room.' . $chatRoomId; // Initial string name
 
-        $user = $request->user();
-        $targetId = intval($request->input('targetId'));
+        $user = $request->user(); // Get the current auth user
 
-        $message = $this->messageRepository->createNewMessage(['chat_room_id' => $chatRoomId, 'source_id' => $user->id, 'target_id' => $targetId, 'message' => trim($request->input('message'))]);
+        $targetId = intval($request->input('targetId')); // Get the target user retrieve message
 
+        // Store new message in database
+        $message = $this->messageRepository->createNewMessage([
+            'chat_room_id' => $chatRoomId,
+            'source_id' => $user->id,
+            'target_id' => $targetId,
+            'message' => trim($request->input('message'))
+        ]);
+
+        // Send message include the files if request has files
         if ($request->hasFile("files")) {
             foreach ($request->file("files") as $key => $file) {
                 $originFileName = $file->getClientOriginalName();
@@ -96,18 +110,19 @@ class ChatsController extends Controller
      */
     final public function downloadFile(int $chatRoomId, int $messageId, int $fileId)
     {
+        // Check the message is existed?
         if (is_null($this->messageRepository->findById($messageId))) {
             return response()->json("Message not found", 404);
         }
 
         $file = $this->fileManagerRepository->findById($fileId);
 
+        // Check the file is existed
         if (is_null($file)) {
             return response()->json("File not found", 404);
         }
 
         return response()->download(public_path() . "/" . $file->path);  // Return the file
-
     }
 
     /**
@@ -130,7 +145,7 @@ class ChatsController extends Controller
 
         $fileName = 'files.zip'; // Set the default name of file zip
 
-        $files = $message->files->toArray(); // Get array files infomation from the message
+        $files = $message->files->toArray(); // Get array files information from the message
 
         // Open the file zip
         if ($zip->open($fileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
@@ -138,7 +153,7 @@ class ChatsController extends Controller
                 $zip->addFile(public_path() . '/' . $file['path'], $file['name']); // Add each the file to the zip file
             }
 
-            $zip->close();
+            $zip->close(); // Close file zip
         }
 
         return response()->download($fileName); // Return file zip

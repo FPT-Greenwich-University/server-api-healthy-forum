@@ -25,7 +25,7 @@ class CategoryController extends Controller
      * @param CreateOrUpdateCategoryRequest $request
      * @return JsonResponse
      */
-    public function store(CreateOrUpdateCategoryRequest $request): JsonResponse
+    final public function store(CreateOrUpdateCategoryRequest $request): JsonResponse
     {
         $this->categoryRepos->create($request->only(['name', 'description']));
         return response()->json('Create new category successful', 201);
@@ -38,7 +38,7 @@ class CategoryController extends Controller
      * @param int $categoryId
      * @return JsonResponse
      */
-    public function update(CreateOrUpdateCategoryRequest $request, int $categoryId): JsonResponse
+    final public function update(CreateOrUpdateCategoryRequest $request, int $categoryId): JsonResponse
     {
         $attributes = $request->only(['name', 'description']); // Get field from body http
 
@@ -55,11 +55,13 @@ class CategoryController extends Controller
      * @param int $categoryId
      * @return JsonResponse
      */
-    public function destroy(int $categoryId): JsonResponse
+    final public function destroy(int $categoryId): JsonResponse
     {
         $posts = $this->postRepository->getPostsByCategory(categoryId: $categoryId, perPage: 5); // Get all the posts with category's id
 
-        if ($posts->total() !== 0) return response()->json("Category is used by post", 400); // If exits the posts then return bad request
+        if ($posts->total() !== 0) {
+            return response()->json("Category is used by post", 400); // If exits the posts then return bad request
+        }
 
         $result = $this->categoryRepos->handleDeleteCategory($categoryId); // delete category information if category is existed
 

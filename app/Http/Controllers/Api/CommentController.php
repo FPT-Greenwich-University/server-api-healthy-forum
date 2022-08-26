@@ -26,11 +26,12 @@ class CommentController extends Controller
      */
     final public function index(int $postId): JsonResponse
     {
+        // Check the post is exited?
         if (is_null($this->postRepository->findById($postId))) {
             return response()->json("Post not found", 404);
         }
 
-        return response()->json($this->commentRepository->getAllComments(postId: $postId, perPage: 5));
+        return response()->json($this->commentRepository->getAllComments(postId: $postId, perPage: 5)); // Return the comments with pagination
     }
 
     /**
@@ -42,10 +43,11 @@ class CommentController extends Controller
      */
     final public function getReplyComments(int $postId, int $commentId): JsonResponse
     {
+        // Check the post is existed?
         if (is_null($this->postRepository->findById($postId))) {
             return response()->json("Post not found", 404);
         }
-
+        // Check the comment is existed?
         if (is_null($this->commentRepository->findById($commentId))) {
             return response()->json("Root comment not found", 404);
         }

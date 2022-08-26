@@ -27,14 +27,14 @@ class SearchController extends Controller
      */
     final public function searchPosts(Request $request): JsonResponse
     {
-        // The total in one page
         $title = trim($request->query('title')); // Retrieve query title from url
 
-        // If request have query title and it not empty string
+        // If the request have query title and it not empty string
         if (empty($title) || !$request->has('title')) {
             return response()->json('', 204); // Return http 204 if empty title
         }
 
+        // Return the posts by title (5 item in one page)
         return response()->json($this->postRepository->searchPosts(title: $title, perPage: 5));
     }
 
@@ -42,10 +42,12 @@ class SearchController extends Controller
     {
         $query = trim($request->query('query')); // Retrieve query from input user
 
+        // If the request have query title and it not empty string
         if (empty($query) || !$request->has('query')) {
             return response()->json('', 204); // Return http 204 no content if empty query
         }
 
+        // Return the posts by title (10 item in one page)
         return response()->json($this->userRepository->searchUser(query: $query, perPage: 10));
     }
 }

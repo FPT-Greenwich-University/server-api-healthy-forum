@@ -29,6 +29,7 @@ class ContractDoctor extends Mailable
      */
     public function build()
     {
+        // Send the email for contract with the doctor
         return $this->subject('Need support of customer from healthy social')
             ->from($this->details['from_email'], $this->details['from_user_name'])
             ->view('emails.contract-doctor');
