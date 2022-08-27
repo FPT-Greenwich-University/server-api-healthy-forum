@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\IUserRepository;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository extends BaseRepository implements IUserRepository
 {
@@ -14,7 +15,7 @@ class UserRepository extends BaseRepository implements IUserRepository
         parent::__construct($model);
     }
 
-    public function getListIdByRoleName(string $roleName)
+    public function getListIdByRoleName(string $roleName): array|string
     {
         try {
             return $this->model->role($roleName)->pluck('id')->toArray();
@@ -36,7 +37,7 @@ class UserRepository extends BaseRepository implements IUserRepository
         }
     }
 
-    public function getUserWithRolePermission(int $userId)
+    public function getUserWithRolePermission(int $userId): User|string
     {
         try {
             return $this->model->with(['roles', 'permissions'])->find($userId);
@@ -45,7 +46,7 @@ class UserRepository extends BaseRepository implements IUserRepository
         }
     }
 
-    public function syncPermissions(int $userId, array $permissions)
+    public function syncPermissions(int $userId, array $permissions): bool|string
     {
         try {
             $user = $this->model->find($userId);
@@ -62,7 +63,7 @@ class UserRepository extends BaseRepository implements IUserRepository
         }
     }
 
-    public function getUserWithProfile(int $userId)
+    public function getUserWithProfile(int $userId): User|string
     {
         try {
             return $this->model->with(["profile", "image"])->find($userId);
@@ -93,8 +94,29 @@ class UserRepository extends BaseRepository implements IUserRepository
         }
     }
 
-    public function setDirectPermission(int $userId, string $permissionName)
+    public function setDirectPermission(int $userId, string $permissionName): void
     {
         $this->model->find($userId)->givePermissionTo($permissionName);
+    }
+
+    public function checkEmailExists(string $email): User|null
+    {
+        return $this->model->where('email', $email)->first();
+    }
+
+    public function createNewAccount(array $attributes): User
+    {
+        return DB::transaction(function () use ($attributes) {
+            $user = $this->model->create($attributes);
+
+            // Assign permission
+            $user->assignRole('customer'); // Assign customer role
+            $user->givePermissionTo('view all posts', 'view a post');
+
+            // Set default avatar
+            $user->image()->create(['path' => "default/avatar/user-avatar.png"]);
+
+            return $user;
+        });
     }
 }
