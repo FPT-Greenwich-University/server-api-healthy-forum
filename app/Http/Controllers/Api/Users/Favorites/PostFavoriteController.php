@@ -40,7 +40,7 @@ class PostFavoriteController extends Controller
     final public function store(StoreFavoritePostRequest $request): JsonResponse
     {
         $userId = $request->user()->id;
-        $postId = $request->input('post_id');
+        $postId = $request->input('postId');
 
         if ($this->checkIsPostFavoriteExist($userId, $postId) === false) { // check if post have exits in user's favorite post
             $post = $this->postRepository->findById($postId);
