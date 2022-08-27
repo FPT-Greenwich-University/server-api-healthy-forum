@@ -39,13 +39,7 @@ class UserRepository extends BaseRepository implements IUserRepository
     public function getUserWithRolePermission(int $userId)
     {
         try {
-            $result = $this->model->with(['roles', 'permissions'])->find($userId);
-
-            if (is_null($result)) {
-                return false;
-            }
-
-            return $result;
+            return $this->model->with(['roles', 'permissions'])->find($userId);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admins\Categories;
 
+use App\Http\Controllers\Api\Users\Profiles\ProfileController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Admins\Categories\CreateOrUpdateCategoryRequest;
 use App\Repositories\Interfaces\ICategoryRepository;
@@ -40,11 +41,12 @@ class CategoryController extends Controller
      */
     final public function update(CreateOrUpdateCategoryRequest $request, int $categoryId): JsonResponse
     {
-        $attributes = $request->only(['name', 'description']); // Get field from body http
+        // Check category is existed
+        if (is_null($this->categoryRepos->findById($categoryId))) {
+            return response()->json('Category not found', 404);
+        }
 
-        $result = $this->categoryRepos->updateCategory($categoryId, $attributes); // Update category information if category is existed
-
-        if ($result === false) return response()->json("Category not found", 404); // Return not found if no result record
+        $this->categoryRepos->updateCategory($categoryId, $request->only(['name', 'description'])); // Update category information if category is existed
 
         return response()->json("", 204); // Return http response with status 204
     }
@@ -57,15 +59,20 @@ class CategoryController extends Controller
      */
     final public function destroy(int $categoryId): JsonResponse
     {
-        $posts = $this->postRepository->getPostsByCategory(categoryId: $categoryId, perPage: 5); // Get all the posts with category's id
-
-        if ($posts->total() !== 0) {
-            return response()->json("Category is used by post", 400); // If exits the posts then return bad request
+        // Check category is existed
+        if (is_null($this->categoryRepos->findById($categoryId))) {
+            return response()->json('Category not found', 404);
         }
 
-        $result = $this->categoryRepos->handleDeleteCategory($categoryId); // delete category information if category is existed
+        /**
+         *  Get all the posts with category's id
+         *  If exits the posts then return bad request
+         */
+        if ($this->postRepository->getPostsByCategory(categoryId: $categoryId, perPage: 5)->total() !== 0) {
+            return response()->json("Category is used by post", 400);
+        }
 
-        if ($result === false) return response()->json("Category not found", 404);
+        $this->categoryRepos->handleDeleteCategory($categoryId); // delete category
 
         return response()->json("", 204);
     }

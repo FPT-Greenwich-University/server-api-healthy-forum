@@ -20,9 +20,9 @@ class StatisticController extends Controller
      *
      * @return JsonResponse
      */
-    public function getPostsMostLiked(): JsonResponse
+    final public function getPostsMostLiked(): JsonResponse
     {
-        $posts = $this->postLikeRepos->handleGetPostsMostLiked(perPage: 5); // Get the posts have most liked, total 5 item in per page
-        return response()->json($posts);
+        // Get the posts have most liked, total 5 item in one page
+        return response()->json($this->postLikeRepos->handleGetPostsMostLiked(perPage: 5));
     }
 }

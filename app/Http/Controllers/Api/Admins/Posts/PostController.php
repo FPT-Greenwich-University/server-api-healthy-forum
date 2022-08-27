@@ -21,10 +21,9 @@ class PostController extends Controller
      *
      * @return JsonResponse
      */
-    public function getPostsIsNotPublished(): JsonResponse
+    final public function getPostsIsNotPublished(): JsonResponse
     {
-        $posts = $this->postResponse->getPostsNotPublish(per_page: 5); // Get the posts have not published yet
-        return response()->json($posts);
+        return response()->json($this->postResponse->getPostsNotPublish(per_page: 5));
     }
 
     /**
@@ -32,11 +31,13 @@ class PostController extends Controller
      * @param int $postId
      * @return JsonResponse
      */
-    public function show(int $postId): JsonResponse
+    final public function show(int $postId): JsonResponse
     {
         $post = $this->postResponse->getDetailPost($postId); // find the post
 
-        if (is_null($post)) return response()->json("Product not found", 404);
+        if (is_null($post)) {
+            return response()->json("Product not found", 404);
+        }
 
         return response()->json($post); // return post detail information
     }
@@ -47,7 +48,7 @@ class PostController extends Controller
      * @param int $postId Post's id need publish
      * @return JsonResponse
      */
-    public function acceptPublishPost(int $postId): JsonResponse
+    final public function acceptPublishPost(int $postId): JsonResponse
     {
         $post = $this->postResponse->findById($postId); // find the post
 
