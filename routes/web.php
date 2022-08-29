@@ -1,6 +1,5 @@
 <?php
 
-use App\Events\Hello;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,10 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', static function () {
     return view('welcome');
-});
-
-Route::get('/broadcast', function () {
-    broadcast(new Hello());
 });
