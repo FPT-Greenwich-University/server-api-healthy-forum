@@ -1,5 +1,6 @@
 <?php
 
+use App\Broadcasting\ChatChannel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -18,9 +19,7 @@ use Illuminate\Support\Facades\Broadcast;
 //    return (int) $user->id === (int) $id;
 //});
 
-Broadcast::channel('chat', function () {
-    return Auth::check();
-});
+Broadcast::channel('chatRoom.{chatRoomId}', ChatChannel::class);
 
 Broadcast::channel('chat-room', function () {
     return Auth::check();

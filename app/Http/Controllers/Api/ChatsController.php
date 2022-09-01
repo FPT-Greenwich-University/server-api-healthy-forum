@@ -59,8 +59,10 @@ class ChatsController extends Controller
      */
     final public function sendMessage(StoreMessageRequest $request, int $chatRoomId): JsonResponse
     {
+        $existedChatRoom = $this->chatRoomRepository->findById($chatRoomId);
+
         // Check the chat room is existed?
-        if (is_null($this->chatRoomRepository->findById($chatRoomId))) {
+        if (is_null($existedChatRoom)) {
             return response()->json("Chat room not found", 404);
         }
 
@@ -94,7 +96,7 @@ class ChatsController extends Controller
             $message->files()->createMany($array);
         }
 
-        broadcast(new MessageSent($user, $message))->toOthers();
+        broadcast(new MessageSent($user, $message, $existedChatRoom))->toOthers();
 
         return response()->json(['status' => 'Message Sent!'], 201);
     }
