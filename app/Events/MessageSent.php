@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\ChatRoom;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -30,15 +31,18 @@ class MessageSent implements ShouldBroadcast, ShouldQueue
      */
     public $message;
 
+    public $chatRoom;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(User $user, Message $message)
+    public function __construct(User $user, Message $message, ChatRoom $chatRoom)
     {
         $this->user = $user;
         $this->message = $message;
+        $this->chatRoom = $chatRoom;
     }
 
     /**
@@ -48,6 +52,6 @@ class MessageSent implements ShouldBroadcast, ShouldQueue
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('chat');
+        return new PrivateChannel('chatRoom.' . $this->chatRoom->id);
     }
 }
