@@ -2,6 +2,7 @@
 /public/hot
 /public/storage
 /public/posts
+/public/messageZipFile.zip
 /public/messages
 /storage/*.key
 /vendor

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Admins\Categories;
 
-use App\Http\Controllers\Api\Users\Profiles\ProfileController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Admins\Categories\CreateOrUpdateCategoryRequest;
 use App\Repositories\Interfaces\ICategoryRepository;

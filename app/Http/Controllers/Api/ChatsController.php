@@ -122,7 +122,16 @@ class ChatsController extends Controller
             return response()->json("File not found", 404);
         }
 
-        return response()->download(public_path() . "/" . $file->path);  // Return the file
+        $zip = new ZipArchive(); // create object of zip archive
+
+        $zipFile = 'messageZipFile.zip'; // Set the default name of file zip
+
+        // Open the file zip
+        $zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        $zip->addFile(public_path() . '/' . $file->path, $file->name);
+        $zip->close(); // Close file zip
+
+        return response()->download($zipFile);  // Return zip file
     }
 
     /**
@@ -143,12 +152,12 @@ class ChatsController extends Controller
 
         $zip = new ZipArchive(); // Create new object of ZipArchive class
 
-        $fileName = 'files.zip'; // Set the default name of file zip
+        $zipFile = 'messageZipFile.zip'; // Set the default name of file zip
 
         $files = $message->files->toArray(); // Get array files information from the message
 
         // Open the file zip
-        if ($zip->open($fileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+        if ($zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
             foreach ($files as $key => $file) {
                 $zip->addFile(public_path() . '/' . $file['path'], $file['name']); // Add each the file to the zip file
             }
@@ -156,6 +165,6 @@ class ChatsController extends Controller
             $zip->close(); // Close file zip
         }
 
-        return response()->download($fileName); // Return file zip
+        return response()->download($zipFile); // Return file zip
     }
 }
