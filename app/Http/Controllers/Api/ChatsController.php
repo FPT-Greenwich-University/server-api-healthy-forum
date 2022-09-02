@@ -101,7 +101,6 @@ class ChatsController extends Controller
         return response()->json(['status' => 'Message Sent!'], 201);
     }
 
-
     /**
      * <p>Download the <b>Single File</b> in message chat<p>
      *
