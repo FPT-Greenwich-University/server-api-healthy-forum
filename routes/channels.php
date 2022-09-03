@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\Broadcast;
 //    return (int) $user->id === (int) $id;
 //});
 
-Broadcast::channel('chatRoom.{chatRoomId}', ChatChannel::class);
+Broadcast::channel('chat.{chatRoomId}', ChatChannel::class);
 
-Broadcast::channel('chat-room', function () {
+Broadcast::channel('chat-room.{targetId}', function ($user, int $targetId) {
     return Auth::check();
 });
 

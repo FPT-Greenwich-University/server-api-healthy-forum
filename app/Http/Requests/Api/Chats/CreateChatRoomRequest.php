@@ -24,8 +24,7 @@ class CreateChatRoomRequest extends ApiFormRequest
     public function rules()
     {
         return [
-            'sourceId' => ['required', 'numeric'],
-            'targetId' => ['required', 'numeric']
+            'targetUserId' => ['required', 'numeric']
         ];
     }
 }

@@ -16,4 +16,9 @@ class ChatRoom extends Model
     {
         return $this->hasMany(Message::class);
     }
+
+    public function user(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
 }

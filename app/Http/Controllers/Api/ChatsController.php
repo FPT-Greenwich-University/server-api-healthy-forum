@@ -66,17 +66,15 @@ class ChatsController extends Controller
             return response()->json("Chat room not found", 404);
         }
 
-        (string)$permissionName = 'chat-room.' . $chatRoomId; // Initial string name
-
         $user = $request->user(); // Get the current auth user
 
-        $targetId = intval($request->input('targetId')); // Get the target user retrieve message
+        $targetUserId = (int)($request->input('targetUserId')); // Get the target user retrieve message
 
         // Store new message in database
         $message = $this->messageRepository->createNewMessage([
             'chat_room_id' => $chatRoomId,
             'source_id' => $user->id,
-            'target_id' => $targetId,
+            'target_id' => $targetUserId,
             'message' => trim($request->input('message'))
         ]);
 
@@ -96,11 +94,10 @@ class ChatsController extends Controller
             $message->files()->createMany($array);
         }
 
-        broadcast(new MessageSent($user, $message, $existedChatRoom))->toOthers();
+        broadcast(new MessageSent($user, $message, $chatRoomId))->toOthers();
 
         return response()->json(['status' => 'Message Sent!'], 201);
     }
-
 
     /**
      * <p>Download the <b>Single File</b> in message chat<p>
