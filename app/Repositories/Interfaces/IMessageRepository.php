@@ -17,7 +17,4 @@ interface IMessageRepository extends IEloquentRepository
      */
     public function getMessagesByChatRoom(int $chatRoomId): Collection|null;
 
-    public function getDetailMessage(int $sourceId, int $targetId): Collection|null;
-
-    public function getTheFirstMessage(int $chatRoomId): Message|null;
 }

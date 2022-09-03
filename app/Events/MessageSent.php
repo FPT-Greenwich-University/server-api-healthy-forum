@@ -31,18 +31,18 @@ class MessageSent implements ShouldBroadcast, ShouldQueue
      */
     public $message;
 
-    public $chatRoom;
+    public int $chatRoomId;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(User $user, Message $message, ChatRoom $chatRoom)
+    public function __construct(User $user, Message $message, int $chatRoomId)
     {
         $this->user = $user;
         $this->message = $message;
-        $this->chatRoom = $chatRoom;
+        $this->chatRoomId = $chatRoomId;
     }
 
     /**
@@ -52,6 +52,6 @@ class MessageSent implements ShouldBroadcast, ShouldQueue
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('chatRoom.' . $this->chatRoom->id);
+        return new PrivateChannel('chat.' . $this->chatRoomId);
     }
 }

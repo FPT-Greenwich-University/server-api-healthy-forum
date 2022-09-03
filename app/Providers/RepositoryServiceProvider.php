@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Eloquent\CategoryRepository;
+use App\Repositories\Eloquent\ChatRoomDetailRepository;
 use App\Repositories\Eloquent\ChatRoomRepository;
 use App\Repositories\Eloquent\CommentRepository;
 use App\Repositories\Eloquent\FileManagerRepository;
@@ -18,6 +19,7 @@ use App\Repositories\Eloquent\TagRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Interfaces\Common\IEloquentRepository;
 use App\Repositories\Interfaces\ICategoryRepository;
+use App\Repositories\Interfaces\IChatRoomDetailRepository;
 use App\Repositories\Interfaces\IChatRoomRepository;
 use App\Repositories\Interfaces\ICommentRepository;
 use App\Repositories\Interfaces\IFavoriteRepository;
@@ -58,6 +60,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IMessageRepository::class, MessageRepository::class);
         $this->app->bind(IChatRoomRepository::class, ChatRoomRepository::class);
         $this->app->bind(IFileManagerRepository::class, FileManagerRepository::class);
+        $this->app->bind(IChatRoomDetailRepository::class, ChatRoomDetailRepository::class);
     }
 
     /**

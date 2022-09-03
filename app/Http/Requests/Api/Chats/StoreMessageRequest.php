@@ -24,7 +24,7 @@ class StoreMessageRequest extends ApiFormRequest
     public function rules()
     {
         return [
-            "targetId" => ["required"],
+            "targetUserId" => ["required"],
             "message" => ["required", "string"],
             "files" => ["array", "nullable", "max:2"],
             "files.*" => ["file", "max:2000"]

@@ -16,7 +16,7 @@ class DoctorAccountSeeder extends Seeder
     public function run()
     {
         $doctor = User::create([
-            'name' => 'doctor phuoc',
+            'name' => 'doctor',
             'email' => 'doctor@gmail.com',
             'password' => bcrypt('ngocphuocha'),
             'email_verified_at' => now()

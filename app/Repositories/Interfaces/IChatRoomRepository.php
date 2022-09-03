@@ -16,7 +16,5 @@ interface IChatRoomRepository extends IEloquentRepository
      */
     public function createNewRoom(): ChatRoom;
 
-    public function getChatRooms(int $sourceId): Collection;
-
     public function getRoomByUserId(int $sourceId, int $targetId): ChatRoom|null;
 }

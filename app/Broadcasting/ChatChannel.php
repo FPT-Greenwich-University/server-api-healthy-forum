@@ -2,6 +2,7 @@
 
 namespace App\Broadcasting;
 
+use App\Models\ChatRoom;
 use App\Models\User;
 
 class ChatChannel

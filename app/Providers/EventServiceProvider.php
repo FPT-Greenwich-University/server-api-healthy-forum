@@ -34,7 +34,7 @@ class EventServiceProvider extends ServiceProvider
             NotifyResetPassword::class
         ],
 
-        // Send email notify new post publised
+        // Send email notify new post published
         NotifyNewPost::class => [
             SendEmailNotifyNewPost::class
         ],

@@ -15,7 +15,6 @@ class ChatRoomCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public ChatRoom $newChatRoom;
     public int $targetUserId;
 
     /**
@@ -23,10 +22,9 @@ class ChatRoomCreated implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(ChatRoom $chatRoom, int $targetUserIdId)
+    public function __construct(int $targetUserId)
     {
-        $this->newChatRoom = $chatRoom;
-        $this->targetUserId = $targetUserIdId;
+        $this->targetUserId = $targetUserId;
     }
 
     /**
@@ -36,6 +34,6 @@ class ChatRoomCreated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('chat-room');
+        return new PrivateChannel('chat-room.' . $this->targetUserId);
     }
 }
