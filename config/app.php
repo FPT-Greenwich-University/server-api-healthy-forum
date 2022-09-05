@@ -181,6 +181,7 @@ return [
         \App\Providers\FileManagerServiceProvider::class,
         \App\Providers\PostServiceProvider::class,
         \App\Providers\CustomAuthServicesProvider::class,
+        \App\Providers\ChatServiceProvider::class,
     ],
 
     /*
