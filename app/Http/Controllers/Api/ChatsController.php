@@ -70,9 +70,14 @@ class ChatsController extends Controller
         }
 
         // Hanle send message
-        $this->chatService->sendMessage(chatRoomId: $chatRoomId, request: $request);
+        $result = $this->chatService->sendMessage(chatRoomId: $chatRoomId, request: $request);
+
+        if ($result === false) {
+            return response()->json(['status' => 'Failed Sent Message'], 400); //TODO: ask thay http status transaction failed
+        }
 
         return response()->json(['status' => 'Message Sent!'], 201);
+
     }
 
     /**
