@@ -32,7 +32,7 @@ class AccessChatRoomPermission
 
         // Check the permission name is existed in database
         if (is_null($this->permissionRepository->findByName($permissionName))) {
-            return response()->json("Permission not found", 404);
+            return response()->json("Chat room or permission not exits!", 404);
         }
 
         // If the current user had permission then allow user access the chat room
