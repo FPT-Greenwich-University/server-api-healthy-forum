@@ -29,7 +29,12 @@ class SendEmailNotifyNewPost implements ShouldQueue
      */
     public function handle(NotifyNewPost $event)
     {
+        // Get all the users
         $users = $this->userRepository->getAll();
+
+        /**
+         * Send the email to each user in the system for notification the new post
+         */
         $users->each->notify(new SendMailForNewPost($event->post));
     }
 }

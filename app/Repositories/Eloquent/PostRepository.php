@@ -20,7 +20,10 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getPosts(int $per_page)
     {
         try {
-            return $this->model->with(['image', 'category', 'user'])->isPublished()->orderBy('id', 'desc')->paginate($per_page);
+            return $this->model->with(['image', 'category', 'user'])
+                ->isPublished()
+                ->orderBy('id', 'desc')
+                ->paginate($per_page);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -43,7 +46,10 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getPostsNotPublish(int $per_page)
     {
         try {
-            return $this->model->with(['image', 'category', 'user'])->isNotPublished()->orderBy('id', 'desc')->paginate($per_page);
+            return $this->model->with(['image', 'category', 'user'])
+                ->isNotPublished()
+                ->orderBy('id', 'desc')
+                ->paginate($per_page);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -52,7 +58,9 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getDetailPost(int $id)
     {
         try {
-            return $this->model->with(['image', 'category', 'user'])->isPublished()->find($id);
+            return $this->model->with(['image', 'category', 'user'])
+                ->isPublished()
+                ->find($id);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -61,9 +69,8 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getPostsByTag(int $tagId, int $perPage)
     {
         try {
-            $listpostIds = $this->getListpostIdByTag($tagId);
             return Post::with(['image', 'category', 'user', 'tags'])
-                ->whereIn('posts.id', $listpostIds)
+                ->whereIn('posts.id', $this->getListpostIdByTag($tagId))
                 ->isPublished()
                 ->orderBy('posts.id', 'desc')
                 ->paginate($perPage)
@@ -85,9 +92,8 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getPostsByCategory(int $categoryId, int $perPage)
     {
         try {
-            $listpostIds = $this->getListpostIdByCategory($categoryId);
             return Post::with(['image', 'category', 'user'])
-                ->whereIn('posts.id', $listpostIds)
+                ->whereIn('posts.id', $this->getListpostIdByCategory($categoryId))
                 ->orderBy('posts.id', 'desc')
                 ->paginate($perPage)
                 ->withQueryString();
@@ -99,7 +105,7 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getListpostIdByCategory(int $categoryId)
     {
         try {
-            return $this->model->where('category_id', '=', $categoryId)->pluck('id');
+            return $this->model->where('category_id', $categoryId)->pluck('id');
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -110,6 +116,7 @@ class PostRepository extends BaseRepository implements IPostRepository
      *
      * @param integer $userId
      * @param integer $itemPerPage the total number item in per page
+     * @return string
      */
     public function doctorGetOwnPosts(int $userId, int $itemPerPage)
     {
@@ -138,7 +145,7 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function getPostsByUser(int $userId, int $perPage)
     {
         try {
-            return $this->model->with(['image'])
+            return $this->model->with(['user', 'category', 'image'])
                 ->where('user_id', $userId)
                 ->orderBy('id', 'desc')
                 ->isPublished()
@@ -162,7 +169,9 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function updatePostTags(int $postId, array $tags)
     {
         try {
-            return $this->model->find($postId)->tags()->sync($tags);
+            return $this->model->find($postId)
+                ->tags()
+                ->sync($tags);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -184,6 +193,7 @@ class PostRepository extends BaseRepository implements IPostRepository
             $post = $this->model->find($postId);
 
             $post->image()->create(['path' => $filePath]);
+
             return true;
         } catch (Exception $exception) {
             return $exception->getMessage();
@@ -206,7 +216,9 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function assignPostTags(int $postId, array $tags)
     {
         try {
-            return $this->model->find($postId)->tags()->attach($tags, ['created_at' => now(), 'updated_at' => now()]);
+            return $this->model->find($postId)
+                ->tags()
+                ->attach($tags, ['created_at' => now(), 'updated_at' => now()]);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -215,7 +227,9 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function storePostComment(int $postId, array $attributes)
     {
         try {
-            return $this->model->find($postId)->comments()->create($attributes);
+            return $this->model->find($postId)
+                ->comments()
+                ->create($attributes);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -224,8 +238,10 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function addFavoritePost(int $postId, int $userId)
     {
         try {
-            $post = $this->model->find($postId);
-            $post->favorites()->create(['user_id' => $userId]);
+            $this->model->find($postId)
+                ->favorites()
+                ->create(['user_id' => $userId]);
+
             return true;
         } catch (Exception $exception) {
             return $exception->getMessage();
@@ -235,7 +251,12 @@ class PostRepository extends BaseRepository implements IPostRepository
     public function doctorGetDetailPost(int $postId)
     {
         try {
-            return $this->model->with(['image', 'category', 'user', 'tags'])->find($postId);
+            return $this->model->with([
+                'image',
+                'category',
+                'user',
+                'tags'
+            ])->find($postId);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }

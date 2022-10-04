@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Public\Posts;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\UpdatePostViewCount;
@@ -8,7 +8,7 @@ use App\Repositories\Interfaces\ICategoryRepository;
 use App\Repositories\Interfaces\IPostRepository;
 use Illuminate\Http\JsonResponse;
 
-class PublicPostController extends Controller
+class PostController extends Controller
 {
     private readonly IPostRepository $postRepos;
     private readonly ICategoryRepository $categoryRepos;
@@ -24,25 +24,29 @@ class PublicPostController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    final public function index(): JsonResponse
     {
-        $perPage = 10; // the total post in one page
-        return response()->json($this->postRepos->filterPosts($perPage));
+        return response()->json($this->postRepos->filterPosts(perPage: 10));
     }
 
     /**
      * Display the specified the post.
      *
-     * @param integer $postId
+     * @param int $postId
      * @return JsonResponse
      */
-    public function show(int $postId): JsonResponse
+    final public function show(int $postId): JsonResponse
     {
         $post = $this->postRepos->getDetailPost($postId); // Get the detail post
 
-        if (is_null($post)) return response()->json("Post not found", 404);
+        // Check the post is existed?
+        if (is_null($post)) {
+            return response()->json("Post not found", 404);
+        }
 
+        // Update view count in background
         dispatch(new UpdatePostViewCount($post->id));
+
         return response()->json($post);
     }
 
@@ -52,13 +56,14 @@ class PublicPostController extends Controller
      * @param int $categoryId
      * @return JsonResponse
      */
-    public function getRelatedPosts(int $categoryId): JsonResponse
+    final public function getRelatedPosts(int $categoryId): JsonResponse
     {
-        $category = $this->categoryRepos->findById($categoryId);
+        // Check is existed category?
+        if (is_null($this->categoryRepos->findById($categoryId))) {
+            return response()->json("Not found", 404);
+        }
 
-        if (is_null($category)) return response()->json("Not found", 404);
-
-        $limitItem = 6;
-        return response()->json($this->postRepos->getRelatedPostsByCategory($categoryId, $limitItem)); // get random related post
+        // Return the random related posts
+        return response()->json($this->postRepos->getRelatedPostsByCategory(categoryId: $categoryId, limitItem: 6));
     }
 }

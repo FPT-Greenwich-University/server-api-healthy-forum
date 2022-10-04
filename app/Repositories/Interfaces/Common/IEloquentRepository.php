@@ -2,9 +2,6 @@
 
 namespace App\Repositories\Interfaces\Common;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
-
 interface IEloquentRepository
 {
     /**

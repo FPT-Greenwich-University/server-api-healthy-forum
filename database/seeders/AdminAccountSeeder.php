@@ -16,7 +16,7 @@ class AdminAccountSeeder extends Seeder
     public function run()
     {
         $admin = User::create([
-            'name' => 'phuoctn admin',
+            'name' => 'admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('ngocphuocha'),
             'email_verified_at' => now()
@@ -32,5 +32,7 @@ class AdminAccountSeeder extends Seeder
             'ward' => 'Cam Chau',
             'street' => '213 Cua Dai',
         ]);
+        // Set default avatar
+        $admin->image()->create(['path' => "default/avatar/user-avatar.png"]);
     }
 }

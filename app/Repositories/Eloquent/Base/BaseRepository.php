@@ -4,7 +4,6 @@ namespace App\Repositories\Eloquent\Base;
 
 use App\Repositories\Interfaces\Common\IEloquentRepository;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 class BaseRepository implements IEloquentRepository
 {

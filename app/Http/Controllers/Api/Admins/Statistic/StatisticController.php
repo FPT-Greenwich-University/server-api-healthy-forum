@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Api\Admins\Statistic;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\IPostLikeRepository;
-use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 
 class StatisticController extends Controller
 {
@@ -22,11 +20,9 @@ class StatisticController extends Controller
      *
      * @return JsonResponse
      */
-    public function getPostsMostLiked(): JsonResponse
+    final public function getPostsMostLiked(): JsonResponse
     {
-        $perPage = 5; // item post in one page
-        $posts = $this->postLikeRepos->handleGetPostsMostLiked($perPage); // Get the posts have most liked
-
-        return response()->json($posts);
+        // Get the posts have most liked, total 5 item in one page
+        return response()->json($this->postLikeRepos->handleGetPostsMostLiked(perPage: 5));
     }
 }

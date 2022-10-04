@@ -173,7 +173,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
@@ -181,6 +181,7 @@ return [
         \App\Providers\FileManagerServiceProvider::class,
         \App\Providers\PostServiceProvider::class,
         \App\Providers\CustomAuthServicesProvider::class,
+        \App\Providers\ChatServiceProvider::class,
     ],
 
     /*

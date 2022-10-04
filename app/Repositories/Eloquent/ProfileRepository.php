@@ -25,8 +25,7 @@ class ProfileRepository extends BaseRepository implements IProfileRepository
     public function updateProfileUser(int $userId, array $attributes)
     {
         try {
-            $this->model->where("user_id", "=", $userId)
-                ->update($attributes);
+            $this->model->where("user_id", "=", $userId)->update($attributes);
             return true;
         } catch (\Exception $exception) {
             return $exception->getMessage();

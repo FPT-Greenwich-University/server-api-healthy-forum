@@ -10,5 +10,7 @@ interface PostServiceInterface
 
     public function updatePost(int $postId, Request $request);
 
+    public function updatePostView(int $postId);
+
     public function deletePost(int $userId, int $postId, Request $request);
 }

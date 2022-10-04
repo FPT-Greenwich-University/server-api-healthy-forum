@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Repositories\Eloquent\Base\BaseRepository;
 use App\Repositories\Interfaces\ICategoryRepository;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 
 class CategoryRepository extends BaseRepository implements ICategoryRepository
 {
@@ -15,37 +16,41 @@ class CategoryRepository extends BaseRepository implements ICategoryRepository
         parent::__construct($model);
     }
 
-    public function getAllCategories()
+    final public function getAllCategories(): Collection|string
     {
         try {
-            return parent::getAll();
+            return $this->getAll();
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
     }
 
-    public function handleDeleteCategory(int $id)
+    final public function handleDeleteCategory(int $id): bool|string
     {
         try {
-            $existingCategory = parent::findById($id);
+            $existingCategory = $this->findById($id);
 
-            if (is_null($existingCategory)) return false;
+            if (is_null($existingCategory)) {
+                return false;
+            }
 
-            parent::delete($id);
+            $this->delete($id);
             return true;
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
     }
 
-    public function updateCategory(int $id, array $attributes)
+    final public function updateCategory(int $id, array $attributes): bool|string
     {
         try {
-            $existingCategory = parent::findById($id);
+            $existingCategory = $this->findById($id);
 
-            if (is_null($existingCategory)) return false;
+            if (is_null($existingCategory)) {
+                return false;
+            }
 
-            parent::update($id, $attributes);
+            $this->update($id, $attributes);
             return true;
         } catch (Exception $exception) {
             return $exception->getMessage();

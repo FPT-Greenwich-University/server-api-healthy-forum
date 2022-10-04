@@ -28,10 +28,9 @@ class UserController extends Controller
      *
      * @return JsonResponse
      */
-    public function getRoles(): JsonResponse
+    final public function getRoles(): JsonResponse
     {
-        $roles = $this->roleRepos->handleGetExceptRoleByName(['admin']);
-        return response()->json($roles);
+        return response()->json($this->roleRepos->handleGetExceptRoleByName(['admin']));
     }
 
     /**
@@ -40,7 +39,7 @@ class UserController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    final public function index(Request $request): JsonResponse
     {
         $roleName = User::CUSTOMER_ROLE; // set default role name
 
@@ -48,25 +47,22 @@ class UserController extends Controller
             $roleName = $this->roleRepos->getRoleNameById($request->query('role_id'));
         }
 
-        $listAdminId = $this->userRepos->getListIdByRoleName(User::ADMIN_ROLE);
-
-        $users = $this->userRepos->getUsersWithoutAdmin($roleName, $listAdminId);
-        return response()->json($users);
+        return response()->json($this->userRepos->getUsersWithoutAdmin(roleName: $roleName, listIds: $this->userRepos->getListIdByRoleName(roleName: User::ADMIN_ROLE)));
     }
 
     /**
      * Get the detail user include roles and permissions
      *
-     * @param $userId
+     * @param int $userId
      * @return JsonResponse
      */
-    public function getUserRoles(int $userId): JsonResponse
+    final public function getUserRoles(int $userId): JsonResponse
     {
-        $result = $this->userRepos->getUserWithRolePermission($userId); // Get detail user
+        if (is_null($this->userRepos->findById($userId))) {
+            return response()->json("User not found", 404);
+        }
 
-        if ($result === false) return response()->json("User not found", 404); // return 404 if not found user in resources
-
-        return response()->json($result);
+        return response()->json($this->userRepos->getUserWithRolePermission($userId));
     }
 
     /**
@@ -75,9 +71,14 @@ class UserController extends Controller
      * @param FetchPermissionsRequest $request
      * @return JsonResponse
      */
-    public function getPermissionsByRole(FetchPermissionsRequest $request): JsonResponse
+    final public function getPermissionsByRole(FetchPermissionsRequest $request): JsonResponse
     {
         $roleId = $request->input('role_id'); // get list role id
+
+        if (is_null($this->roleRepos->findById($roleId))) {
+            return  response()->json("Role not found", 404);
+        }
+
         return response()->json($this->roleRepos->getPermissionByRoleId($roleId)); // Get list permissions by role's id
     }
 
@@ -85,17 +86,18 @@ class UserController extends Controller
      * Admin update list permission of user
      *
      * @param UpdatePermissionRequest $request
-     * @param $userId
+     * @param int $userId
      * @return JsonResponse
      */
-    public function updatePermission(UpdatePermissionRequest $request, int $userId)
+    public function updatePermission(UpdatePermissionRequest $request, int $userId): JsonResponse
     {
         $permissions = $request->input('permissions'); // Get list permission from request of user
 
-        $result = $this->userRepos->syncPermissions($userId, $permissions); // sync permission based on list permission
+        // Sync permission based on list permission
+        if ($this->userRepos->syncPermissions($userId, $permissions) === false) {
+            return response()->json("User not found", 404);
+        }
 
-        if ($result === false) return response()->json("User not found", 404);
-
-        return response()->json("", 204);
+        return response()->json("", 204); // Update success, return HTTP 204 No Content
     }
 }

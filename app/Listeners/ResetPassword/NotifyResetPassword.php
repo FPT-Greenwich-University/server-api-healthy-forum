@@ -26,6 +26,7 @@ class NotifyResetPassword implements ShouldQueue
      */
     public function handle(ResetPassword $event)
     {
+        // Send a notification to the email of user
         $event->user->notify(new SendLinkResetPassword($event->data));
     }
 }

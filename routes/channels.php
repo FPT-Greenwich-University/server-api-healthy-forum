@@ -1,5 +1,7 @@
 <?php
 
+use App\Broadcasting\ChatChannel;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -13,6 +15,13 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+//Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+//    return (int) $user->id === (int) $id;
+//});
+
+Broadcast::channel('chat.{chatRoomId}', ChatChannel::class);
+
+Broadcast::channel('chat-room.{targetId}', function ($user, int $targetId) {
+    return Auth::check();
 });
+

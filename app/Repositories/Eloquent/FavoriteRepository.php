@@ -14,7 +14,7 @@ class FavoriteRepository extends BaseRepository implements IFavoriteRepository
         parent::__construct($model);
     }
 
-    public function getListFavoritesDoctors(int $userId, int $perPage)
+    final public function getListFavoritesDoctors(int $userId, int $perPage)
     {
         try {
             return $this->model->where('favorites.user_id', $userId)
@@ -27,7 +27,8 @@ class FavoriteRepository extends BaseRepository implements IFavoriteRepository
             return $exception->getMessage();
         }
     }
-    public function getListFavoritesPosts(int $userId, int $perPage)
+
+    final public function getListFavoritesPosts(int $userId, int $perPage)
     {
         try {
             return $this->model->where('favorites.user_id', '=', $userId)
@@ -42,7 +43,7 @@ class FavoriteRepository extends BaseRepository implements IFavoriteRepository
         }
     }
 
-    public function checkFavoriteExisted(int $userId, int $favoriteable_id, string $favoriteable_type)
+    final public function checkFavoriteExisted(int $userId, int $favoriteable_id, string $favoriteable_type)
     {
         try {
             return $this->model->where('user_id', '=', $userId)
@@ -53,22 +54,24 @@ class FavoriteRepository extends BaseRepository implements IFavoriteRepository
             return $exception->getMessage();
         }
     }
-    public function getDetailFavorite(int $userId, int $favoriteable_id)
+
+    final public function removeFavorite(int $userId, int $favoriteable_id)
+    {
+        try {
+            $favorite = $this->getDetailFavorite($userId, $favoriteable_id);
+            $favorite->delete();
+        } catch (Exception $exception) {
+            echo $exception->getMessage();
+            exit();
+        }
+    }
+
+    final public function getDetailFavorite(int $userId, int $favoriteable_id)
     {
         try {
             return $this->model->where("user_id", "=", $userId)
                 ->where("favoriteable_id", "=", $favoriteable_id)
                 ->first();
-        } catch (Exception $exception) {
-            return $exception->getMessage();
-        }
-    }
-
-    public function removeFavorite(int $userId, int $favoriteable_id)
-    {
-        try {
-            $favorite =  $this->getDetailFavorite($userId, $favoriteable_id);
-            return $favorite->delete();
         } catch (Exception $exception) {
             return $exception->getMessage();
         }

@@ -7,12 +7,12 @@ use App\Http\Requests\Api\Users\Favorites\StoreFavoriteDoctorRequest;
 use App\Repositories\Interfaces\IFavoriteRepository;
 use App\Repositories\Interfaces\IUserRepository;
 use Illuminate\Http\JsonResponse;
+use App\Models\User;
 
 class DoctorFavoriteController extends Controller
 {
     private readonly IFavoriteRepository $favoriteRepository;
     private readonly IUserRepository $userRepository;
-    private $demo;
 
     public function __construct(IFavoriteRepository $favoriteRepository, IUserRepository $userRepository)
     {
@@ -26,10 +26,9 @@ class DoctorFavoriteController extends Controller
      * @param integer $userId
      * @return JsonResponse
      */
-    public function index(int $userId): JsonResponse
+    final public function index(int $userId): JsonResponse
     {
-        $perPage = 5;
-        return response()->json($this->favoriteRepository->getListFavoritesDoctors($userId, $perPage));
+        return response()->json($this->favoriteRepository->getListFavoritesDoctors(userId: $userId, perPage: 5));
     }
 
     /**
@@ -38,26 +37,28 @@ class DoctorFavoriteController extends Controller
      * @param StoreFavoriteDoctorRequest $request
      * @return JsonResponse
      */
-    public function addFavoriteItem(StoreFavoriteDoctorRequest $request): JsonResponse
+    final public function addFavoriteItem(StoreFavoriteDoctorRequest $request): JsonResponse
     {
-        $user = $request->user(); // Retrive the current user authenticated
+        $user = $request->user(); // Retrieve the current user authenticated
 
-        $doctorId = intval($request->input('doctor_id')); // Retrive doctor id from http request
+        $doctorId = (int)($request->input('doctor_id')); // Retrieve doctor id from http request
 
-        // The user can't not add themself to themeself favorite list
-        if ($doctorId === $user->id) return response()->json("Bad request", 400); // Return bad request if the doctor's id equal user's id
+        // The user can't add themselves to themselves favorite list
+        if ($doctorId === $user->id) {
+            return response()->json("Bad request", 400);
+        }
 
         if ($this->checkIsDoctorFavoriteExist($user->id, $doctorId) === false) { // check if post have exits in user's favorite post
-            $doctor = $this->userRepository->findById($doctorId); // Get the current user
+            if (is_null($this->userRepository->findById($doctorId))) {
+                return response()->json("Not Found", 404);
+            }
 
-            if (is_null($doctor)) return response()->json("Not Found", 404);
-
-            $this->favoriteRepository->create(['user_id' => $user->id,'favoriteable_id' => $doctorId, 'favoriteable_type' => "App\Models\User" ]); // Add doctor to favorite list
+            $this->favoriteRepository->create(['user_id' => $user->id, 'favoriteable_id' => $doctorId, 'favoriteable_type' => User::class]); // Add doctor to favorite list
 
             return response()->json('Add to favorite list successfully', 201); // Add success
         }
 
-        return response()->json("", 204); // Return http no content if the user is have exits in favorite list
+        return response()->json("", 204); // Return http no content if the user is had exits in favorite list
     }
 
     /**
@@ -68,11 +69,11 @@ class DoctorFavoriteController extends Controller
      * @return bool true if existed
      * otherwise false
      */
-    public function checkIsDoctorFavoriteExist(int $userId, int $doctorId): bool
+    final public function checkIsDoctorFavoriteExist(int $userId, int $doctorId): bool
     {
-        $favoriteExisted = $this->favoriteRepository->checkFavoriteExisted($userId, $doctorId, "App\Models\User");
-
-        if (is_null($favoriteExisted)) return false;
+        if (is_null($this->favoriteRepository->checkFavoriteExisted($userId, $doctorId, User::class))) {
+            return false;
+        }
 
         return true;
     }
@@ -84,9 +85,11 @@ class DoctorFavoriteController extends Controller
      * @param integer $doctorId
      * @return JsonResponse
      */
-    public function checkUserFollow(int $userId, int $doctorId): JsonResponse
+    final public function checkUserFollow(int $userId, int $doctorId): JsonResponse
     {
-        if ($this->checkIsDoctorFavoriteExist($userId, $doctorId)) return response()->json(true);
+        if ($this->checkIsDoctorFavoriteExist($userId, $doctorId)) {
+            return response()->json(true);
+        }
 
         return response()->json(false);
     }
@@ -98,11 +101,11 @@ class DoctorFavoriteController extends Controller
      * @param integer $doctorId
      * @return JsonResponse
      */
-    public function removeFavoriteItem(int $userId, int $doctorId): JsonResponse
+    final public function removeFavoriteItem(int $userId, int $doctorId): JsonResponse
     {
-        $favorite = $this->favoriteRepository->getDetailFavorite($userId, $doctorId);
-
-        if (is_null($favorite)) return response()->json("Doctor favorite item not found", 404);
+        if (is_null($this->favoriteRepository->getDetailFavorite($userId, $doctorId))) {
+            return response()->json("Doctor favorite item not found", 404);
+        }
 
         $this->favoriteRepository->removeFavorite($userId, $doctorId);
         return response()->json("", 204);

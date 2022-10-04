@@ -28,15 +28,14 @@ class PostCommentController extends Controller
      * @param int $commentId
      * @return JsonResponse
      */
-    public function getDetailComment(int $postId, int $commentId): JsonResponse
+    final public function getDetailComment(int $postId, int $commentId): JsonResponse
     {
         // If not found then return 404 HTTP
         if ($this->checkExistedComment($postId, $commentId) === false) {
             return response()->json("Not found", 404);
         }
 
-        $existedComment = $this->commentRepository->getDetail($postId, $commentId);
-        return response()->json($existedComment);
+        return response()->json($this->commentRepository->getDetail($postId, $commentId));
     }
 
     /**
@@ -52,11 +51,8 @@ class PostCommentController extends Controller
         $existedPost = $this->postRepository->findById($postId); // Find the post
         $existedComment = $this->commentRepository->findById($commentId); // root comment of reply comment
 
-        if (is_null($existedPost) || is_null($existedComment)) { // If one of them not found then return false
-            return false;
-        }
-
-        return true;
+        // False if post or comment not existed
+        return !(is_null($existedPost) || is_null($existedComment));
     }
 
     /**
@@ -67,22 +63,16 @@ class PostCommentController extends Controller
      * @param ReplyPostCommentRequest $request
      * @return JsonResponse
      */
-    public function replyPostComment(int $postId, int $commentId, ReplyPostCommentRequest $request): JsonResponse
+    final public function replyPostComment(int $postId, int $commentId, ReplyPostCommentRequest $request): JsonResponse
     {
         // If not found then return 404 HTTP
         if ($this->checkExistedComment($postId, $commentId) === false) {
             return response()->json("Not found", 404);
         }
 
-        $attributes = [
-            'content' => $request->input('content'),
-            'user_id' => $request->user()->id,
-            'post_id' => $postId,
-            'parent_comment_id' => $commentId // root comment id
-        ];
+        $this->postRepository->storePostComment(postId: $postId, attributes: ['content' => $request->input('content'), 'user_id' => $request->user()->id, 'post_id' => $postId, 'parent_comment_id' => $commentId]);
 
-        $this->postRepository->storePostComment($postId, $attributes);
-        return response()->json("Success", 201);
+        return response()->json("Saving reply comment success", 201);
     }
 
     /**
@@ -92,19 +82,14 @@ class PostCommentController extends Controller
      * @param int $postId
      * @return JsonResponse
      */
-    public function storePostComment(CreatePostCommentRequest $request, int $postId): JsonResponse
+    final public function storePostComment(CreatePostCommentRequest $request, int $postId): JsonResponse
     {
-        $post = $this->postRepository->findById($postId);
+        if (is_null($this->postRepository->findById($postId))) {
+            return response()->json("Post not found", 404);
+        }
 
-        if (is_null($post)) return response()->json("Post not found", 404);
+        $this->postRepository->storePostComment(postId: $postId, attributes: ['content' => $request->input('content'), 'user_id' => $request->user()->id, 'post_id' => $postId,]); // Store new comment into the post
 
-        $attributes = [
-            'content' => $request->input('content'),
-            'user_id' => $request->user()->id,
-            'post_id' => $postId,
-        ];
-
-        $this->postRepository->storePostComment($postId, $attributes); // Store new comment into the post
         return response()->json('Success', 201);
     }
 
@@ -116,26 +101,21 @@ class PostCommentController extends Controller
      * @param EditCommentRequest $request
      * @return JsonResponse
      */
-    public function updateComment(int $postId, int $commentId, EditCommentRequest $request): JsonResponse
+    final public function updateComment(int $postId, int $commentId, EditCommentRequest $request): JsonResponse
     {
-        $currentUser = $request->user();
-
         // If not found then return 404 HTTP
         if ($this->checkExistedComment($postId, $commentId) === false) {
             return response()->json("Not found", 404);
         }
 
         // If user not own comment then return 400 HTTP
-        if ($this->checkIsOwnComment($currentUser->id, $commentId) === false) {
+        if ($this->checkIsOwnComment($request->user()->id, $commentId) === false) {
             return response()->json("Bad request", 400);
         }
 
-        $attributes = [
-            'content' => $request->input('content'),
-            'post_id' => $postId,
-        ];
+        // Handle update comment content
+        $this->commentRepository->updateComment(postId: $postId, commentId: $commentId, attributes: ['content' => $request->input('content'), 'post_id' => $postId]);
 
-        $this->commentRepository->updateComment($postId, $commentId, $attributes); // Handle update comment content
         return response()->json("", 204);
     }
 
@@ -151,11 +131,8 @@ class PostCommentController extends Controller
     {
         $existedComment = $this->commentRepository->findById($commentId); // Find the comment
 
-        if ($userId !== $existedComment->user_id) {
-            return false;
-        }
-
-        return true;
+        // Return TRUE if user own comment
+        return $userId === $existedComment->user_id;
     }
 
     /**
@@ -165,7 +142,7 @@ class PostCommentController extends Controller
      * @param int $commentId
      * @return JsonResponse
      */
-    public function deleteComment(int $postId, int $commentId): JsonResponse
+    final public function deleteComment(int $postId, int $commentId): JsonResponse
     {
         if ($this->checkExistedComment($postId, $commentId) === false) {
             return response()->json("Not found", 404);

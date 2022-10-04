@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\Admins\Posts;
 
+use App\Events\NotifyNewPost;
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\IPostRepository;
 use Illuminate\Http\JsonResponse;
-use App\Events\NotifyNewPost;
 
 class PostController extends Controller
 {
@@ -21,11 +21,9 @@ class PostController extends Controller
      *
      * @return JsonResponse
      */
-    public function getPostsIsNotPublished(): JsonResponse
+    final public function getPostsIsNotPublished(): JsonResponse
     {
-        $perPage = 5; // the total post item in one page
-        $posts = $this->postResponse->getPostsNotPublish($perPage); // Get the posts have not publihed yet
-        return response()->json($posts);
+        return response()->json($this->postResponse->getPostsNotPublish(per_page: 5));
     }
 
     /**
@@ -33,11 +31,13 @@ class PostController extends Controller
      * @param int $postId
      * @return JsonResponse
      */
-    public function show(int $postId): JsonResponse
+    final public function show(int $postId): JsonResponse
     {
         $post = $this->postResponse->getDetailPost($postId); // find the post
 
-        if (is_null($post)) return response()->json("Product not found", 404);
+        if (is_null($post)) {
+            return response()->json("Product not found", 404);
+        }
 
         return response()->json($post); // return post detail information
     }
@@ -48,15 +48,18 @@ class PostController extends Controller
      * @param int $postId Post's id need publish
      * @return JsonResponse
      */
-    public function acceptPublishPost(int $postId): JsonResponse
+    final public function acceptPublishPost(int $postId): JsonResponse
     {
         $post = $this->postResponse->findById($postId); // find the post
 
-        if (is_null($post)) return response()->json("Post not found", 404); // return http status not found
+        // Return http status not found
+        if (is_null($post)) {
+            return response()->json("Post not found", 404);
+        }
 
-        $this->postResponse->update($postId, ['is_published' => true, 'published_at' => now()]); // update publlished status
+        $this->postResponse->update($postId, ['is_published' => true, 'published_at' => now()]); // update published status
 
-        event(new NotifyNewPost($post)); // throw event for notifacation new post to all user via email
+        event(new NotifyNewPost($post)); // throw event for notification new post to all user via email
 
         return response()->json("", 204);
     }

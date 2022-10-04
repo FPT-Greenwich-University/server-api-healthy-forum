@@ -18,7 +18,7 @@ class RegisterController extends Controller
      *
      * @return JsonResponse
      */
-    public function getListRegisterDoctorRoles(): JsonResponse
+    final public function getListRegisterDoctorRoles(): JsonResponse
     {
         try {
             $users = RegisterDoctorRole::with(['user'])
@@ -36,7 +36,7 @@ class RegisterController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function registerWithRoleDoctor(Request $request): JsonResponse
+    final public function registerWithRoleDoctor(Request $request): JsonResponse
     {
         try {
             User::findOrFail($request->user()->id);
@@ -48,9 +48,9 @@ class RegisterController extends Controller
                     'updated_at' => now(),
                 ]);
                 return response()->json('Register success');
-            } else {
-                return response()->json('You have already register before');
             }
+
+            return response()->json('You have already register before');
         } catch (Exception $exception) {
             return response()->json(['Message' => $exception->getMessage(), 'Line' => $exception->getLine(), 'File' => $exception->getFile()], 500);
         }
@@ -59,28 +59,28 @@ class RegisterController extends Controller
     /**
      * Admin accept request register doctor role from normal user
      *
-     * @param $registeruserId
+     * @param $registeredId
      * @return JsonResponse
      */
-    public function acceptRegisterDoctorRole($registeruserId): JsonResponse
+    final public function acceptRegisterDoctorRole(int $registeredId): JsonResponse
     {
         try {
             $registerUser = DB::table('register_doctor_role_drafts')
-                ->where('user_id', $registeruserId)
+                ->where('user_id', $registeredId)
                 ->where('is_accept', false)
                 ->first();
 
             if (!is_null($registerUser)) {  // If exist user then
                 DB::table('register_doctor_role_drafts')
-                    ->where('user_id', $registeruserId)
+                    ->where('user_id', $registeredId)
                     ->update(['is_accept' => true]);
-                $user = User::findOrFail($registeruserId);
+                $user = User::findOrFail($registeredId);
                 $user->assignRole('doctor'); // Assign doctor role
                 $user->givePermissionTo('create a post', 'update a post', 'delete a post'); // Give permission of doctor role
                 return response()->json('Accept success');
-            } else {
-                return response()->json('User not found or not have request register doctor role!', 404); // Return response 404
             }
+
+            return response()->json('User not found or not have request register doctor role!', 404); // Return response 404
         } catch (ModelNotFoundException) {
             return response()->json('User not found', 404);
         } catch (Exception $exception) {

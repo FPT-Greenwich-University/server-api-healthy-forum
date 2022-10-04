@@ -8,14 +8,15 @@ use File;
 class HandleFile implements FileServicesContract
 {
 
-    public function storeFile($file, string $targetDir, string $fileName)
+    final public function storeFile($file, string $targetDir, string $fileName): bool|string
     {
         try {
             $fileName = $file->hashName(); // Generate a unique, random name...
-            $targetDir = 'posts/thumbnails/'; // set default path
 
             // movie file to public folder
-            if (!$file->move($targetDir, $fileName)) return false;
+            if (!$file->move($targetDir, $fileName)) {
+                return false;
+            }
 
             return true;
         } catch (Exception $exception) {
@@ -23,10 +24,12 @@ class HandleFile implements FileServicesContract
         }
     }
 
-    public function deleteFile(string $pathFile)
+    final public function deleteFile(string $pathFile): bool|string
     {
         try {
-            if (!File::delete($pathFile)) return false;
+            if (!File::delete($pathFile)) {
+                return false;
+            }
 
             return true;
         } catch (Exception $exception) {

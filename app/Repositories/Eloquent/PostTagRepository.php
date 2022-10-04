@@ -19,7 +19,9 @@ class PostTagRepository extends BaseRepository implements IPostTagRepository
     {
         try {
             DB::beginTransaction();
+
             $this->model->where('post_id', $postId)->delete();
+
             DB::commit();
             return true;
         } catch (Exception $exception) {

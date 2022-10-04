@@ -39,7 +39,6 @@ Route::controller(ResetPasswordController::class)->group(function () {
     Route::put('/reset-password', 'resetPassword');
 });
 
-
 /**
  * Verify account
  */

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Public\PostTags;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TagResource;
@@ -8,7 +8,7 @@ use App\Repositories\Interfaces\IPostRepository;
 use App\Repositories\Interfaces\ITagRepository;
 use Illuminate\Http\JsonResponse;
 
-class PublicPostTagController extends Controller
+class PostTagController extends Controller
 {
     private readonly ITagRepository $tagRepos;
     private readonly IPostRepository $postRepos;
@@ -19,7 +19,7 @@ class PublicPostTagController extends Controller
         $this->postRepos = $postRepository;
     }
 
-    public function index()
+    final public function index(): JsonResponse
     {
         return response()->json(TagResource::collection($this->tagRepos->getAll()));
     }
@@ -27,16 +27,15 @@ class PublicPostTagController extends Controller
     /**
      * Get the tags belong to the posts by post ID
      *
-     * @param $postId
+     * @param int $postId
      * @return JsonResponse
      */
-    public function getPostTags(int $postId): JsonResponse
+    final public function getPostTags(int $postId): JsonResponse
     {
-        $post = $this->postRepos->findById($postId);
+        if (is_null($this->postRepos->findById($postId))) {
+            return response()->json("Post not found", 404);
+        }
 
-        if (is_null($post)) return response()->json("Post not found", 404);
-
-        $tags = $this->tagRepos->getPostTags($postId);
-        return response()->json($tags);
+        return response()->json($this->tagRepos->getPostTags($postId));
     }
 }

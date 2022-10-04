@@ -31,59 +31,82 @@ class DoctorController extends Controller
      * @param int $userId
      * @return JsonResponse
      */
-    public function getPublishedPostsByUser(int $userId): JsonResponse
+    final public function getPublishedPostsByUser(int $userId): JsonResponse
     {
-        $user = $this->userRepository->findById($userId);
+        if (is_null($this->userRepository->findById($userId))) {
+            return response()->json("User not found", 404);
+        }
 
-        if (is_null($user)) return response()->json("User not found", 404);
-
-        $perPage = 5;
-        $posts = $this->postRepository->getPostsByUser($userId, $perPage);
-        return response()->json($posts);
+        return response()->json($this->postRepository->getPostsByUser(userId: $userId, perPage: 5));
     }
 
-    public function doctorGetOwnPosts(int $userId, Request $request): JsonResponse
+    /**
+     * Get the posts belong to the doctor
+     *
+     * @param int $userId
+     * @param Request $request
+     * @return JsonResponse
+     */
+    final public function doctorGetOwnPosts(int $userId, Request $request): JsonResponse
     {
-        if ($userId != $request->user()->id) return response()->json("Not found", 404);
+        if ((((int)$request->user()->id) !== $userId)) {
+            return response()->json("Not found", 404);
+        }
 
-        $itemPerPage = 5;
-        $posts = $this->postRepository->doctorGetOwnPosts($userId, $itemPerPage);
-        return response()->json($posts);
+        return response()->json($this->postRepository->doctorGetOwnPosts(userId: $userId, itemPerPage: 5));
     }
 
     /**
      * Detail post by user id
      *
-     * @param $userId
-     * @param $postId
+     * @param int $userId
+     * @param int $postId
      * @return JsonResponse
      */
-    public function getDetailPost(int $userId, int $postId): JsonResponse
+    final public function getDetailPost(int $userId, int $postId): JsonResponse
     {
         $post = $this->postRepository->doctorGetDetailPost($postId);
 
-        if (is_null($post) || $post->user_id != $userId) return response()->json("Post not found", 404);
+        if (is_null($post) || (int)$post->user_id !== $userId) {
+            return response()->json("Post not found", 404);
+        }
 
         return response()->json($post);
     }
 
 
-    public function update(UpdatePostRequest $request, int $userId, int $postId)
+    /**
+     * Update the post
+     *
+     * @param UpdatePostRequest $request
+     * @param int $userId
+     * @param int $postId
+     * @return JsonResponse
+     */
+    final public function update(UpdatePostRequest $request, int $userId, int $postId): JsonResponse
     {
 
         $post = $this->postRepository->findById($postId);
 
-        if (is_null($post)) return response()->json("Post Not found", 404);
+        if (is_null($post)) {
+            return response()->json("Post Not found", 404);
+        }
 
-        if ($post->user_id != $userId) return response()->json("Bad request user not found", 404);
+        if ($post->user_id !== $userId) {
+            return response()->json("Bad request user not found", 404);
+        }
 
-        if (!$this->postService->updatePost($postId, $request)) return response()->json("Bad request update post information", 400);
+        if (!$this->postService->updatePost($postId, $request)) {
+            return response()->json("Bad request update post information", 400);
+        }
 
         // If user want update a thumbnail of the post
         if ($request->hasFile('thumbnail')) {
             $imagePath = public_path($post->image->path);
             // Delete image file
-            if (!$this->fileServices->deleteFile($imagePath)) return response()->json("Error to update post image", 500);
+            if (!$this->fileServices->deleteFile($imagePath)) {
+                return response()->json("Error to update post image", 500);
+            }
 
             $file = $request->file('thumbnail'); // retrieve a file
             $fileName = $file->hashName(); // Generate a unique, random name...
@@ -96,6 +119,6 @@ class DoctorController extends Controller
             $this->postRepository->updatePostImage($postId, $filePath); // update current path image
         }
 
-        return response()->json("", 204);
+        return response()->json("", 204); // Update success
     }
 }

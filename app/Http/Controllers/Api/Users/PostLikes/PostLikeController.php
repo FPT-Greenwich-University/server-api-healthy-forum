@@ -20,26 +20,26 @@ class PostLikeController extends Controller
      * User like the post
      *
      * @param Request $request
-     * @param $postId
+     * @param int $postId
      * @return JsonResponse
      */
-    public function likeThePost(Request $request, int $postId): JsonResponse
+    final public function likeThePost(Request $request, int $postId): JsonResponse
     {
         $userId = $request->user()->id;
 
-        $result = $this->checkLikeIsExist($userId, $postId); // Check if the like exitsed
+        // Check if the like existed
+        if ($this->checkLikeIsExist($userId, $postId) === true) {
+            return response()->json("", 204);
+        }
 
-        if ($result === true) return response()->json("", 204); // return no conntent if the like exitsed
+        $this->postLikeRepository->create(['post_id' => $postId, 'user_id' => $userId]); // Handle like the post
 
-        $this->postLikeRepository->create(['post_id' => $postId, 'user_id' => $userId]); // like the post
-
-        return response()->json("Success", 201);
+        return response()->json("Like Success", 201);
     }
 
     /**
      * Check if the like of user was had existed
      *
-     * @param Request $request
      * @param integer $userId
      * @param integer $postId
      * @return bool true if result is null, false
@@ -47,11 +47,9 @@ class PostLikeController extends Controller
      */
     private function checkLikeIsExist(int $userId, int $postId): bool
     {
-        $result = $this->postLikeRepository->checkIsUserLikePost($postId, $userId); // Check the like is exitsed
-
-        if (is_null($result)) return false; // The like not exitsed in the post by user
-
-        return true;
+        // Check the like is exited
+        // The like not existed in the post by user
+        return !is_null($this->postLikeRepository->checkIsUserLikePost(postId: $postId, userId: $userId));
     }
 
     /**
@@ -61,12 +59,14 @@ class PostLikeController extends Controller
      * @param int $postId
      * @return JsonResponse
      */
-    public function unlikeThePost(Request $request, int $postId): JsonResponse
+    final public function unlikeThePost(Request $request, int $postId): JsonResponse
     {
         $user = $request->user(); // Get the auth current user
-        $result = $this->checkLikeIsExist($user->id, $postId); // Check if user have like the post
+        // Check if user have like the post
 
-        if ($result === false) return response()->json("Not found", 404);
+        if ($this->checkLikeIsExist(userId: $user->id, postId: $postId) === false) {
+            return response()->json("Not found", 404);
+        }
 
         $this->postLikeRepository->deleteLike($user->id, $postId); // Unlike the post
         return response()->json("", 204);
@@ -76,18 +76,11 @@ class PostLikeController extends Controller
      * Get like status, true if user has like otherwise false
      *
      * @param Request $request
-     * @param $postId
+     * @param int $postId
      * @return JsonResponse
      */
-    public function checkUserLikePost(Request $request, $postId): JsonResponse
+    final public function checkUserLikePost(Request $request, int $postId): JsonResponse
     {
-        $userId = $request->user()->id; // Current user's id was authenticated
-        $result = $this->checkLikeIsExist($userId, $postId);
-
-        if ($result === true) {
-            return response()->json(true);
-        } else {
-            return response()->json(false);
-        }
+        return $this->checkLikeIsExist(userId: $request->user()->id, postId: $postId) === true ? response()->json(true) : response()->json(false);
     }
 }

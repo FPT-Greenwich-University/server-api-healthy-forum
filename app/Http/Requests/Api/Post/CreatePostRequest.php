@@ -24,8 +24,8 @@ class CreatePostRequest extends ApiFormRequest
     public function rules()
     {
         return [
-            'title' => ['required', 'min:10', 'max:100'],
-            'description' => ['required', 'min:20'],
+            'title' => ['required', 'min:10'],
+            'description' => ['required', 'min:10'],
             'category_id' => ['required', 'numeric'],
             'body' => ['required'],
             'thumbnail' => ['required', 'image'],

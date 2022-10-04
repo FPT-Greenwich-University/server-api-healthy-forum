@@ -2,7 +2,9 @@
 
 namespace App\Repositories\Interfaces;
 
-interface IPostTagRepository
+use App\Repositories\Interfaces\Common\IEloquentRepository;
+
+interface IPostTagRepository extends IEloquentRepository
 {
     /**
      * Delete post tags

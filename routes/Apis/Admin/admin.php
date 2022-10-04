@@ -7,11 +7,10 @@ use App\Http\Controllers\Api\Admins\Users\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
- * Admin handle posts
+ * Admin manager the post
  */
-
-Route::prefix('/admins')
-    ->controller(PostController::class)
+Route::controller(PostController::class)
+    ->prefix('/admins')
     ->middleware(['role:admin', 'auth:sanctum'])
     ->group(function () {
         Route::get('/posts/not-published', 'getPostsIsNotPublished'); // Get posts where are not published
@@ -20,10 +19,10 @@ Route::prefix('/admins')
     });
 
 /*
- * Admin handle posts
+ * Admin manager the post's category
  */
-Route::prefix('/admins')
-    ->controller(CategoryController::class)
+Route::controller(CategoryController::class)
+    ->prefix('/admins')
     ->middleware(['role:admin', 'auth:sanctum'])
     ->group(function () {
         Route::post('/categories', 'store');
@@ -34,9 +33,9 @@ Route::prefix('/admins')
 /**
  * Admin manager user
  */
-Route::prefix('/admins')
+Route::controller(UserController::class)
+    ->prefix('/admins')
     ->middleware(['role:admin', 'auth:sanctum'])
-    ->controller(UserController::class)
     ->group(function () {
         Route::get('/users', 'index'); // List all users
         Route::get('/roles', 'getRoles');
@@ -46,11 +45,11 @@ Route::prefix('/admins')
     });
 
 /**
- * Admin statistic
+ * Admin statistic resources
  */
-Route::prefix('/admins/statistic')
+Route::controller(StatisticController::class)
+    ->prefix('/admins/statistic')
     ->middleware(['role:admin', 'auth:sanctum'])
-    ->controller(StatisticController::class)
     ->group(function () {
         Route::get('/posts', 'getPostsMostLiked');
     });
