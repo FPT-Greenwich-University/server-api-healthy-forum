@@ -101,7 +101,7 @@ class AuthController extends Controller
         // send link verify account
         event(new UserVerifyAccount($user));
 
-        return response()->json("Register successfully", 201);
+        return response()->json($user, 201);
     }
 
     /**
