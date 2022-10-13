@@ -19,8 +19,10 @@ use Illuminate\Support\Facades\Broadcast;
 //    return (int) $user->id === (int) $id;
 //});
 
+// Broadcast for new chat room created
 Broadcast::channel('chat.{chatRoomId}', ChatChannel::class);
 
+// Broadcast for new messages send
 Broadcast::channel('chat-room.{targetId}', function ($user, int $targetId) {
     return Auth::check();
 });
