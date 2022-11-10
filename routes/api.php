@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\Api\NotificationController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,3 +20,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return response()->json(User::with(['roles', 'permissions'])->findOrFail($request->user()->id));
 });
+
+Route::middleware('auth:sanctum')->get('/notifications', [NotificationController::class, 'index']);

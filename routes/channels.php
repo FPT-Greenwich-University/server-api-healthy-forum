@@ -27,3 +27,7 @@ Broadcast::channel('chat-room.{targetId}', function ($user, int $targetId) {
     return Auth::check();
 });
 
+Broadcast::channel('posts.notification', function () {
+    return Auth::check();
+});
+

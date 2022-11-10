@@ -14,6 +14,16 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        Category::factory()->count(10)->create();
+        Category::insert([
+            [
+                "name" => "Food",
+                "description" => "The food",
+            ],
+            [
+                "name" => "Sport",
+                "description" => "The sport such as gym, running, yoga."
+            ],
+        ]);
+
     }
 }
