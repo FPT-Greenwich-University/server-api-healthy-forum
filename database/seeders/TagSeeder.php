@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Tag;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class TagSeeder extends Seeder
@@ -15,6 +14,20 @@ class TagSeeder extends Seeder
      */
     public function run()
     {
-        Tag::factory()->count(10)->create();
+//        Tag::factory()->count(10)->create();
+        Tag::insert([
+            [
+                "name" => "Water",
+                "description" => "The water",
+            ],
+            [
+                "name" => "HealthyFood",
+                "description" => "The healthy food"
+            ],
+            [
+                "name" => "Relax",
+                "description" => "Relax"
+            ]
+        ]);
     }
 }

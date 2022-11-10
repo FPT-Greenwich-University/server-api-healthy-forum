@@ -2,18 +2,25 @@
 
 namespace App\Http\Controllers\Api\Admins\Posts;
 
+use App\Events\NewPostNotification;
 use App\Events\NotifyNewPost;
 use App\Http\Controllers\Controller;
+use App\Repositories\Interfaces\INotificationRepository;
 use App\Repositories\Interfaces\IPostRepository;
 use Illuminate\Http\JsonResponse;
 
 class PostController extends Controller
 {
     private readonly IPostRepository $postResponse;
+    private readonly INotificationRepository $notificationRepository;
 
-    public function __construct(IPostRepository $postRepository)
+    public function __construct(
+        IPostRepository         $postRepository,
+        INotificationRepository $notificationRepository
+    )
     {
         $this->postResponse = $postRepository;
+        $this->notificationRepository = $notificationRepository;
     }
 
     /**
@@ -59,7 +66,14 @@ class PostController extends Controller
 
         $this->postResponse->update($postId, ['is_published' => true, 'published_at' => now()]); // update published status
 
+        $this->notificationRepository->create([
+            "type" => "/posts/" . $post->id,
+            "content" => "The post: " . $post->title . " have published"
+        ]);
+
         event(new NotifyNewPost($post)); // throw event for notification new post to all user via email
+        broadcast(new NewPostNotification($post));
+
 
         return response()->json("", 204);
     }
