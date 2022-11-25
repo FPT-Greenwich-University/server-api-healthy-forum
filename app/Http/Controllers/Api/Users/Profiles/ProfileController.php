@@ -10,8 +10,8 @@ use Illuminate\Http\JsonResponse;
 
 class ProfileController extends Controller
 {
-    private IUserRepository $userRepository;
-    private IProfileRepository $profileRepository;
+    private readonly IUserRepository $userRepository;
+    private readonly IProfileRepository $profileRepository;
 
     public function __construct(IUserRepository $userRepository, IProfileRepository $profileRepository)
     {

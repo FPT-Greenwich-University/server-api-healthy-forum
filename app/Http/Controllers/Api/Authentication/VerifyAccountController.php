@@ -25,11 +25,14 @@ class VerifyAccountController extends Controller
             $plainTextToken = $request->input('token'); // get plain text token
 
             $accountToken = DB::table('verify_accounts')->where('token', $plainTextToken)->first();
+
             if (is_null($accountToken)) {
                 return response()->json('Invalid token', 403);
             }
+
             // Check user is existed
             $user = User::where('email', $accountToken->email)->first();
+
             if (!$user) {
                 return response()->json("User doesn't exist!", 404);
             }

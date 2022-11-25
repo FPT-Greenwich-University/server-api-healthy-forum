@@ -7,10 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\LoginRequest;
 use App\Http\Requests\Api\Auth\RegisterRequest;
 use App\Models\User;
+use App\Repositories\Interfaces\IUserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Repositories\Interfaces\IUserRepository;
 
 class AuthController extends Controller
 {
@@ -34,7 +34,9 @@ class AuthController extends Controller
 
 
         // check password if wrong?
-        if (is_null($user) || $this->checkValidPassword(user: $user, password: $request->input('password')) === FALSE) {
+        if (
+            is_null($user) ||
+            $this->checkValidPassword(user: $user, password: $request->input('password')) === FALSE) {
             return response()->json("Email or password not found!", 401);
         }
 
