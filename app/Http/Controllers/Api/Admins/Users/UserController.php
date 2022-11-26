@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Admins\Users\Permissions\FetchPermissionsRequest;
 use App\Http\Requests\Api\Admins\Users\Permissions\UpdatePermissionRequest;
 use App\Models\User;
+use App\Repositories\Interfaces\IRoleRepository;
 use App\Repositories\Interfaces\IUserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Repositories\Interfaces\IRoleRepository;
 
 class UserController extends Controller
 {
@@ -73,13 +73,9 @@ class UserController extends Controller
      */
     final public function getPermissionsByRole(FetchPermissionsRequest $request): JsonResponse
     {
-        $roleId = $request->input('role_id'); // get list role id
+        $roleIds = $request->input('role_id'); // get list role id
 
-        if (is_null($this->roleRepos->findById($roleId))) {
-            return  response()->json("Role not found", 404);
-        }
-
-        return response()->json($this->roleRepos->getPermissionByRoleId($roleId)); // Get list permissions by role's id
+        return response()->json($this->roleRepos->getPermissionByRoleId($roleIds)); // Get list permissions by role's id
     }
 
     /**
