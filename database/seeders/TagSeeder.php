@@ -14,7 +14,6 @@ class TagSeeder extends Seeder
      */
     public function run()
     {
-//        Tag::factory()->count(10)->create();
         Tag::insert([
             [
                 "name" => "Water",
@@ -27,6 +26,10 @@ class TagSeeder extends Seeder
             [
                 "name" => "Relax",
                 "description" => "Relax"
+            ],
+            [
+                "name" => "Gym",
+                "description" => "Go to the gym"
             ]
         ]);
     }
