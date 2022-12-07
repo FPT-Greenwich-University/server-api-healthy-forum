@@ -66,6 +66,16 @@ class PostRepository extends BaseRepository implements IPostRepository
         }
     }
 
+    public function adminGetDetailPost(int $id)
+    {
+        try {
+            return $this->model->with(['image', 'category', 'user'])
+                ->find($id);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
     public function getPostsByTag(int $tagId, int $perPage)
     {
         try {

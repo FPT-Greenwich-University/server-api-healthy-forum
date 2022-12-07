@@ -40,10 +40,10 @@ class PostController extends Controller
      */
     final public function show(int $postId): JsonResponse
     {
-        $post = $this->postResponse->getDetailPost($postId); // find the post
+        $post = $this->postResponse->adminGetDetailPost($postId); // find the post
 
         if (is_null($post)) {
-            return response()->json("Product not found", 404);
+            return response()->json("Post not found", 404);
         }
 
         return response()->json($post); // return post detail information
