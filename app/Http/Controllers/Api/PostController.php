@@ -26,7 +26,7 @@ class PostController extends Controller
      */
     final public function index(): JsonResponse
     {
-        return response()->json($this->postRepos->filterPosts(perPage: 10));
+        return response()->json($this->postRepos->filterPosts(perPage: 4));
     }
 
     /**
