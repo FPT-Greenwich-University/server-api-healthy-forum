@@ -17,7 +17,7 @@ class NotificationRepository extends BaseRepository implements INotificationRepo
     public function getAllNotifications(int $perPage)
     {
         try {
-            return $this->model->paginate($perPage);
+            return $this->model->orderBy('id', 'desc')->paginate($perPage);
         } catch (Exception $exception) {
             return $exception;
         }
