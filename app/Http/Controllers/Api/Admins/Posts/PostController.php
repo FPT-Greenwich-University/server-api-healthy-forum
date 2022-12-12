@@ -74,7 +74,6 @@ class PostController extends Controller
         event(new NotifyNewPost($post)); // throw event for notification new post to all user via email
         broadcast(new NewPostNotification($post));
 
-
         return response()->json("", 204);
     }
 }

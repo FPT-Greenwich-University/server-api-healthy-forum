@@ -1,26 +1,27 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Healthy social website
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+#### Author: Tran Ngoc Phuoc - Fullstack developer
 
-## About Laravel
+#### Contract me: phuoctn412@gmail.com
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and
-creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in
-many web projects, such as:
+### This source code is server-side
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache)
-  storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Client-site Vue JS repository is here [Healthy social](https://github.com/FPT-Greenwich-University/server-api-healthy-forum "Laravel project")
+
+# Application Architecture
+
+![Application Architecture](project-introduce/images/application_architecture.png)
+
+# Demonstration
+
+1. [Posts view page](project-introduce/images/posts.png)
+2. [Create post view page](project-introduce/images/create-posts.png)
+3. [Search post view page](project-introduce/images/search-posts.png)
+4. [Search user view page](project-introduce/images/search-users.png)
+5. [Chat and video call view page](project-introduce/images/chat-videocall.png)
+6. [Favorite doctor list view page](project-introduce/images/favorite-doctor-list.png)
+7. [Favorite post list view page](project-introduce/images/favorite-post.png)
+8. [Profile view page](project-introduce/images/profiles.png)
 
 # Important when run this project:
 
@@ -33,89 +34,3 @@ php artisan schedule:work
 ```php
 php artisan queue:listen
 ```
-
-[//]: # (Laravel is accessible, powerful, and provides tools required for large, robust applications.)
-
-[//]: # ()
-
-[//]: # (## Learning Laravel)
-
-[//]: # ()
-
-[//]: # (Laravel has the most extensive and thorough [documentation]&#40;https://laravel.com/docs&#41; and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.)
-
-[//]: # ()
-
-[//]: # (If you don't feel like reading, [Laracasts]&#40;https://laracasts.com&#41; can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.)
-
-[//]: # ()
-
-[//]: # (## Laravel Sponsors)
-
-[//]: # ()
-
-[//]: # (We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page]&#40;https://patreon.com/taylorotwell&#41;.)
-
-[//]: # ()
-
-[//]: # (### Premium Partners)
-
-[//]: # ()
-
-[//]: # (- **[Vehikl]&#40;https://vehikl.com/&#41;**)
-
-[//]: # (- **[Tighten Co.]&#40;https://tighten.co&#41;**)
-
-[//]: # (- **[Kirschbaum Development Group]&#40;https://kirschbaumdevelopment.com&#41;**)
-
-[//]: # (- **[64 Robots]&#40;https://64robots.com&#41;**)
-
-[//]: # (- **[Cubet Techno Labs]&#40;https://cubettech.com&#41;**)
-
-[//]: # (- **[Cyber-Duck]&#40;https://cyber-duck.co.uk&#41;**)
-
-[//]: # (- **[Many]&#40;https://www.many.co.uk&#41;**)
-
-[//]: # (- **[Webdock, Fast VPS Hosting]&#40;https://www.webdock.io/en&#41;**)
-
-[//]: # (- **[DevSquad]&#40;https://devsquad.com&#41;**)
-
-[//]: # (- **[Curotec]&#40;https://www.curotec.com/services/technologies/laravel/&#41;**)
-
-[//]: # (- **[OP.GG]&#40;https://op.gg&#41;**)
-
-[//]: # (- **[WebReinvent]&#40;https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors&#41;**)
-
-[//]: # (- **[Lendio]&#40;https://lendio.com&#41;**)
-
-[//]: # ()
-
-[//]: # (## Contributing)
-
-[//]: # ()
-
-[//]: # (Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation]&#40;https://laravel.com/docs/contributions&#41;.)
-
-[//]: # ()
-
-[//]: # (## Code of Conduct)
-
-[//]: # ()
-
-[//]: # (In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct]&#40;https://laravel.com/docs/contributions#code-of-conduct&#41;.)
-
-[//]: # ()
-
-[//]: # (## Security Vulnerabilities)
-
-[//]: # ()
-
-[//]: # (If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com]&#40;mailto:taylor@laravel.com&#41;. All security vulnerabilities will be promptly addressed.)
-
-[//]: # ()
-
-[//]: # (## License)
-
-[//]: # ()
-
-[//]: # (The Laravel framework is open-sourced software licensed under the [MIT license]&#40;https://opensource.org/licenses/MIT&#41;.)
